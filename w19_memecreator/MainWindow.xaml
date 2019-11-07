@@ -5,8 +5,29 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:w19_memecreator"
         mc:Ignorable="d"
-        Title="Meme Creator" Height="450" Width="800" ResizeMode="NoResize">
+        Title="Meme Creator" Height="650" Width="1000" ResizeMode="NoResize">
     <Grid>
-        
+        <StackPanel x:Name="stackP_Timeline" HorizontalAlignment="Left" Height="100" Margin="10,56,0,0" VerticalAlignment="Top" Width="974"/>
+
+        <Border BorderThickness="2" BorderBrush="Black" Height="450" Width="620" Margin="10,161,0,0" VerticalAlignment="Top" HorizontalAlignment="Left">
+            <Canvas x:Name="canvas_Bearbeitungsfenster" HorizontalAlignment="Left" Height="450" Margin="-2" VerticalAlignment="Top" Width="620"/>
+        </Border>
+
+        <Border BorderThickness="2" BorderBrush="Black" Height="450" Width="344" Margin="636,161,0,0" VerticalAlignment="Top" HorizontalAlignment="Left">
+        </Border>
+
+        <Menu x:Name="menu_mainMenu" HorizontalAlignment="Left" Height="21" VerticalAlignment="Top" Width="364">
+            <MenuItem Header="File">
+                <MenuItem Header="Load"></MenuItem>
+                <MenuItem Header="Save"></MenuItem>
+                <Separator Margin="3,2,-3,2"></Separator>
+                <MenuItem Header="Exit"></MenuItem>
+            </MenuItem>
+            <MenuItem Header="Edit">
+                <MenuItem Header="Create">
+                    <MenuItem Header="Template"></MenuItem>
+                </MenuItem>
+            </MenuItem>
+        </Menu>
     </Grid>
 </Window>
