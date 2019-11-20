@@ -24,6 +24,10 @@ namespace w19_memecreator
         Button btn_txtField_Apply = new Button();
         ComboBox cmBox_fontMenu = new ComboBox();
 
+
+
+        int i_currentSelection_Tag = 0;
+
         public void set_KontextFenster_TextView_properties()
         {
             txtBox_txtField_Text.Height = 100;
@@ -40,6 +44,7 @@ namespace w19_memecreator
             btn_txtField_Apply.VerticalAlignment = VerticalAlignment.Top;
             btn_txtField_Apply.Margin = new Thickness(10, 130, 0, 0);
             btn_txtField_Apply.AddHandler(Button.ClickEvent, new RoutedEventHandler(btn_txtField_Apply_Click));
+            btn_txtField_Apply.Tag = i_currentSelection_Tag;
 
             cmBox_fontMenu.Height = 25;
             cmBox_fontMenu.Width = 120;
@@ -51,46 +56,88 @@ namespace w19_memecreator
             //cmBox_fontMenu.AddHandler(ComboBox.SelectionChangedEvent, new RoutedEventHandler(cmBox_fontMenu_SelectionChangedEvent));
         }
 
+        public void draw_KontextFenster()
+        {
+            set_KontextFenster_TextView_properties();
+
+            grid_Kontextfenster.Children.Add(txtBox_txtField_Text);
+            grid_Kontextfenster.Children.Add(btn_txtField_Apply);
+            grid_Kontextfenster.Children.Add(cmBox_fontMenu);
+        }
+
+        public string generateString()
+        {
+            string str_text = txtBox_txtField_Text.Text;
+            return str_text;
+        }
+
         public MainWindow()
         {
             InitializeComponent();
         }
 
-        private void btn_DEBUG_ContextTextView_Click(object sender, RoutedEventArgs e)
-        {  
-            grid_Kontextfenster.Children.Add(txtBox_txtField_Text);
-            grid_Kontextfenster.Children.Add(btn_txtField_Apply);
-            grid_Kontextfenster.Children.Add(cmBox_fontMenu);
 
-            set_KontextFenster_TextView_properties();
-        }
 
         //EventHandler
         private void btn_txtField_Apply_Click(object sender, RoutedEventArgs e)
         {
-            String str_cmBox_fontMenu_Selection = cmBox_fontMenu.Text;
-            
-            
-            if(str_cmBox_fontMenu_Selection == "Arial")
+            string str_content = generateString();
+            if (i_currentSelection_Tag == 1)
             {
-                lbl_DEBUG_ShowText.FontFamily = new FontFamily("Arial"); 
-            } else if(str_cmBox_fontMenu_Selection == "Comic Sans")
+                lbl_DEBUG_ShowText1.Content = str_content;
+            } else if (i_currentSelection_Tag == 2)
             {
-                lbl_DEBUG_ShowText.FontFamily = new FontFamily("Comic Sans");
-            } else
-            {
-                MessageBox.Show("Error: str_cmBox_fontMenu_Selection not found");
+                lbl_DEBUG_ShowText2.Content = str_content;
             }
 
-            lbl_DEBUG_ShowText.Content = txtBox_txtField_Text.Text;
+
         }
+
+        private void btn_DEBUG_lbl1_Click(object sender, RoutedEventArgs e)
+        {
+            string tag_buffer = btn_DEBUG_lbl1.Tag.ToString();
+            i_currentSelection_Tag = Int32.Parse(tag_buffer);
+            draw_KontextFenster();
+            
+            
+        }
+
+        private void btn_DEBUG_lbl2_Click(object sender, RoutedEventArgs e)
+        {
+            string tag_buffer = btn_DEBUG_lbl2.Tag.ToString();
+            i_currentSelection_Tag = Int32.Parse(tag_buffer);
+            draw_KontextFenster();
+        }
+
+
+
+
+
 
         /*private void cmBox_fontMenu_SelectionChangedEvent(object sender, RoutedEventArgs e)
         {
             String str_cmBox_fontMenu_Selection = cmBox_fontMenu.Text;
             MessageBox.Show(str_cmBox_fontMenu_Selection);
+
+
+                   String str_cmBox_fontMenu_Selection = cmBox_fontMenu.Text;
+            Label lbl_target = null;
+            
+            
+            if(str_cmBox_fontMenu_Selection == "Arial")
+            {
+                lbl_target.FontFamily = new FontFamily("Arial"); 
+            } else if(str_cmBox_fontMenu_Selection == "Comic Sans")
+            {   
+                lbl_target.FontFamily = new FontFamily("Comic Sans");
+            } else
+            {
+                MessageBox.Show("Error: str_cmBox_fontMenu_Selection not found");
+            }
+
+            lbl_target.Content = txtBox_txtField_Text.Text;
         }*/
 
-        
+
     }
 }
