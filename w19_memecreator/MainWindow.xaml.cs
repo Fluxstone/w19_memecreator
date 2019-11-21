@@ -52,7 +52,7 @@ namespace w19_memecreator
             cmBox_fontMenu.HorizontalAlignment = HorizontalAlignment.Left;
             cmBox_fontMenu.VerticalAlignment = VerticalAlignment.Top;
             cmBox_fontMenu.Margin = new Thickness(10, 160, 0, 0);
-            cmBox_fontMenu.ItemsSource = new List<string> { "Arial", "Comic Sans MS" };
+            cmBox_fontMenu.ItemsSource = new List<string> {"impact", "Arial", "Comic Sans MS" };
             cmBox_fontMenu.SelectedIndex = 0;
             //cmBox_fontMenu.AddHandler(ComboBox.SelectionChangedEvent, new RoutedEventHandler(cmBox_fontMenu_SelectionChangedEvent));
 
@@ -79,7 +79,10 @@ namespace w19_memecreator
         {
             int i_fontSize = Int32.Parse(cmBox_fontSize.Text);
 
-            if(cmBox_fontMenu.Text == "Arial")
+            if(cmBox_fontMenu.Text == "impact")
+            {
+                lbl_in.FontFamily = new FontFamily("impact");
+            } else if (cmBox_fontMenu.Text == "Arial")
             {
                 lbl_in.FontFamily = new FontFamily("Arial");
             } else if (cmBox_fontMenu.Text == "Comic Sans MS")
