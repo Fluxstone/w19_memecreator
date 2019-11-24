@@ -7,6 +7,8 @@
         mc:Ignorable="d"
         Title="Meme Creator" Height="650" Width="1000" ResizeMode="NoResize">
     <Grid>
+
+        <Label Content="Templates" HorizontalAlignment="Left" Margin="10,30,0,0" VerticalAlignment="Top"/>
         <StackPanel x:Name="stackP_Timeline" HorizontalAlignment="Left" Height="100" Margin="10,56,0,0" VerticalAlignment="Top" Width="974"/>
 
         <Border BorderThickness="2" BorderBrush="Black" Height="450" Width="620" Margin="10,161,0,0" VerticalAlignment="Top" HorizontalAlignment="Left">
@@ -26,7 +28,7 @@
             <MenuItem Header="File">
                 <MenuItem Header="Load"></MenuItem>
                 <MenuItem Header="Save"></MenuItem>
-                <Separator Margin="3,2,-3,2"></Separator>
+              <Separator Margin="3,2,-3,2"></Separator>
                 <MenuItem Header="Exit"></MenuItem>
             </MenuItem>
             <MenuItem Header="Edit">
@@ -35,8 +37,6 @@
                 </MenuItem>
             </MenuItem>
         </Menu>
-
-
 
         <Button x:Name="btn_DEBUG_lbl1" Content="lbl1" HorizontalAlignment="Left" Margin="881,22,0,0" VerticalAlignment="Top" Width="75" Tag="1" Click="btn_DEBUG_lbl1_Click"/>
         <Label x:Name="lbl_DEBUG_ShowText1" Content="YourTextHere" HorizontalAlignment="Left" Margin="330,202,0,0" VerticalAlignment="Top" Width="157" Height="160" Tag="1"/>
