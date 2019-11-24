@@ -1,0 +1,94 @@
+[
+	{
+		"name": "Drake",
+		"previewSource": "drake.jpg",
+		"components": {
+			"images": [
+				{
+					"type": "Image",
+					"relSource": "drake1.jpg",
+					"xPos": 0,
+					"yPos": 0,
+					"width": 100,
+					"height": 100
+				},
+				{
+					"type": "Image",
+					"relSource": "drake1.jpg",
+					"xPos": 0,
+					"yPos": 100,
+					"width": 100,
+					"height": 100
+				}
+			],
+			"text": [
+				{
+					"type": "Text",
+					"content": "Insert text here",
+					"font": "Arial",
+					"fontsize": 12,
+					"xPos": 100,
+					"yPos": 0,
+					"width": 100,
+					"height": 100
+				},
+				{
+					"type": "Text",
+					"content": "Insert text here",
+					"font": "Arial",
+					"fontsize": 12,
+					"xPos": 100,
+					"yPos": 100,
+					"width": 100,
+					"height": 100
+				}
+			]
+		}
+	},
+	{
+		"name": "Drake",
+		"previewSource": "drake.jpg",
+		"components": {
+			"images": [
+				{
+					"type": "Image",
+					"relSource": "drake1.jpg",
+					"xPos": 0,
+					"yPos": 0,
+					"width": 100,
+					"height": 100
+				},
+				{
+					"type": "Image",
+					"relSource": "drake1.jpg",
+					"xPos": 0,
+					"yPos": 100,
+					"width": 100,
+					"height": 100
+				}
+			],
+			"text": [
+				{
+					"type": "Text",
+					"content": "Insert text here",
+					"font": "Arial",
+					"fontsize": 12,
+					"xPos": 100,
+					"yPos": 0,
+					"width": 100,
+					"height": 100
+				},
+				{
+					"type": "Text",
+					"content": "Insert text here",
+					"font": "Arial",
+					"fontsize": 12,
+					"xPos": 100,
+					"yPos": 100,
+					"width": 100,
+					"height": 100
+				}
+			]
+		}
+	}
+]
