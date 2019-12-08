@@ -6,7 +6,7 @@ using System.Windows.Media;
 
 namespace w19_memecreator
 {
-    class KontextFenster
+    class TextKontext
     {
         //Variables
         TextBox txtBox_txtField_Text = new TextBox();
@@ -15,7 +15,7 @@ namespace w19_memecreator
         ComboBox cmBox_fontSize = new ComboBox();
 
         //Construktor
-        public KontextFenster()
+        public TextKontext()
         {
 
         }
