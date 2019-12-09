@@ -30,6 +30,7 @@ namespace w19_memecreator
         public void drawEffectContext()
         {
             grid_Kontextfenster.Children.Add(effectWindow.get_btn_effectField_Apply());
+            grid_Kontextfenster.Children.Add(effectWindow.get_btn_effectField_Brightness());
         }
 
         //Eventhandler
@@ -37,7 +38,7 @@ namespace w19_memecreator
         //Menuitem
         public void addSprite_Click(object sender, RoutedEventArgs e)
         {
-            drawEffectContext();
+
         }
 
         public void canvas_Bearbeitungsfenster_MouseLeftButtonDown(object sender, RoutedEventArgs e)
