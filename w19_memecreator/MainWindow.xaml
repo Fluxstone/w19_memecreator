@@ -36,6 +36,15 @@
                     <MenuItem Header="Template"></MenuItem>
                 </MenuItem>
             </MenuItem>
+            <MenuItem Header="Effects">
+                <MenuItem Header="Add Sprite" Click="addSprite_Click"></MenuItem>
+                <MenuItem Header="Add Filter">
+                    <MenuItem Header="Film Grain"></MenuItem>
+                    <MenuItem Header="Sharpen"></MenuItem>
+                    <MenuItem Header="Black and White"></MenuItem>
+                    <MenuItem Header="Color Saturation"></MenuItem>
+                </MenuItem>
+            </MenuItem>
         </Menu>
     </Grid>
 </Window>

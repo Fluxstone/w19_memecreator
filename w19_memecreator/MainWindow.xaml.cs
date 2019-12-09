@@ -1,5 +1,7 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 
 namespace w19_memecreator
 {
@@ -9,19 +11,40 @@ namespace w19_memecreator
       
     public partial class MainWindow : Window
     {
-        KontextFenster contextWindow = new KontextFenster();
+        TextKontext textWindow = new TextKontext();
+        EffektKontext effectWindow = new EffektKontext();
 
         public MainWindow()
         {
             InitializeComponent();
-            contextWindow.setWindowProperties();
+            canvas_Bearbeitungsfenster.AddHandler(Canvas.MouseLeftButtonDownEvent, new RoutedEventHandler(canvas_Bearbeitungsfenster_MouseLeftButtonDown));
         }
-        public void drawContextWindow()
+        public void drawTextContext()
         {
-            grid_Kontextfenster.Children.Add(contextWindow.get_btn_txtField_Apply());
-            grid_Kontextfenster.Children.Add(contextWindow.get_cmBox_fontMenu());
-            grid_Kontextfenster.Children.Add(contextWindow.get_cmBox_fontSize());
-            grid_Kontextfenster.Children.Add(contextWindow.get_txtField_Text());
+            grid_Kontextfenster.Children.Add(textWindow.get_btn_txtField_Apply());
+            grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontMenu());
+            grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontSize());
+            grid_Kontextfenster.Children.Add(textWindow.get_txtField_Text());
+        }
+        
+        public void drawEffectContext()
+        {
+            grid_Kontextfenster.Children.Add(effectWindow.get_btn_effectField_Apply());
+            grid_Kontextfenster.Children.Add(effectWindow.get_btn_effectField_Brightness());
+        }
+
+        //Eventhandler
+
+        //Menuitem
+        public void addSprite_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        public void canvas_Bearbeitungsfenster_MouseLeftButtonDown(object sender, RoutedEventArgs e)
+        {
+            effectWindow.set_Cursor(canvas_Bearbeitungsfenster);
+            effectWindow.drawSprite(canvas_Bearbeitungsfenster);
         }
     }
 }
