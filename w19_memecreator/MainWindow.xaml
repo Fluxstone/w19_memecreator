@@ -8,8 +8,9 @@
         Title="Meme Creator" Height="650" Width="1000" ResizeMode="NoResize">
     <Grid>
 
-        <Label Content="Templates" HorizontalAlignment="Left" Margin="10,30,0,0" VerticalAlignment="Top"/>
-        <StackPanel x:Name="stackP_Timeline" HorizontalAlignment="Left" Height="100" Margin="10,56,0,0" VerticalAlignment="Top" Width="974"/>
+        <Label x:Name="TemplatesLabel" Content="Templates" HorizontalAlignment="Left" Margin="10,30,0,0" VerticalAlignment="Top"/>
+        <StackPanel x:Name="stackP_Timeline" Orientation="Horizontal" HorizontalAlignment="Left" Height="100" Margin="10,56,0,0" VerticalAlignment="Top" Width="974" />
+
 
         <Border BorderThickness="2" BorderBrush="Black" Height="450" Width="600" Margin="10,160,0,0" VerticalAlignment="Top" HorizontalAlignment="Left">
             <Canvas x:Name="canvas_Bearbeitungsfenster" Background="White" HorizontalAlignment="Left" Height="445" Width="595" Margin="0,0,0,0" VerticalAlignment="Top"/>
@@ -22,6 +23,9 @@
 
                 </Grid>
             </ScrollViewer>
+          
+          <Border BorderThickness="2" BorderBrush="Black" Height="450" Width="344" Margin="636,161,0,0" VerticalAlignment="Top" HorizontalAlignment="Left">
+            <StackPanel x:Name="stackP_Kontext" Orientation="Horizontal" HorizontalAlignment="Left" Height="450" VerticalAlignment="Top" Width="344" />
         </Border>
 
         <Menu x:Name="menu_mainMenu" HorizontalAlignment="Left" Height="21" VerticalAlignment="Top" Width="364">
