@@ -23,8 +23,9 @@
 
                 </Grid>
             </ScrollViewer>
-          
-          <Border BorderThickness="2" BorderBrush="Black" Height="450" Width="344" Margin="636,161,0,0" VerticalAlignment="Top" HorizontalAlignment="Left">
+        </Border>
+
+        <Border BorderThickness="2" BorderBrush="Black" Height="450" Width="344" Margin="636,161,0,0" VerticalAlignment="Top" HorizontalAlignment="Left">
             <StackPanel x:Name="stackP_Kontext" Orientation="Horizontal" HorizontalAlignment="Left" Height="450" VerticalAlignment="Top" Width="344" />
         </Border>
 

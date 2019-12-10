@@ -11,6 +11,8 @@ using System.Windows.Media.Imaging;
 using Button = System.Windows.Controls.Button;
 using Image = System.Windows.Controls.Image;
 
+//Musste Shit auskommentieren damits funktioniert
+
 
 namespace w19_memecreator {
     /// <summary>
@@ -28,6 +30,9 @@ namespace w19_memecreator {
         public MainWindow()
         {
             InitializeComponent();
+            canvas_Bearbeitungsfenster.AddHandler(Canvas.MouseLeftButtonDownEvent, new RoutedEventHandler(canvas_Bearbeitungsfenster_MouseLeftButtonDown));
+
+
 
 
             using (StreamReader r = new StreamReader(Environment.CurrentDirectory + "\\..\\..\\Templates\\templates.json"))
@@ -155,13 +160,14 @@ namespace w19_memecreator {
         {
             int rando = 6;
             Label label = (Label)canvas_Bearbeitungsfenster.Children[nummerKind];
-            label.Content += Graphics.MeasureString(label.Content.ToString(), new Font(label.FontFamily.ToString(), (float)label.FontSize);
+            //label.Content += Graphics.MeasureString(label.Content.ToString(), new Font(label.FontFamily.ToString(), (float)label.FontSize);
         }
-    }
-}
 
-            canvas_Bearbeitungsfenster.AddHandler(Canvas.MouseLeftButtonDownEvent, new RoutedEventHandler(canvas_Bearbeitungsfenster_MouseLeftButtonDown));
-        }
+
+
+
+
+        //Code Yannic
         public void drawTextContext()
         {
             grid_Kontextfenster.Children.Add(textWindow.get_btn_txtField_Apply());
@@ -169,7 +175,7 @@ namespace w19_memecreator {
             grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontSize());
             grid_Kontextfenster.Children.Add(textWindow.get_txtField_Text());
         }
-        
+
         public void drawEffectContext()
         {
             grid_Kontextfenster.Children.Add(effectWindow.get_btn_effectField_Apply());
@@ -189,6 +195,9 @@ namespace w19_memecreator {
             effectWindow.set_Cursor(canvas_Bearbeitungsfenster);
             effectWindow.drawSprite(canvas_Bearbeitungsfenster);
         }
+
+
     }
 }
 
+          
