@@ -1,19 +1,23 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Button = System.Windows.Controls.Button;
+using Image = System.Windows.Controls.Image;
 
-namespace w19_memecreator
-{
+namespace w19_memecreator {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
-    {
+    public partial class MainWindow : Window {
+
+        private int nummerKind;
 
         public MainWindow()
         {
@@ -29,7 +33,7 @@ namespace w19_memecreator
                     Image myImage = new Image();
                     myImage.Height = 100;
                     myImage.Width = 120;
-                    myImage.Cursor = Cursors.Hand;
+                    myImage.Cursor = System.Windows.Input.Cursors.Hand;
 
                     // Create source
                     BitmapImage myBitmapImage = new BitmapImage();
@@ -57,7 +61,7 @@ namespace w19_memecreator
 
             double maxSizeY = canvas_Bearbeitungsfenster.Height;
             double maxSizeX = canvas_Bearbeitungsfenster.Height;
-            
+
             double leftPadding = (canvas_Bearbeitungsfenster.Width - canvas_Bearbeitungsfenster.Height) / 2;
             double topPadding = 0;
 
@@ -76,12 +80,14 @@ namespace w19_memecreator
                 leftPadding = 0;
             }
 
+            int canvasChildIndex = 0;
+
             foreach (var image in templateData.components.images)
             {
                 Image newImage = new Image();
-                newImage.Height = (double)image.height/100.0 * maxSizeY;
+                newImage.Height = (double)image.height / 100.0 * maxSizeY;
                 newImage.Width = (double)image.width / 100.0 * maxSizeX;
-                newImage.Cursor = Cursors.Hand;
+                newImage.Cursor = System.Windows.Input.Cursors.Hand;
 
                 // Create source
                 BitmapImage myBitmapImage = new BitmapImage();
@@ -93,8 +99,12 @@ namespace w19_memecreator
                 myBitmapImage.EndInit();
                 //set image source
                 newImage.Source = myBitmapImage;
-                int xPos = (int)((double)(image.xPos)/100.0 * maxSizeX + leftPadding);
-                int yPos = (int)((double)(image.yPos)/100.0 * maxSizeY + topPadding);
+                newImage.Tag = canvasChildIndex;
+                canvasChildIndex++;
+
+                //newImage.MouseLeftButtonUp += Irgendwas;
+                int xPos = (int)((double)(image.xPos) / 100.0 * maxSizeX + leftPadding);
+                int yPos = (int)((double)(image.yPos) / 100.0 * maxSizeY + topPadding);
                 Canvas.SetLeft(newImage, xPos);
                 Canvas.SetTop(newImage, yPos);
                 canvas_Bearbeitungsfenster.Children.Add(newImage);
@@ -106,17 +116,39 @@ namespace w19_memecreator
                 newLabel.Cursor = Cursors.Hand;
                 newLabel.Content = text.content;
                 newLabel.FontFamily = text.font;
-                newLabel.FontSize = text.fontsize;
+                newLabel.FontSize = text.fontSize;
                 newLabel.HorizontalContentAlignment = HorizontalAlignment.Center;
                 newLabel.VerticalContentAlignment = VerticalAlignment.Center;
-                newLabel.Height = (double)text.height / 100.0 * maxSizeY;
-                newLabel.Width = (double)text.width / 100.0 * maxSizeX;
-                int xPos = (int)((double)(text.xPos)/100.0 * maxSizeX + leftPadding);
-                int yPos = (int)((double)(text.yPos)/100.0 * maxSizeY + topPadding);
+                newLabel.Height = (int)((double)text.height / 100.0 * maxSizeY);
+                newLabel.Width = (int)((double)text.width / 100.0 * maxSizeX);
+                newLabel.Background = System.Windows.Media.Brushes.Red;
+                int xPos = (int)((double)(text.xPos) / 100.0 * maxSizeX + leftPadding);
+                int yPos = (int)((double)(text.yPos) / 100.0 * maxSizeY + topPadding);
+                newLabel.MouseLeftButtonUp += Irgendwas;
+                newLabel.Tag = canvasChildIndex;
+                canvasChildIndex++;
                 Canvas.SetLeft(newLabel, xPos);
                 Canvas.SetTop(newLabel, yPos);
                 canvas_Bearbeitungsfenster.Children.Add(newLabel);
             }
+        }
+
+        private void Irgendwas(object sender, MouseButtonEventArgs e)
+        {
+            Label label = (Label)sender;
+
+            Button newButton = new Button();
+            newButton.Content = "Klick mich";
+            newButton.Click += new RoutedEventHandler(IrgendwasButtoniges);
+            stackP_Kontext.Children.Add(newButton);
+            nummerKind = (int)label.Tag;
+        }
+
+        private void IrgendwasButtoniges(object sender, RoutedEventArgs e)
+        {
+            int rando = 6;
+            Label label = (Label)canvas_Bearbeitungsfenster.Children[nummerKind];
+            label.Content += Graphics.MeasureString(label.Content.ToString(), new Font(label.FontFamily.ToString(), (float)label.FontSize);
         }
     }
 }
