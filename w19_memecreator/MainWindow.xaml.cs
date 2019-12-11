@@ -1,7 +1,10 @@
 ﻿using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
+
 
 namespace w19_memecreator
 {
@@ -34,13 +37,11 @@ namespace w19_memecreator
         }
 
         //Eventhandler
-
         //Menuitem
         public void addSprite_Click(object sender, RoutedEventArgs e)
         {
 
         }
-
         public void canvas_Bearbeitungsfenster_MouseLeftButtonDown(object sender, RoutedEventArgs e)
         {
             effectWindow.set_Cursor(canvas_Bearbeitungsfenster);
