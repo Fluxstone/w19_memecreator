@@ -28,6 +28,7 @@ namespace w19_memecreator
             txtBox_txtField_Text.Text = "";
             txtBox_txtField_Text.HorizontalAlignment = HorizontalAlignment.Left;
             txtBox_txtField_Text.VerticalAlignment = VerticalAlignment.Top;
+            txtBox_txtField_Text.AcceptsReturn = true;
             txtBox_txtField_Text.Margin = new Thickness(10, 20, 0, 0);
 
             btn_txtField_Apply.Height = 25;

@@ -27,12 +27,15 @@ namespace w19_memecreator {
         EffektKontext effectWindow = new EffektKontext();
 
 
+
+
         public MainWindow()
         {
             InitializeComponent();
             canvas_Bearbeitungsfenster.AddHandler(Canvas.MouseLeftButtonDownEvent, new RoutedEventHandler(canvas_Bearbeitungsfenster_MouseLeftButtonDown));
 
-
+            textWindow.setWindowProperties();
+            drawTextContext();
 
 
             using (StreamReader r = new StreamReader(Environment.CurrentDirectory + "\\..\\..\\Templates\\templates.json"))
@@ -128,7 +131,7 @@ namespace w19_memecreator {
                 newLabel.Cursor = Cursors.Hand;
                 newLabel.Content = text.content;
                 newLabel.FontFamily = text.font;
-                newLabel.FontSize = text.fontSize;
+                newLabel.FontSize = text.fontsize;
                 newLabel.HorizontalContentAlignment = HorizontalAlignment.Center;
                 newLabel.VerticalContentAlignment = VerticalAlignment.Center;
                 newLabel.Height = (int)((double)text.height / 100.0 * maxSizeY);
@@ -192,8 +195,8 @@ namespace w19_memecreator {
 
         public void canvas_Bearbeitungsfenster_MouseLeftButtonDown(object sender, RoutedEventArgs e)
         {
-            effectWindow.set_Cursor(canvas_Bearbeitungsfenster);
-            effectWindow.drawSprite(canvas_Bearbeitungsfenster);
+            /*effectWindow.set_Cursor(canvas_Bearbeitungsfenster);
+            effectWindow.drawSprite(canvas_Bearbeitungsfenster);*/
         }
 
 
