@@ -1,4 +1,4 @@
-﻿using ImageProcessor;
+﻿//using ImageProcessor;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +14,7 @@ namespace w19_memecreator
     class EffektKontext
     {
         //Variables
-        ImageFactory imgFactory = new ImageFactory();
+        //ImageFactory imgFactory = new ImageFactory();
         const string path_lmao_emoji = "C:/Users/yanni/Source/Repos/Fluxstone/w19_memecreator/w19_memecreator/Resources/4506313_0.jpg";
 
         Point cursor = new Point(0, 0);
@@ -26,7 +26,7 @@ namespace w19_memecreator
         //Construktor
         public EffektKontext()
         {
-            img_LMAO_Emoj.Source = new BitmapImage(new Uri(path_lmao_emoji));
+            //img_LMAO_Emoj.Source = new BitmapImage(new Uri(path_lmao_emoji));
         }
 
         public void setWindowProperties()

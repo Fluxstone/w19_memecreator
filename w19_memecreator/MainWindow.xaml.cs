@@ -35,7 +35,7 @@ namespace w19_memecreator {
             canvas_Bearbeitungsfenster.AddHandler(Canvas.MouseLeftButtonDownEvent, new RoutedEventHandler(canvas_Bearbeitungsfenster_MouseLeftButtonDown));
 
             textWindow.setWindowProperties();
-            drawTextContext();
+            
 
 
             using (StreamReader r = new StreamReader(Environment.CurrentDirectory + "\\..\\..\\Templates\\templates.json"))
@@ -139,7 +139,8 @@ namespace w19_memecreator {
                 newLabel.Background = System.Windows.Media.Brushes.Red;
                 int xPos = (int)((double)(text.xPos) / 100.0 * maxSizeX + leftPadding);
                 int yPos = (int)((double)(text.yPos) / 100.0 * maxSizeY + topPadding);
-                newLabel.MouseLeftButtonUp += Irgendwas;
+                // LabelInCanvasClicked wird ausgeführt, wenn man auf ein Label im Canvas klickt
+                newLabel.MouseLeftButtonUp += LabelInCanvasClicked;
                 newLabel.Tag = canvasChildIndex;
                 canvasChildIndex++;
                 Canvas.SetLeft(newLabel, xPos);
@@ -148,22 +149,22 @@ namespace w19_memecreator {
             }
         }
 
-        private void Irgendwas(object sender, MouseButtonEventArgs e)
+        private void LabelInCanvasClicked(object sender, MouseButtonEventArgs e)
         {
+            // Das angeklickte Label wird als globale Variable in der Klasse gespeichert, um es später direkt ansprechen und im Kontextfenster verändern zu können
             Label label = (Label)sender;
-
-            Button newButton = new Button();
-            newButton.Content = "Klick mich";
-            newButton.Click += new RoutedEventHandler(IrgendwasButtoniges);
-            stackP_Kontext.Children.Add(newButton);
+            //newButton.Click += new RoutedEventHandler(LabelNummerLaden);
+            
+            // Index von Label in Canvas-Kind-Array in globale Variable nummerKind
             nummerKind = (int)label.Tag;
+            drawTextContext();
         }
 
-        private void IrgendwasButtoniges(object sender, RoutedEventArgs e)
+        private void LabelNummerLaden(object sender, RoutedEventArgs e)
         {
             int rando = 6;
             Label label = (Label)canvas_Bearbeitungsfenster.Children[nummerKind];
-            //label.Content += Graphics.MeasureString(label.Content.ToString(), new Font(label.FontFamily.ToString(), (float)label.FontSize);
+            label.Content = "Blabubb";
         }
 
 
@@ -173,6 +174,8 @@ namespace w19_memecreator {
         //Code Yannic
         public void drawTextContext()
         {
+            // TODO: if drawn == true
+            textWindow.set_targetLbl((Label)canvas_Bearbeitungsfenster.Children[nummerKind]);
             grid_Kontextfenster.Children.Add(textWindow.get_btn_txtField_Apply());
             grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontMenu());
             grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontSize());
@@ -184,6 +187,8 @@ namespace w19_memecreator {
             grid_Kontextfenster.Children.Add(effectWindow.get_btn_effectField_Apply());
             grid_Kontextfenster.Children.Add(effectWindow.get_btn_effectField_Brightness());
         }
+
+        //TODO: drawBildKontext
 
         //Eventhandler
 
