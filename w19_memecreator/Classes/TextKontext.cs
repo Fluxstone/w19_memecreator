@@ -13,6 +13,7 @@ namespace w19_memecreator
         Button btn_txtField_Apply = new Button();
         ComboBox cmBox_fontMenu = new ComboBox();
         ComboBox cmBox_fontSize = new ComboBox();
+        Label lbl_targetLbl;
 
         //Construktor
         public TextKontext()
@@ -28,6 +29,7 @@ namespace w19_memecreator
             txtBox_txtField_Text.Text = "";
             txtBox_txtField_Text.HorizontalAlignment = HorizontalAlignment.Left;
             txtBox_txtField_Text.VerticalAlignment = VerticalAlignment.Top;
+            txtBox_txtField_Text.AcceptsReturn = true;
             txtBox_txtField_Text.Margin = new Thickness(10, 20, 0, 0);
 
             btn_txtField_Apply.Height = 25;
@@ -55,34 +57,40 @@ namespace w19_memecreator
             cmBox_fontSize.SelectedIndex = 0;
         }
 
-        public void generateLabel(ref Label lbl_in)
+        public void generateLabel()
         {
             int i_fontSize = Int32.Parse(cmBox_fontSize.Text);
 
             if (cmBox_fontMenu.Text == "impact")
             {
-                lbl_in.FontFamily = new FontFamily("impact");
+                lbl_targetLbl.FontFamily = new FontFamily("impact");
             }
             else if (cmBox_fontMenu.Text == "Arial")
             {
-                lbl_in.FontFamily = new FontFamily("Arial");
+                lbl_targetLbl.FontFamily = new FontFamily("Arial");
             }
             else if (cmBox_fontMenu.Text == "Comic Sans MS")
             {
-                lbl_in.FontFamily = new FontFamily("Comic Sans MS");
+                lbl_targetLbl.FontFamily = new FontFamily("Comic Sans MS");
             }
             else
             {
                 MessageBox.Show("Error: str_cmBox_fontMenu_Selection not found");
             }
 
-            lbl_in.FontSize = i_fontSize;
-            lbl_in.Content = txtBox_txtField_Text.Text;
+            lbl_targetLbl.FontSize = i_fontSize;
+            lbl_targetLbl.Content = txtBox_txtField_Text.Text;
+        }
+
+        public void set_targetLbl(Label lbl_in)
+        {
+            lbl_targetLbl = lbl_in;
         }
 
         //Getter und Setter
         public TextBox get_txtField_Text()
         {
+            txtBox_txtField_Text.Text = lbl_targetLbl.Content.ToString();
             return txtBox_txtField_Text;
         }
         public Button get_btn_txtField_Apply()
@@ -100,7 +108,7 @@ namespace w19_memecreator
         //Event Handler
         private void btn_txtField_Apply_Click(object sender, RoutedEventArgs e)
         {
-
+            generateLabel();
         }
     }
 }
