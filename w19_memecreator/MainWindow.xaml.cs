@@ -26,9 +26,6 @@ namespace w19_memecreator {
         TextKontext textWindow = new TextKontext();
         EffektKontext effectWindow = new EffektKontext();
 
-
-
-
         public MainWindow()
         {
             InitializeComponent();
@@ -157,7 +154,11 @@ namespace w19_memecreator {
             
             // Index von Label in Canvas-Kind-Array in globale Variable nummerKind
             nummerKind = (int)label.Tag;
+
+
+            grid_Kontextfenster.Children.Clear();
             drawTextContext();
+            
         }
 
         private void LabelNummerLaden(object sender, RoutedEventArgs e)
@@ -174,12 +175,14 @@ namespace w19_memecreator {
         //Code Yannic
         public void drawTextContext()
         {
-            // TODO: if drawn == true
-            textWindow.set_targetLbl((Label)canvas_Bearbeitungsfenster.Children[nummerKind]);
-            grid_Kontextfenster.Children.Add(textWindow.get_btn_txtField_Apply());
-            grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontMenu());
-            grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontSize());
-            grid_Kontextfenster.Children.Add(textWindow.get_txtField_Text());
+
+                textWindow.set_targetLbl((Label)canvas_Bearbeitungsfenster.Children[nummerKind]);
+                grid_Kontextfenster.Children.Add(textWindow.get_btn_txtField_Apply());
+                grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontMenu());
+                grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontSize());
+                grid_Kontextfenster.Children.Add(textWindow.get_txtField_Text());
+
+            
         }
 
         public void drawEffectContext()
