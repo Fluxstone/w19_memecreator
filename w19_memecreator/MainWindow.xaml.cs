@@ -9,7 +9,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Button = System.Windows.Controls.Button;
+using Cursors = System.Windows.Input.Cursors;
 using Image = System.Windows.Controls.Image;
+
 
 //Musste Shit auskommentieren damits funktioniert
 
@@ -25,6 +27,8 @@ namespace w19_memecreator {
         private int nummerKind;
         TextKontext textWindow = new TextKontext();
         EffektKontext effectWindow = new EffektKontext();
+        int[] memeSize = new int[4];
+        bool memeSelected = false;
 
         public MainWindow()
         {
@@ -32,6 +36,11 @@ namespace w19_memecreator {
             canvas_Bearbeitungsfenster.AddHandler(Canvas.MouseLeftButtonDownEvent, new RoutedEventHandler(canvas_Bearbeitungsfenster_MouseLeftButtonDown));
 
             textWindow.setWindowProperties();
+
+            memeSize[0] = 0;
+            memeSize[1] = 0;
+            memeSize[2] = (int)canvas_Bearbeitungsfenster.Width;
+            memeSize[3] = (int)canvas_Bearbeitungsfenster.Height;
             
 
 
@@ -92,6 +101,11 @@ namespace w19_memecreator {
                 leftPadding = 0;
             }
 
+            memeSize[0] = (int)leftPadding;
+            memeSize[1] = (int)topPadding;
+            memeSize[2] = (int)maxSizeX;
+            memeSize[3] = (int)maxSizeY;
+
             int canvasChildIndex = 0;
 
             foreach (var image in templateData.components.images)
@@ -99,7 +113,7 @@ namespace w19_memecreator {
                 Image newImage = new Image();
                 newImage.Height = (double)image.height / 100.0 * maxSizeY;
                 newImage.Width = (double)image.width / 100.0 * maxSizeX;
-                newImage.Cursor = System.Windows.Input.Cursors.Hand;
+                newImage.Cursor = Cursors.Hand;
 
                 // Create source
                 BitmapImage myBitmapImage = new BitmapImage();
@@ -133,7 +147,7 @@ namespace w19_memecreator {
                 newLabel.VerticalContentAlignment = VerticalAlignment.Center;
                 newLabel.Height = (int)((double)text.height / 100.0 * maxSizeY);
                 newLabel.Width = (int)((double)text.width / 100.0 * maxSizeX);
-                newLabel.Background = System.Windows.Media.Brushes.Red;
+                newLabel.Background = System.Windows.Media.Brushes.White;
                 int xPos = (int)((double)(text.xPos) / 100.0 * maxSizeX + leftPadding);
                 int yPos = (int)((double)(text.yPos) / 100.0 * maxSizeY + topPadding);
                 // LabelInCanvasClicked wird ausgeführt, wenn man auf ein Label im Canvas klickt
@@ -144,6 +158,7 @@ namespace w19_memecreator {
                 Canvas.SetTop(newLabel, yPos);
                 canvas_Bearbeitungsfenster.Children.Add(newLabel);
             }
+            memeSelected = true;
         }
 
         private void LabelInCanvasClicked(object sender, MouseButtonEventArgs e)
@@ -199,13 +214,56 @@ namespace w19_memecreator {
         {
 
         }
+
         public void canvas_Bearbeitungsfenster_MouseLeftButtonDown(object sender, RoutedEventArgs e)
         {
             /*effectWindow.set_Cursor(canvas_Bearbeitungsfenster);
             effectWindow.drawSprite(canvas_Bearbeitungsfenster);*/
         }
 
+        // Export finished meme as image file
 
+        public void saveImage(object sender, RoutedEventArgs e)
+        {
+            if (memeSelected)
+            {
+                RenderTargetBitmap rtb = new RenderTargetBitmap((int)canvas_Bearbeitungsfenster.RenderSize.Width,
+                (int)canvas_Bearbeitungsfenster.RenderSize.Height, 96d, 96d, PixelFormats.Default);
+                rtb.Render(canvas_Bearbeitungsfenster);
+
+                var crop = new CroppedBitmap(rtb, new Int32Rect(memeSize[0], memeSize[1], memeSize[2], memeSize[3]));
+
+                BitmapEncoder pngEncoder = new PngBitmapEncoder();
+                pngEncoder.Frames.Add(BitmapFrame.Create(crop));
+
+                try
+                {
+                    Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog()
+                    {
+                        Filter = "Image Files(*.png)|*.png|All(*.*)|*",
+                        FileName = "meme.png",
+                        InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures)
+                    };
+                    if (saveFileDialog.ShowDialog() == true)
+                    {
+                        using (var fileStream = new FileStream(saveFileDialog.FileName, FileMode.Create))
+                        {
+                            pngEncoder.Save(fileStream);
+                        }
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"There was an error saving the file: {ex.Message}");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Du musst erst ein Meme erstellen, bevor du es speichern kannst!", "Oopsies", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
+
+        }
     }
 }
 
