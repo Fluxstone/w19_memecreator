@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using w19_memecreator.Classes;
 using Button = System.Windows.Controls.Button;
 using Image = System.Windows.Controls.Image;
 
@@ -25,6 +26,7 @@ namespace w19_memecreator {
         private int nummerKind;
         TextKontext textWindow = new TextKontext();
         EffektKontext effectWindow = new EffektKontext();
+        BildKontext pictureWindow = new BildKontext();
 
         public MainWindow()
         {
@@ -32,6 +34,9 @@ namespace w19_memecreator {
             canvas_Bearbeitungsfenster.AddHandler(Canvas.MouseLeftButtonDownEvent, new RoutedEventHandler(canvas_Bearbeitungsfenster_MouseLeftButtonDown));
 
             textWindow.setWindowProperties();
+            pictureWindow.setWindowProperties();
+
+            drawBildKontext();
             
 
 
@@ -192,6 +197,10 @@ namespace w19_memecreator {
         }
 
         //TODO: drawBildKontext
+        public void drawBildKontext()
+        {
+            grid_Kontextfenster.Children.Add(pictureWindow.get_wrapP_content());
+        }
 
         //Eventhandler
         //Menuitem
