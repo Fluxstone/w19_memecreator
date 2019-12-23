@@ -23,7 +23,7 @@ namespace w19_memecreator
 
         Image img_LMAO_Emoj = new Image();
         
-        //Construktor
+        //Constructor
         public EffektKontext()
         {
             //img_LMAO_Emoj.Source = new BitmapImage(new Uri(path_lmao_emoji));

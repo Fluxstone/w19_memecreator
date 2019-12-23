@@ -15,13 +15,13 @@ namespace w19_memecreator
         ComboBox cmBox_fontSize = new ComboBox();
         Label lbl_targetLbl;
 
-        //Construktor
+        //Constructor
         public TextKontext()
         {
 
         }
 
-        //Set KontextWindow Controlls
+        //Set KontextWindow Controls
         public void setWindowProperties()
         {
             txtBox_txtField_Text.Height = 100;

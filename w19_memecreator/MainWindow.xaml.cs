@@ -31,12 +31,14 @@ namespace w19_memecreator {
         public MainWindow()
         {
             InitializeComponent();
-            canvas_Bearbeitungsfenster.AddHandler(Canvas.MouseLeftButtonDownEvent, new RoutedEventHandler(canvas_Bearbeitungsfenster_MouseLeftButtonDown));
+            //Der Befehl soll was auf das Bearbeitungsfenster malen
+            //canvas_Bearbeitungsfenster.AddHandler(Canvas.MouseLeftButtonDownEvent, new RoutedEventHandler(canvas_Bearbeitungsfenster_MouseLeftButtonDown));
 
             textWindow.setWindowProperties();
             pictureWindow.setWindowProperties();
+            effectWindow.setWindowProperties();
 
-            drawBildKontext();
+            
             
 
 
@@ -196,7 +198,6 @@ namespace w19_memecreator {
             grid_Kontextfenster.Children.Add(effectWindow.get_btn_effectField_Brightness());
         }
 
-        //TODO: drawBildKontext
         public void drawBildKontext()
         {
             grid_Kontextfenster.Children.Add(pictureWindow.get_wrapP_content());
@@ -210,7 +211,8 @@ namespace w19_memecreator {
         }
         public void canvas_Bearbeitungsfenster_MouseLeftButtonDown(object sender, RoutedEventArgs e)
         {
-            /*effectWindow.set_Cursor(canvas_Bearbeitungsfenster);
+            /*Setzt die Mausposi auf den Klickpunkt und malt dann iwas hin (FÜR EFFEKTKONTEXT)
+             * effectWindow.set_Cursor(canvas_Bearbeitungsfenster);
             effectWindow.drawSprite(canvas_Bearbeitungsfenster);*/
         }
 
