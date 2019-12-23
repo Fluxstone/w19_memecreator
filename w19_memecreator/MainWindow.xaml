@@ -32,7 +32,7 @@
         <Menu x:Name="menu_mainMenu" HorizontalAlignment="Left" Height="21" VerticalAlignment="Top" Width="364">
             <MenuItem Header="File">
                 <MenuItem Header="Load"></MenuItem>
-                <MenuItem Header="Save"></MenuItem>
+                <MenuItem Header="Save" Click="saveImage"></MenuItem>
                 <Separator Margin="3,2,-3,2"></Separator>
                 <MenuItem Header="Exit"></MenuItem>
             </MenuItem>
