@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using w19_memecreator.Classes;
 using Button = System.Windows.Controls.Button;
 using Cursors = System.Windows.Input.Cursors;
 using Image = System.Windows.Controls.Image;
@@ -24,25 +25,28 @@ namespace w19_memecreator {
       
     public partial class MainWindow : Window
     {
-        private int nummerKind;
         TextKontext textWindow = new TextKontext();
         EffektKontext effectWindow = new EffektKontext();
+        BildKontext pictureWindow = new BildKontext();
+        
+        private int nummerKind;
         int[] memeSize = new int[4];
         bool memeSelected = false;
-
+        
         public MainWindow()
         {
             InitializeComponent();
-            canvas_Bearbeitungsfenster.AddHandler(Canvas.MouseLeftButtonDownEvent, new RoutedEventHandler(canvas_Bearbeitungsfenster_MouseLeftButtonDown));
+            //Der Befehl soll was auf das Bearbeitungsfenster malen
+            //canvas_Bearbeitungsfenster.AddHandler(Canvas.MouseLeftButtonDownEvent, new RoutedEventHandler(canvas_Bearbeitungsfenster_MouseLeftButtonDown));
 
             textWindow.setWindowProperties();
-
+            pictureWindow.setWindowProperties();
+            effectWindow.setWindowProperties();
+            
             memeSize[0] = 0;
             memeSize[1] = 0;
             memeSize[2] = (int)canvas_Bearbeitungsfenster.Width;
             memeSize[3] = (int)canvas_Bearbeitungsfenster.Height;
-            
-
 
             using (StreamReader r = new StreamReader(Environment.CurrentDirectory + "\\..\\..\\Templates\\templates.json"))
             {
@@ -183,10 +187,6 @@ namespace w19_memecreator {
             label.Content = "Blabubb";
         }
 
-
-
-
-
         //Code Yannic
         public void drawTextContext()
         {
@@ -195,9 +195,7 @@ namespace w19_memecreator {
                 grid_Kontextfenster.Children.Add(textWindow.get_btn_txtField_Apply());
                 grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontMenu());
                 grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontSize());
-                grid_Kontextfenster.Children.Add(textWindow.get_txtField_Text());
-
-            
+                grid_Kontextfenster.Children.Add(textWindow.get_txtField_Text());         
         }
 
         public void drawEffectContext()
@@ -206,7 +204,10 @@ namespace w19_memecreator {
             grid_Kontextfenster.Children.Add(effectWindow.get_btn_effectField_Brightness());
         }
 
-        //TODO: drawBildKontext
+        public void drawBildKontext()
+        {
+            grid_Kontextfenster.Children.Add(pictureWindow.get_wrapP_content());
+        }
 
         //Eventhandler
         //Menuitem
@@ -217,7 +218,8 @@ namespace w19_memecreator {
 
         public void canvas_Bearbeitungsfenster_MouseLeftButtonDown(object sender, RoutedEventArgs e)
         {
-            /*effectWindow.set_Cursor(canvas_Bearbeitungsfenster);
+            /*Setzt die Mausposi auf den Klickpunkt und malt dann iwas hin (FÜR EFFEKTKONTEXT)
+             * effectWindow.set_Cursor(canvas_Bearbeitungsfenster);
             effectWindow.drawSprite(canvas_Bearbeitungsfenster);*/
         }
 
