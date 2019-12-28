@@ -28,10 +28,15 @@ namespace w19_memecreator {
         TextKontext textWindow = new TextKontext();
         EffektKontext effectWindow = new EffektKontext();
         BildKontext pictureWindow = new BildKontext();
+
+        double d_canvas_initial_width;
+        double d_canvas_initial_height;
+        double d_canvas_margin_top;
+        double d_canvas_margin_left;
         
-        private int nummerKind;
-        int[] memeSize = new int[4];
-        bool memeSelected = false;
+        private int i_index_of_canvas_child;
+        double[] a_meme_measurements = new double[4];
+        bool b_meme_is_selected = false;
         
         public MainWindow()
         {
@@ -39,15 +44,22 @@ namespace w19_memecreator {
             //Der Befehl soll was auf das Bearbeitungsfenster malen
             //canvas_Bearbeitungsfenster.AddHandler(Canvas.MouseLeftButtonDownEvent, new RoutedEventHandler(canvas_Bearbeitungsfenster_MouseLeftButtonDown));
 
+            d_canvas_initial_height = canvas_Bearbeitungsfenster.Height;
+            d_canvas_initial_width = canvas_Bearbeitungsfenster.Width;
+            d_canvas_margin_top = canvas_Bearbeitungsfenster.Margin.Top;
+            d_canvas_margin_left = canvas_Bearbeitungsfenster.Margin.Left;
+
             textWindow.setWindowProperties();
             pictureWindow.setWindowProperties();
             effectWindow.setWindowProperties();
             
-            memeSize[0] = 0;
-            memeSize[1] = 0;
-            memeSize[2] = (int)canvas_Bearbeitungsfenster.Width;
-            memeSize[3] = (int)canvas_Bearbeitungsfenster.Height;
+            // Default-Werte
+            a_meme_measurements[0] = 0; // Canvas linke Margin
+            a_meme_measurements[1] = 0; // Canvas obere Margin
+            a_meme_measurements[2] = canvas_Bearbeitungsfenster.Height; // Breite
+            a_meme_measurements[3] = canvas_Bearbeitungsfenster.Height; // Höhe
 
+            // Template-Datei lesen und Thumbnails anzeigen
             using (StreamReader r = new StreamReader(Environment.CurrentDirectory + "\\..\\..\\Templates\\templates.json"))
             {
                 string json = r.ReadToEnd();
@@ -58,11 +70,9 @@ namespace w19_memecreator {
                     Image myImage = new Image();
                     myImage.Height = 100;
                     myImage.Width = 120;
-                    myImage.Cursor = System.Windows.Input.Cursors.Hand;
-
-                    // Create source
+                    myImage.Cursor = Cursors.Hand;
+                    
                     BitmapImage myBitmapImage = new BitmapImage();
-
                     // BitmapImage.UriSource must be in a BeginInit/EndInit block
                     myBitmapImage.BeginInit();
                     myBitmapImage.UriSource = new Uri(Environment.CurrentDirectory + "\\..\\..\\Templates\\Previews\\" + template.previewSource, UriKind.Absolute);
@@ -70,53 +80,63 @@ namespace w19_memecreator {
                     myBitmapImage.EndInit();
                     //set image source
                     myImage.Source = myBitmapImage;
-                    myImage.MouseLeftButtonUp += LoadTemplateToCanvas;
-                    myImage.Tag = JsonConvert.SerializeObject(template);
+                    myImage.MouseLeftButtonUp += LoadTemplateToCanvas; // Handler für Klick auf Thumbnail
+                    myImage.Tag = JsonConvert.SerializeObject(template); // Meme-Daten aus Template als Json-Text in Thumbnail-Tag gespeichert zur Weiterverarbeitung
                     stackP_Timeline.Children.Add(myImage);
                 }
             }
         }
 
+        // Wird beim Klick auf ein Tumbnail in der Templates-Leiste ausgeführt und stellt das Meme im Canvas dar
         private void LoadTemplateToCanvas(object sender, MouseButtonEventArgs e)
         {
             canvas_Bearbeitungsfenster.Children.Clear();
 
-            Image selctedTemplateImage = (Image)sender;
-            dynamic templateData = JsonConvert.DeserializeObject(selctedTemplateImage.Tag.ToString());
+            Image selectedTemplateImage = (Image)sender;
+            dynamic templateData = JsonConvert.DeserializeObject(selectedTemplateImage.Tag.ToString()); // Meme-Daten aus der Template-Datei
 
-            double maxSizeY = canvas_Bearbeitungsfenster.Height;
-            double maxSizeX = canvas_Bearbeitungsfenster.Height;
+            // Default-Werte für quadratisches Meme
+            double d_maxSize_Y = d_canvas_initial_height;
+            double d_maxSize_X = d_canvas_initial_height;
+            double d_leftPadding = (d_canvas_initial_width - d_canvas_initial_height) / 2;
+            double d_topPadding = 0;
+            canvas_Bearbeitungsfenster.Width = d_canvas_initial_height;
+            canvas_Bearbeitungsfenster.Height = d_canvas_initial_height;
 
-            double leftPadding = (canvas_Bearbeitungsfenster.Width - canvas_Bearbeitungsfenster.Height) / 2;
-            double topPadding = 0;
-
+            // Wenn Format des Memes höher ist als breit
             if (templateData.formatWidth / templateData.formatHeight < 1)
             {
-                maxSizeY = canvas_Bearbeitungsfenster.Height;
-                maxSizeX = (double)templateData.formatWidth / (double)templateData.formatHeight * canvas_Bearbeitungsfenster.Height;
-                leftPadding = (canvas_Bearbeitungsfenster.Width - maxSizeX) / 2;
+                d_maxSize_Y = d_canvas_initial_height;
+                canvas_Bearbeitungsfenster.Width = (double)templateData.formatWidth / (double)templateData.formatHeight * d_canvas_initial_height;
+                d_maxSize_X = canvas_Bearbeitungsfenster.Width;
+                d_leftPadding = (d_canvas_initial_width - d_maxSize_X) / 2;
+
             }
 
+            // Wenn Format des Memes breiter ist als hoch
             if (templateData.formatWidth / templateData.formatHeight > 1)
             {
-                maxSizeX = canvas_Bearbeitungsfenster.Width;
-                maxSizeY = (double)templateData.formatHeight / (double)templateData.formatWidth * canvas_Bearbeitungsfenster.Width;
-                topPadding = (canvas_Bearbeitungsfenster.Height - maxSizeY) / 2;
-                leftPadding = 0;
+                d_maxSize_X = d_canvas_initial_width;
+                canvas_Bearbeitungsfenster.Width = d_canvas_initial_width;
+                canvas_Bearbeitungsfenster.Height = (double)templateData.formatHeight / (double)templateData.formatWidth * d_canvas_initial_width;
+                d_maxSize_Y = canvas_Bearbeitungsfenster.Height;
+                d_topPadding = (d_canvas_initial_height - d_maxSize_Y) / 2;
+                d_leftPadding = 0;
             }
 
-            memeSize[0] = (int)leftPadding;
-            memeSize[1] = (int)topPadding;
-            memeSize[2] = (int)maxSizeX;
-            memeSize[3] = (int)maxSizeY;
+            a_meme_measurements[0] = d_leftPadding;
+            a_meme_measurements[1] = d_topPadding;
+            a_meme_measurements[2] = d_maxSize_X;
+            a_meme_measurements[3] = d_maxSize_Y;
 
             int canvasChildIndex = 0;
 
+            // Bilder in Meme werden Anhand der Daten im Template ins Canvas geladen und platziert
             foreach (var image in templateData.components.images)
             {
                 Image newImage = new Image();
-                newImage.Height = (double)image.height / 100.0 * maxSizeY;
-                newImage.Width = (double)image.width / 100.0 * maxSizeX;
+                newImage.Height = (double)image.height / 100.0 * d_maxSize_Y;
+                newImage.Width = (double)image.width / 100.0 * d_maxSize_X;
                 newImage.Cursor = Cursors.Hand;
 
                 // Create source
@@ -125,7 +145,8 @@ namespace w19_memecreator {
                 // BitmapImage.UriSource must be in a BeginInit/EndInit block
                 myBitmapImage.BeginInit();
                 myBitmapImage.UriSource = new Uri(Environment.CurrentDirectory + "\\..\\..\\Templates\\Images\\" + image.relSource, UriKind.Absolute);
-                myBitmapImage.DecodePixelHeight = (int)((double)image.height / 100.0 * maxSizeY);
+                myBitmapImage.DecodePixelHeight = (int)((double)image.height / 100.0 * d_maxSize_Y);
+                myBitmapImage.DecodePixelHeight = (int)((double)image.width / 100.0 * d_maxSize_X);
                 myBitmapImage.EndInit();
                 //set image source
                 newImage.Source = myBitmapImage;
@@ -133,13 +154,14 @@ namespace w19_memecreator {
                 canvasChildIndex++;
 
                 //newImage.MouseLeftButtonUp += Irgendwas;
-                int xPos = (int)((double)(image.xPos) / 100.0 * maxSizeX + leftPadding);
-                int yPos = (int)((double)(image.yPos) / 100.0 * maxSizeY + topPadding);
+                int xPos = (int)((double)(image.xPos) / 100.0 * d_maxSize_X);
+                int yPos = (int)((double)(image.yPos) / 100.0 * d_maxSize_Y);
                 Canvas.SetLeft(newImage, xPos);
                 Canvas.SetTop(newImage, yPos);
                 canvas_Bearbeitungsfenster.Children.Add(newImage);
             }
-
+            
+            // Texte in Meme werden Anhand der Daten im Template als Label ins Canvas geladen und platziert
             foreach (var text in templateData.components.text)
             {
                 Label newLabel = new Label();
@@ -149,11 +171,10 @@ namespace w19_memecreator {
                 newLabel.FontSize = text.fontsize;
                 newLabel.HorizontalContentAlignment = HorizontalAlignment.Center;
                 newLabel.VerticalContentAlignment = VerticalAlignment.Center;
-                newLabel.Height = (int)((double)text.height / 100.0 * maxSizeY);
-                newLabel.Width = (int)((double)text.width / 100.0 * maxSizeX);
-                newLabel.Background = System.Windows.Media.Brushes.White;
-                int xPos = (int)((double)(text.xPos) / 100.0 * maxSizeX + leftPadding);
-                int yPos = (int)((double)(text.yPos) / 100.0 * maxSizeY + topPadding);
+                newLabel.Height = (int)((double)text.height / 100.0 * d_maxSize_Y);
+                newLabel.Width = (int)((double)text.width / 100.0 * d_maxSize_X);
+                int xPos = (int)((double)(text.xPos) / 100.0 * d_maxSize_X);
+                int yPos = (int)((double)(text.yPos) / 100.0 * d_maxSize_Y);
                 // LabelInCanvasClicked wird ausgeführt, wenn man auf ein Label im Canvas klickt
                 newLabel.MouseLeftButtonUp += LabelInCanvasClicked;
                 newLabel.Tag = canvasChildIndex;
@@ -162,40 +183,32 @@ namespace w19_memecreator {
                 Canvas.SetTop(newLabel, yPos);
                 canvas_Bearbeitungsfenster.Children.Add(newLabel);
             }
-            memeSelected = true;
+
+            canvas_Bearbeitungsfenster.Margin = new Thickness(d_leftPadding, d_topPadding, 0, 0);
+            b_meme_is_selected = true;
         }
 
         private void LabelInCanvasClicked(object sender, MouseButtonEventArgs e)
         {
             // Das angeklickte Label wird als globale Variable in der Klasse gespeichert, um es später direkt ansprechen und im Kontextfenster verändern zu können
             Label label = (Label)sender;
-            //newButton.Click += new RoutedEventHandler(LabelNummerLaden);
             
             // Index von Label in Canvas-Kind-Array in globale Variable nummerKind
-            nummerKind = (int)label.Tag;
+            i_index_of_canvas_child = (int)label.Tag;
 
-
+            // Kontextfenster leeren und mit Label-Kontext-Controls füllen
             grid_Kontextfenster.Children.Clear();
-            drawTextContext();
-            
-        }
-
-        private void LabelNummerLaden(object sender, RoutedEventArgs e)
-        {
-            int rando = 6;
-            Label label = (Label)canvas_Bearbeitungsfenster.Children[nummerKind];
-            label.Content = "Blabubb";
+            drawTextContext(label);
         }
 
         //Code Yannic
-        public void drawTextContext()
+        public void drawTextContext(Label label)
         {
-
-                textWindow.set_targetLbl((Label)canvas_Bearbeitungsfenster.Children[nummerKind]);
+                textWindow.set_targetLbl((Label)canvas_Bearbeitungsfenster.Children[i_index_of_canvas_child]);
                 grid_Kontextfenster.Children.Add(textWindow.get_btn_txtField_Apply());
-                grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontMenu());
-                grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontSize());
-                grid_Kontextfenster.Children.Add(textWindow.get_txtField_Text());         
+                grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontMenu(label.FontFamily.ToString()));
+                grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontSize(label.FontSize.ToString()));
+                grid_Kontextfenster.Children.Add(textWindow.get_txtField_Text(label.Content.ToString()));         
         }
 
         public void drawEffectContext()
@@ -223,17 +236,17 @@ namespace w19_memecreator {
             effectWindow.drawSprite(canvas_Bearbeitungsfenster);*/
         }
 
-        // Export finished meme as image file
-
+        // Fertiges Meme als Bild exportieren
         public void saveImage(object sender, RoutedEventArgs e)
         {
-            if (memeSelected)
+            if (b_meme_is_selected)
             {
-                RenderTargetBitmap rtb = new RenderTargetBitmap((int)canvas_Bearbeitungsfenster.RenderSize.Width,
-                (int)canvas_Bearbeitungsfenster.RenderSize.Height, 96d, 96d, PixelFormats.Default);
+                // Canvas rendern und Canvas-Maße um Margins beim Rendern erweitert, um Out-of-Bounds-Exception beim Zuschneiden zu verhindern
+                RenderTargetBitmap rtb = new RenderTargetBitmap((int)canvas_Bearbeitungsfenster.RenderSize.Width + (int)a_meme_measurements[0],
+                (int)canvas_Bearbeitungsfenster.RenderSize.Height + (int)a_meme_measurements[1], 96d, 96d, PixelFormats.Default);
                 rtb.Render(canvas_Bearbeitungsfenster);
-
-                var crop = new CroppedBitmap(rtb, new Int32Rect(memeSize[0], memeSize[1], memeSize[2], memeSize[3]));
+                // Render-Ergebnis auf Meme zuschneiden
+                var crop = new CroppedBitmap(rtb, new Int32Rect((int)a_meme_measurements[0]+2, (int)a_meme_measurements[1]+2, (int)a_meme_measurements[2] - 2, (int)a_meme_measurements[3] - 2));
 
                 BitmapEncoder pngEncoder = new PngBitmapEncoder();
                 pngEncoder.Frames.Add(BitmapFrame.Create(crop));

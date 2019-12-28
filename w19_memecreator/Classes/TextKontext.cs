@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -45,7 +46,17 @@ namespace w19_memecreator
             cmBox_fontMenu.HorizontalAlignment = HorizontalAlignment.Left;
             cmBox_fontMenu.VerticalAlignment = VerticalAlignment.Top;
             cmBox_fontMenu.Margin = new Thickness(10, 160, 0, 0);
-            cmBox_fontMenu.ItemsSource = new List<string> { "impact", "Arial", "Comic Sans MS" };
+
+            List<string> fonts = new List<string>();
+            using (InstalledFontCollection fontsCollection = new InstalledFontCollection())
+            {
+                System.Drawing.FontFamily[] fontFamilies = fontsCollection.Families;
+                foreach (System.Drawing.FontFamily font in fontFamilies)
+                {
+                    fonts.Add(font.Name);
+                }
+            }
+            cmBox_fontMenu.ItemsSource = fonts;
             cmBox_fontMenu.SelectedIndex = 0;
             
             cmBox_fontSize.Height = 25;
@@ -53,31 +64,19 @@ namespace w19_memecreator
             cmBox_fontSize.HorizontalAlignment = HorizontalAlignment.Left;
             cmBox_fontSize.VerticalAlignment = VerticalAlignment.Top;
             cmBox_fontSize.Margin = new Thickness(160, 160, 0, 0);
-            cmBox_fontSize.ItemsSource = new List<string> { "4", "6", "10", "15", "30" };
+            List<string> fontSizeList = new List<string>();
+            for (int i = 4; i < 70; i++)
+            {
+                fontSizeList.Add(i.ToString());
+            }
+            cmBox_fontSize.ItemsSource = fontSizeList;
             cmBox_fontSize.SelectedIndex = 0;
         }
 
         public void generateLabel()
         {
             int i_fontSize = Int32.Parse(cmBox_fontSize.Text);
-
-            if (cmBox_fontMenu.Text == "impact")
-            {
-                lbl_targetLbl.FontFamily = new FontFamily("impact");
-            }
-            else if (cmBox_fontMenu.Text == "Arial")
-            {
-                lbl_targetLbl.FontFamily = new FontFamily("Arial");
-            }
-            else if (cmBox_fontMenu.Text == "Comic Sans MS")
-            {
-                lbl_targetLbl.FontFamily = new FontFamily("Comic Sans MS");
-            }
-            else
-            {
-                MessageBox.Show("Error: str_cmBox_fontMenu_Selection not found");
-            }
-
+            lbl_targetLbl.FontFamily = new FontFamily(cmBox_fontMenu.SelectedValue.ToString());
             lbl_targetLbl.FontSize = i_fontSize;
             lbl_targetLbl.Content = txtBox_txtField_Text.Text;
         }
@@ -88,20 +87,26 @@ namespace w19_memecreator
         }
 
         //Getter und Setter
-        public TextBox get_txtField_Text()
+        public TextBox get_txtField_Text(String text)
         {
-            txtBox_txtField_Text.Text = lbl_targetLbl.Content.ToString();
+            txtBox_txtField_Text.Text = text;
             return txtBox_txtField_Text;
         }
+
         public Button get_btn_txtField_Apply()
         {
             return btn_txtField_Apply;
         }
-        public ComboBox get_cmBox_fontMenu()
+
+        public ComboBox get_cmBox_fontMenu(String font)
         {
+            cmBox_fontMenu.SelectedValue = font;
             return cmBox_fontMenu;
-        }public ComboBox get_cmBox_fontSize()
+        }
+
+        public ComboBox get_cmBox_fontSize(String fontSize)
         {
+            cmBox_fontSize.SelectedValue = fontSize;
             return cmBox_fontSize;
         }
 
