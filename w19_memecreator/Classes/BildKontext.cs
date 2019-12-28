@@ -16,18 +16,18 @@ namespace w19_memecreator.Classes
         WrapPanel wrapP_content = new WrapPanel();
 
 
-        const string path_seehofer1 = "C:/Users/yanni/Source/Repos/Fluxstone/w19_memecreator/w19_memecreator/Resources/Seehofer1.PNG";
-        const string path_seehofer2 = "C:/Users/yanni/Source/Repos/Fluxstone/w19_memecreator/w19_memecreator/Resources/Seehofer2.PNG";
+        Uri path_seehofer1 = new Uri(Environment.CurrentDirectory + "\\..\\..\\Resources\\Seehofer1.PNG", UriKind.Absolute);
+        Uri path_seehofer2 = new Uri(Environment.CurrentDirectory + "\\..\\..\\Resources\\Seehofer2.PNG", UriKind.Absolute);
         Image img_seehofer1 = new Image();
         Image img_seehofer2 = new Image();
         //Constructor
         public BildKontext()
         {
-            img_seehofer1.Source = new BitmapImage(new Uri(path_seehofer1));
+            img_seehofer1.Source = new BitmapImage(path_seehofer1);
             img_seehofer1.Width = 100;
             img_seehofer1.Height = 100;
 
-            img_seehofer2.Source = new BitmapImage(new Uri(path_seehofer2));
+            img_seehofer2.Source = new BitmapImage(path_seehofer2);
             img_seehofer2.Width = 100;
             img_seehofer2.Height = 100;
         }
