@@ -14,6 +14,7 @@ namespace w19_memecreator.Classes
     {
         //Variables
         WrapPanel wrapP_content = new WrapPanel();
+        Image img_targetImg;
 
 
         Uri path_seehofer1 = new Uri(Environment.CurrentDirectory + "\\..\\..\\Resources\\Seehofer1.PNG", UriKind.Absolute);
@@ -45,12 +46,11 @@ namespace w19_memecreator.Classes
 
             img_seehofer1.AddHandler(Image.MouseDownEvent, new RoutedEventHandler(img_seehofer1_MouseDownEvent));
             img_seehofer2.AddHandler(Image.MouseDownEvent, new RoutedEventHandler(img_seehofer2_MouseDownEvent));
-
         }
 
-        public void generatePicture(ref Image img_in){
-            img_in.Source = null;
-            //Selective Process here
+        public void generatePicture(Image img_in){
+            img_targetImg.Source = null;
+            img_targetImg.Source = img_in.Source; 
         }
 
         //Getter und Setter
@@ -61,12 +61,17 @@ namespace w19_memecreator.Classes
         //Event Handler
         public void img_seehofer1_MouseDownEvent(object sender, RoutedEventArgs e)
         {
-            //generatePicture();
+            generatePicture(img_seehofer1);
         }
 
         public void img_seehofer2_MouseDownEvent(object sender, RoutedEventArgs e)
         {
-            //generatePicture();
+            generatePicture(img_seehofer2);
+        }
+
+        public void set_img_targetImg(Image img_in)
+        {
+            img_targetImg = img_in;
         }
 
     }
