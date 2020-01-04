@@ -53,8 +53,8 @@ namespace w19_memecreator.Classes
                 wrapP_content.Children.Add(img_Container[i]);
                 img_Container[i].MouseDown += imgClicked_MouseDownEvent;
             }
-            string path_Icon_add = "C:/Users/yanni/Source/Repos/Fluxstone/w19_memecreator/w19_memecreator/MemeResources/OtherResources/add_icon.png";
-            //string path_Icon_add = "\\..\\..\\MemeResources\\OtherResources\\add_icon.png"; BUGFIX
+           
+            string path_Icon_add = Environment.CurrentDirectory + "\\..\\..\\MemeResources\\OtherResources\\add_icon.png";
             Uri uri_Icon_add = new Uri(path_Icon_add, UriKind.Absolute);
             Image img_Icon_add = new Image();
             img_Icon_add.Source = new BitmapImage(uri_Icon_add);
