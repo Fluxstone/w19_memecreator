@@ -147,5 +147,8 @@
     <Resource Include="MemeResources\PictureContext\Seehofer1.PNG" />
     <Resource Include="MemeResources\PictureContext\Seehofer2.PNG" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="MemeResources\OtherResources\add_icon.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

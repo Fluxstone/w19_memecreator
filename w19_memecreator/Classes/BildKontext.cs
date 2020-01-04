@@ -22,6 +22,10 @@ namespace w19_memecreator.Classes
         List<Uri> uri_Container = new List<Uri>();
         List<Image> img_Container = new List<Image>();
 
+        public string Filter { get; private set; }
+        public string FileName { get; private set; }
+        public string InitialDirectory { get; private set; }
+
         //Constructor
         public BildKontext()
         {
@@ -47,8 +51,17 @@ namespace w19_memecreator.Classes
             for(int i = 0; i<img_Container.Count; i++)
             {
                 wrapP_content.Children.Add(img_Container[i]);
-                img_Container[i].MouseDown += imgClicked;
+                img_Container[i].MouseDown += imgClicked_MouseDownEvent;
             }
+            string path_Icon_add = "C:/Users/yanni/Source/Repos/Fluxstone/w19_memecreator/w19_memecreator/MemeResources/OtherResources/add_icon.png";
+            //string path_Icon_add = "\\..\\..\\MemeResources\\OtherResources\\add_icon.png"; BUGFIX
+            Uri uri_Icon_add = new Uri(path_Icon_add, UriKind.Absolute);
+            Image img_Icon_add = new Image();
+            img_Icon_add.Source = new BitmapImage(uri_Icon_add);
+            img_Icon_add.Width = 100;
+            img_Icon_add.Height = 100;
+            img_Icon_add.AddHandler(Image.MouseDownEvent, new RoutedEventHandler(Icon_Add_MouseDownEvent));
+            wrapP_content.Children.Add(img_Icon_add);
         }
 
         public void generatePicture(Image img_in){
@@ -66,9 +79,33 @@ namespace w19_memecreator.Classes
             img_targetImg = img_in;
         }
         //Event Handler
-        private void imgClicked(object sender, MouseButtonEventArgs e)
+        public void imgClicked_MouseDownEvent(object sender, RoutedEventArgs e)
         {
             generatePicture((Image)sender);
+        }
+
+        public void Icon_Add_MouseDownEvent(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Microsoft.Win32.OpenFileDialog dialog_openUserFile = new Microsoft.Win32.OpenFileDialog()
+                {
+                    Filter = "Image Files(*.png)|*.png|All(*.*)|*",
+                    FileName = "meme.png",
+                    InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures)
+                };
+                if (dialog_openUserFile.ShowDialog() == true)
+                {
+                    Uri uri_GetFileName = new Uri(dialog_openUserFile.FileName, UriKind.Absolute);
+                    Image img_GetFileName = new Image();
+                    img_GetFileName.Source = new BitmapImage(uri_GetFileName);
+                    generatePicture(img_GetFileName);
+                }
+            } 
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"There was an error opening the file: {ex.Message}");
+            }
         }
     }
 }
