@@ -133,7 +133,7 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-    <Resource Include="Resources\4506313_0.jpg" />
+    <Resource Include="MemeResources\EffectContext\4506313_0.jpg" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
@@ -144,8 +144,8 @@
     <Resource Include="Templates\Previews\drake.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Seehofer1.PNG" />
-    <Resource Include="Resources\Seehofer2.PNG" />
+    <Resource Include="MemeResources\PictureContext\Seehofer1.PNG" />
+    <Resource Include="MemeResources\PictureContext\Seehofer2.PNG" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
