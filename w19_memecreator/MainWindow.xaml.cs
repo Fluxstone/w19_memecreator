@@ -9,7 +9,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using w19_memecreator.Classes;
-using Button = System.Windows.Controls.Button;
 using Cursors = System.Windows.Input.Cursors;
 using Image = System.Windows.Controls.Image;
 
@@ -52,10 +51,10 @@ namespace w19_memecreator {
             textWindow.setWindowProperties();
             pictureWindow.setWindowProperties();
             effectWindow.setWindowProperties();
-            
+
             // Default-Werte
-            a_meme_measurements[0] = 0; // Canvas linke Margin
-            a_meme_measurements[1] = 0; // Canvas obere Margin
+            a_meme_measurements[0] = d_canvas_margin_left;
+            a_meme_measurements[1] = d_canvas_margin_top; // Canvas obere Margin
             a_meme_measurements[2] = canvas_Bearbeitungsfenster.Height; // Breite
             a_meme_measurements[3] = canvas_Bearbeitungsfenster.Height; // Höhe
 
@@ -91,6 +90,7 @@ namespace w19_memecreator {
         private void LoadTemplateToCanvas(object sender, MouseButtonEventArgs e)
         {
             canvas_Bearbeitungsfenster.Children.Clear();
+            canvas_Bearbeitungsfenster.Background = System.Windows.Media.Brushes.White;
 
             Image selectedTemplateImage = (Image)sender;
             dynamic templateData = JsonConvert.DeserializeObject(selectedTemplateImage.Tag.ToString()); // Meme-Daten aus der Template-Datei
@@ -98,8 +98,8 @@ namespace w19_memecreator {
             // Default-Werte für quadratisches Meme
             double d_maxSize_Y = d_canvas_initial_height;
             double d_maxSize_X = d_canvas_initial_height;
-            double d_leftPadding = (d_canvas_initial_width - d_canvas_initial_height) / 2;
-            double d_topPadding = 0;
+            double d_leftPadding = d_canvas_margin_left + (d_canvas_initial_width - d_canvas_initial_height) / 2;
+            double d_topPadding = d_canvas_margin_top;
             canvas_Bearbeitungsfenster.Width = d_canvas_initial_height;
             canvas_Bearbeitungsfenster.Height = d_canvas_initial_height;
 
@@ -109,7 +109,7 @@ namespace w19_memecreator {
                 d_maxSize_Y = d_canvas_initial_height;
                 canvas_Bearbeitungsfenster.Width = (double)templateData.formatWidth / (double)templateData.formatHeight * d_canvas_initial_height;
                 d_maxSize_X = canvas_Bearbeitungsfenster.Width;
-                d_leftPadding = (d_canvas_initial_width - d_maxSize_X) / 2;
+                d_leftPadding = d_canvas_margin_left + (d_canvas_initial_width - d_maxSize_X) / 2;
 
             }
 
@@ -120,8 +120,8 @@ namespace w19_memecreator {
                 canvas_Bearbeitungsfenster.Width = d_canvas_initial_width;
                 canvas_Bearbeitungsfenster.Height = (double)templateData.formatHeight / (double)templateData.formatWidth * d_canvas_initial_width;
                 d_maxSize_Y = canvas_Bearbeitungsfenster.Height;
-                d_topPadding = (d_canvas_initial_height - d_maxSize_Y) / 2;
-                d_leftPadding = 0;
+                d_topPadding = d_canvas_margin_top + (d_canvas_initial_height - d_maxSize_Y) / 2;
+                d_leftPadding = d_canvas_margin_left;
             }
 
             a_meme_measurements[0] = d_leftPadding;
@@ -169,6 +169,7 @@ namespace w19_memecreator {
                 newLabel.Content = text.content;
                 newLabel.FontFamily = text.font;
                 newLabel.FontSize = text.fontsize;
+                newLabel.Foreground = System.Windows.Media.Brushes.Black;
                 newLabel.HorizontalContentAlignment = HorizontalAlignment.Center;
                 newLabel.VerticalContentAlignment = VerticalAlignment.Center;
                 newLabel.Height = (int)((double)text.height / 100.0 * d_maxSize_Y);

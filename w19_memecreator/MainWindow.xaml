@@ -8,28 +8,24 @@
         Title="Meme Creator" Height="650" Width="1000" ResizeMode="NoResize">
     <Grid>
 
-        <Label x:Name="TemplatesLabel" Content="Templates" HorizontalAlignment="Left" Margin="10,30,0,0" VerticalAlignment="Top"/>
-        <StackPanel x:Name="stackP_Timeline" Orientation="Horizontal" HorizontalAlignment="Left" Height="100" Margin="10,56,0,0" VerticalAlignment="Top" Width="974" />
+        <Label x:Name="TemplatesLabel" Content="Templates" HorizontalAlignment="Left" Margin="10,30,0,0" VerticalAlignment="Top" Background="#232323" Foreground="#828282"/>
+        <StackPanel x:Name="stackP_Timeline" Orientation="Horizontal" HorizontalAlignment="Left" Height="100" Margin="10,56,0,0" VerticalAlignment="Top" Width="974" Background="#232323" />
 
 
-        <Border BorderThickness="2" BorderBrush="Black" Height="450" Width="600" Margin="10,160,0,0" VerticalAlignment="Top" HorizontalAlignment="Left">
-            <Canvas x:Name="canvas_Bearbeitungsfenster" Background="White" HorizontalAlignment="Left" Height="445" Width="595" Margin="0,0,0,0" VerticalAlignment="Top"/>
+        <Border Background="#232323" Height="437" Width="607" Margin="10,173,0,0" VerticalAlignment="Top" HorizontalAlignment="Left">
+            <Canvas x:Name="canvas_Bearbeitungsfenster" HorizontalAlignment="Left" Height="445" Width="607" Margin="0,0,0,0" VerticalAlignment="Top"/>
         </Border>
 
         <!-- Kontextfenster Design -->
-        <Border x:Name="border_KontextFenster" BorderThickness="2" BorderBrush="Black" Height="450" Width="344" Margin="636,161,0,0" VerticalAlignment="Top" HorizontalAlignment="Left">
-            <ScrollViewer>
-                <Grid x:Name="grid_Kontextfenster" ScrollViewer.CanContentScroll="True">
+        <ScrollViewer Margin="636,173,14,10" Background="#232323" >
+            <Grid x:Name="grid_Kontextfenster" Margin="0,0,0,0" ScrollViewer.CanContentScroll="True">
 
-                </Grid>
-            </ScrollViewer>
-        </Border>
+            </Grid>
+        </ScrollViewer>
 
-        <Border BorderThickness="2" BorderBrush="Black" Height="450" Width="344" Margin="636,161,0,0" VerticalAlignment="Top" HorizontalAlignment="Left">
-            <StackPanel x:Name="stackP_Kontext" Orientation="Horizontal" HorizontalAlignment="Left" Height="450" VerticalAlignment="Top" Width="344" />
-        </Border>
+        <StackPanel x:Name="stackP_Kontext" Orientation="Horizontal" HorizontalAlignment="Left" Height="437" VerticalAlignment="Top" Width="344" Margin="636,173,0,0" Background="#232323" />
 
-        <Menu x:Name="menu_mainMenu" HorizontalAlignment="Left" Height="21" VerticalAlignment="Top" Width="364">
+        <Menu x:Name="menu_mainMenu" HorizontalAlignment="Left" Height="21" VerticalAlignment="Top" Width="116">
             <MenuItem Header="File">
                 <MenuItem Header="Load"></MenuItem>
                 <MenuItem Header="Save" Click="saveImage"></MenuItem>

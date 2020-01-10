@@ -4,6 +4,11 @@
              xmlns:local="clr-namespace:w19_memecreator"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <Style TargetType="Grid">
+            <Setter Property="Background" Value="#161616" />
+        </Style>
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#828282" />
+        </Style>
     </Application.Resources>
 </Application>
