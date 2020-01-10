@@ -33,7 +33,6 @@ namespace w19_memecreator {
         double d_canvas_margin_top;
         double d_canvas_margin_left;
         
-        private int i_index_of_canvas_child;
         double[] a_meme_measurements = new double[4];
         bool b_meme_is_selected = false;
         
@@ -98,29 +97,31 @@ namespace w19_memecreator {
             // Default-Werte für quadratisches Meme
             double d_maxSize_Y = d_canvas_initial_height;
             double d_maxSize_X = d_canvas_initial_height;
-            double d_leftPadding = d_canvas_margin_left + (d_canvas_initial_width - d_canvas_initial_height) / 2;
+            double d_leftPadding = (d_canvas_initial_width - d_canvas_initial_height) / 2;
             double d_topPadding = d_canvas_margin_top;
             canvas_Bearbeitungsfenster.Width = d_canvas_initial_height;
             canvas_Bearbeitungsfenster.Height = d_canvas_initial_height;
 
+            double d_template_format = ((double)templateData.formatWidth / (double)templateData.formatHeight) / (d_canvas_initial_width / d_canvas_initial_height);
+
             // Wenn Format des Memes höher ist als breit
-            if (templateData.formatWidth / templateData.formatHeight < 1)
+            if (d_template_format < 1)
             {
                 d_maxSize_Y = d_canvas_initial_height;
                 canvas_Bearbeitungsfenster.Width = (double)templateData.formatWidth / (double)templateData.formatHeight * d_canvas_initial_height;
                 d_maxSize_X = canvas_Bearbeitungsfenster.Width;
-                d_leftPadding = d_canvas_margin_left + (d_canvas_initial_width - d_maxSize_X) / 2;
+                d_leftPadding = (d_canvas_initial_width - d_maxSize_X) / 2;
 
             }
 
             // Wenn Format des Memes breiter ist als hoch
-            if (templateData.formatWidth / templateData.formatHeight > 1)
+            if (d_template_format > 1)
             {
                 d_maxSize_X = d_canvas_initial_width;
                 canvas_Bearbeitungsfenster.Width = d_canvas_initial_width;
                 canvas_Bearbeitungsfenster.Height = (double)templateData.formatHeight / (double)templateData.formatWidth * d_canvas_initial_width;
                 d_maxSize_Y = canvas_Bearbeitungsfenster.Height;
-                d_topPadding = d_canvas_margin_top + (d_canvas_initial_height - d_maxSize_Y) / 2;
+                d_topPadding = (d_canvas_initial_height - d_maxSize_Y) / 2;
                 d_leftPadding = d_canvas_margin_left;
             }
 
@@ -135,9 +136,10 @@ namespace w19_memecreator {
             foreach (var image in templateData.components.images)
             {
                 Image newImage = new Image();
-                newImage.Height = (double)image.height / 100.0 * d_maxSize_Y;
-                newImage.Width = (double)image.width / 100.0 * d_maxSize_X;
                 newImage.Cursor = Cursors.Hand;
+                newImage.Stretch = Stretch.UniformToFill;
+                newImage.VerticalAlignment = VerticalAlignment.Center;
+                newImage.HorizontalAlignment = HorizontalAlignment.Center;
 
                 // Create source
                 BitmapImage myBitmapImage = new BitmapImage();
@@ -145,21 +147,57 @@ namespace w19_memecreator {
                 // BitmapImage.UriSource must be in a BeginInit/EndInit block
                 myBitmapImage.BeginInit();
                 myBitmapImage.UriSource = new Uri(Environment.CurrentDirectory + "\\..\\..\\Templates\\Images\\" + image.relSource, UriKind.Absolute);
-                myBitmapImage.DecodePixelHeight = (int)((double)image.height / 100.0 * d_maxSize_Y);
-                myBitmapImage.DecodePixelHeight = (int)((double)image.width / 100.0 * d_maxSize_X);
                 myBitmapImage.EndInit();
+
+                double d_sourceImageFormat = (double)myBitmapImage.PixelHeight / (double)myBitmapImage.PixelWidth; // höher als breit wenn > 1, breiter als hoch wenn < 1
+                double d_imageFormat = ((double)image.height/100d * d_maxSize_Y) / ((double)image.width/100d * d_maxSize_X); // im Canvas höher als breit wenn > 1, breiter als hoch wenn < 1
+
+                if (d_sourceImageFormat < 1) // Source breiter als hoch
+                {
+                    if (d_sourceImageFormat < d_imageFormat) // Source breiter als Canvas-Slot
+                    {
+                        newImage.Height = (int)((double)image.height / 100d * d_maxSize_X);
+                        newImage.Width = newImage.Height * (2d - d_sourceImageFormat);
+                    }
+                    else // gleich groß oder höher als Canvas-Slot
+                    {
+                        newImage.Height = (int)((double)image.height / 100d * d_maxSize_X);
+                        newImage.Width = newImage.Height * (2d - d_sourceImageFormat);
+                    }
+                    
+                } else // Quadrat oder höher als breit
+                {
+                    if (d_sourceImageFormat < d_imageFormat) // Source breiter als Canvas-Slot
+                    {
+                        newImage.Width = (double)image.width / 100d * d_maxSize_X;
+                        newImage.Height = newImage.Width * d_sourceImageFormat;
+                    }
+                    else // gleich groß oder höher als Canvas-Slot
+                    {
+                        newImage.Width = (double)image.width / 100d * d_maxSize_X;
+                        newImage.Height = newImage.Width * d_sourceImageFormat;
+                    }
+                }
+
                 //set image source
                 newImage.Source = myBitmapImage;
+                //newImage.Height = myBitmapImage.DecodePixelHeight;
                 newImage.Tag = canvasChildIndex;
                 newImage.MouseLeftButtonUp += ImageInCanvasClicked;
-                canvasChildIndex++;
 
-                //newImage.MouseLeftButtonUp += Irgendwas;
+                Grid grid_newImage = new Grid();
+                grid_newImage.ShowGridLines = false;
+
+                grid_newImage.Height = (int)((double)image.height / 100.0 * d_maxSize_Y);
+                grid_newImage.Width = (int)((double)image.width / 100.0 * d_maxSize_X);
+                grid_newImage.Children.Add(newImage);
+                canvasChildIndex++;
+                
                 int xPos = (int)((double)(image.xPos) / 100.0 * d_maxSize_X);
                 int yPos = (int)((double)(image.yPos) / 100.0 * d_maxSize_Y);
-                Canvas.SetLeft(newImage, xPos);
-                Canvas.SetTop(newImage, yPos);
-                canvas_Bearbeitungsfenster.Children.Add(newImage);
+                Canvas.SetLeft(grid_newImage, xPos);
+                Canvas.SetTop(grid_newImage, yPos);
+                canvas_Bearbeitungsfenster.Children.Add(grid_newImage);
             }
             
             // Texte in Meme werden Anhand der Daten im Template als Label ins Canvas geladen und platziert
@@ -168,9 +206,12 @@ namespace w19_memecreator {
                 Label newLabel = new Label();
                 newLabel.Cursor = Cursors.Hand;
                 newLabel.Content = text.content;
+                
                 newLabel.FontFamily = text.font;
                 newLabel.FontSize = text.fontsize;
                 newLabel.Foreground = System.Windows.Media.Brushes.Black;
+                newLabel.HorizontalAlignment = HorizontalAlignment.Center;
+                newLabel.VerticalAlignment = VerticalAlignment.Center;
                 newLabel.HorizontalContentAlignment = HorizontalAlignment.Center;
                 newLabel.VerticalContentAlignment = VerticalAlignment.Center;
                 newLabel.Height = (int)((double)text.height / 100.0 * d_maxSize_Y);
@@ -186,7 +227,7 @@ namespace w19_memecreator {
                 canvas_Bearbeitungsfenster.Children.Add(newLabel);
             }
 
-            canvas_Bearbeitungsfenster.Margin = new Thickness(d_leftPadding, d_topPadding, 0, 0);
+            //canvas_Bearbeitungsfenster.Margin = new Thickness(d_leftPadding, d_topPadding, 0, 0);
             b_meme_is_selected = true;
         }
 
@@ -249,8 +290,7 @@ namespace w19_memecreator {
             if (b_meme_is_selected)
             {
                 // Canvas rendern und Canvas-Maße um Margins beim Rendern erweitert, um Out-of-Bounds-Exception beim Zuschneiden zu verhindern
-                RenderTargetBitmap rtb = new RenderTargetBitmap((int)canvas_Bearbeitungsfenster.RenderSize.Width + (int)a_meme_measurements[0],
-                (int)canvas_Bearbeitungsfenster.RenderSize.Height + (int)a_meme_measurements[1], 96d, 96d, PixelFormats.Default);
+                RenderTargetBitmap rtb = new RenderTargetBitmap((int)canvas_Bearbeitungsfenster.RenderSize.Width + (int)a_meme_measurements[0], (int)canvas_Bearbeitungsfenster.RenderSize.Height + (int)a_meme_measurements[1], 96d, 96d, PixelFormats.Default);
                 rtb.Render(canvas_Bearbeitungsfenster);
                 // Render-Ergebnis auf Meme zuschneiden
                 var crop = new CroppedBitmap(rtb, new Int32Rect((int)a_meme_measurements[0]+2, (int)a_meme_measurements[1]+2, (int)a_meme_measurements[2] - 2, (int)a_meme_measurements[3] - 2));

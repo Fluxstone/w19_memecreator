@@ -44,25 +44,25 @@
         }
     },
     {
-        "name": "Drake",
-        "previewSource": "drake.jpg",
-        "formatWidth": 2,
-        "formatHeight": 1,
+        "name": "Women and Cat",
+        "previewSource": "womenandcat.png",
+        "formatWidth": 127,
+        "formatHeight": 72,
         "components": {
             "images": [
                 {
-                    "relSource": "drake1.jpg",
+                    "relSource": "woman.jpg",
                     "xPos": 0,
                     "yPos": 0,
                     "width": 50,
-                    "height": 50
+                    "height": 100
                 },
                 {
-                    "relSource": "drake2.jpg",
-                    "xPos": 0,
-                    "yPos": 50,
+                    "relSource": "cat.jpg",
+                    "xPos": 50,
+                    "yPos": 0,
                     "width": 50,
-                    "height": 50
+                    "height": 100
                 }
             ],
             "text": [
@@ -70,63 +70,102 @@
                     "content": "Insert text here",
                     "font": "Arial",
                     "fontsize": 12,
-                    "xPos": 50,
-                    "yPos": 0,
+                    "xPos": 0,
+                    "yPos": 80,
                     "width": 50,
-                    "height": 50
+                    "height": 20
                 },
                 {
                     "content": "Insert text here",
                     "font": "Arial",
                     "fontsize": 12,
                     "xPos": 50,
-                    "yPos": 50,
+                    "yPos": 80,
                     "width": 50,
-                    "height": 50
+                    "height": 20
                 }
             ]
         }
     },
     {
-        "name": "Drake",
-        "previewSource": "drake.jpg",
-        "formatWidth": 1,
-        "formatHeight": 2,
+        "name": "Butterfly",
+        "previewSource": "pidgeon.png",
+        "formatWidth": 529,
+        "formatHeight": 475,
         "components": {
             "images": [
                 {
-                    "relSource": "drake1.jpg",
+                    "relSource": "pidgeon.jpg",
                     "xPos": 0,
                     "yPos": 0,
-                    "width": 50,
-                    "height": 50
-                },
-                {
-                    "relSource": "drake2.jpg",
-                    "xPos": 0,
-                    "yPos": 50,
-                    "width": 50,
-                    "height": 50
+                    "width": 100,
+                    "height": 100
                 }
             ],
             "text": [
                 {
-                    "content": "Insert text here",
-                    "font": "Arial",
-                    "fontsize": 12,
-                    "xPos": 50,
-                    "yPos": 0,
-                    "width": 50,
-                    "height": 50
+                    "content": "Is this a pidgeon?",
+                    "font": "Impact",
+                    "fontsize": 40,
+                    "xPos": 0,
+                    "yPos": 85,
+                    "width": 100,
+                    "height": 15
                 },
                 {
-                    "content": "Insert text here",
-                    "font": "Arial",
-                    "fontsize": 12,
-                    "xPos": 50,
-                    "yPos": 50,
-                    "width": 50,
-                    "height": 50
+                    "content": "Butterfly",
+                    "font": "Impact",
+                    "fontsize": 30,
+                    "xPos": 70,
+                    "yPos": 5,
+                    "width": 30,
+                    "height": 20
+                },
+                {
+                    "content": "Me, an intellectual",
+                    "font": "Impact",
+                    "fontsize": 30,
+                    "xPos": 10,
+                    "yPos": 15,
+                    "width": 30,
+                    "height": 20
+                }
+            ]
+        }
+    },
+    {
+        "name": "Mordor",
+        "previewSource": "mordor.png",
+        "formatWidth": 571,
+        "formatHeight": 395,
+        "components": {
+            "images": [
+                {
+                    "relSource": "onedoesnot.png",
+                    "xPos": 0,
+                    "yPos": 0,
+                    "width": 100,
+                    "height": 100
+                }
+            ],
+            "text": [
+                {
+                    "content": "One does not simply",
+                    "font": "Impact",
+                    "fontsize": 30,
+                    "xPos": 0,
+                    "yPos": 0,
+                    "width": 100,
+                    "height": 20
+                },
+                {
+                    "content": "walk into Mordor",
+                    "font": "Impact",
+                    "fontsize": 40,
+                    "xPos": 0,
+                    "yPos": 80,
+                    "width": 100,
+                    "height": 20
                 }
             ]
         }

@@ -8,7 +8,8 @@
             <Setter Property="Background" Value="#161616" />
         </Style>
         <Style TargetType="TextBlock">
-            <Setter Property="Foreground" Value="#828282" />
+            <!--Setter Property="Foreground" Value="#828282" /-->
         </Style>
+        
     </Application.Resources>
 </Application>
