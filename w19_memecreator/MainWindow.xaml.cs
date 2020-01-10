@@ -151,6 +151,7 @@ namespace w19_memecreator {
                 //set image source
                 newImage.Source = myBitmapImage;
                 newImage.Tag = canvasChildIndex;
+                newImage.MouseLeftButtonUp += ImageInCanvasClicked;
                 canvasChildIndex++;
 
                 //newImage.MouseLeftButtonUp += Irgendwas;
@@ -189,23 +190,10 @@ namespace w19_memecreator {
             b_meme_is_selected = true;
         }
 
-        private void LabelInCanvasClicked(object sender, MouseButtonEventArgs e)
-        {
-            // Das angeklickte Label wird als globale Variable in der Klasse gespeichert, um es später direkt ansprechen und im Kontextfenster verändern zu können
-            Label label = (Label)sender;
-            
-            // Index von Label in Canvas-Kind-Array in globale Variable nummerKind
-            i_index_of_canvas_child = (int)label.Tag;
-
-            // Kontextfenster leeren und mit Label-Kontext-Controls füllen
-            grid_Kontextfenster.Children.Clear();
-            drawTextContext(label);
-        }
-
         //Code Yannic
         public void drawTextContext(Label label)
         {
-                textWindow.set_targetLbl((Label)canvas_Bearbeitungsfenster.Children[i_index_of_canvas_child]);
+            textWindow.set_targetLbl(label);
                 grid_Kontextfenster.Children.Add(textWindow.get_btn_txtField_Apply());
                 grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontMenu(label.FontFamily.ToString()));
                 grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontSize(label.FontSize.ToString()));
@@ -218,8 +206,9 @@ namespace w19_memecreator {
             grid_Kontextfenster.Children.Add(effectWindow.get_btn_effectField_Brightness());
         }
 
-        public void drawBildKontext()
+        public void drawBildKontext(Image img_in)
         {
+            pictureWindow.set_img_targetImg(img_in);
             grid_Kontextfenster.Children.Add(pictureWindow.get_wrapP_content());
         }
 
@@ -228,6 +217,23 @@ namespace w19_memecreator {
         public void addSprite_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void LabelInCanvasClicked(object sender, MouseButtonEventArgs e)
+        {
+            // Das angeklickte Label wird als globale Variable in der Klasse gespeichert, um es später direkt ansprechen und im Kontextfenster verändern zu können
+            Label label = (Label)sender;
+
+            // Kontextfenster leeren und mit Label-Kontext-Controls füllen
+            grid_Kontextfenster.Children.Clear();
+            drawTextContext(label);
+        }
+
+        private void ImageInCanvasClicked(object sender, MouseButtonEventArgs e)
+        {
+            Image image = (Image)sender;
+            grid_Kontextfenster.Children.Clear();
+            drawBildKontext(image);
         }
 
         public void canvas_Bearbeitungsfenster_MouseLeftButtonDown(object sender, RoutedEventArgs e)
