@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Text;
@@ -88,6 +89,7 @@ namespace w19_memecreator {
         // Wird beim Klick auf ein Tumbnail in der Templates-Leiste ausgeführt und stellt das Meme im Canvas dar
         private void LoadTemplateToCanvas(object sender, MouseButtonEventArgs e)
         {
+            grid_Kontextfenster.Children.Clear();
             canvas_Bearbeitungsfenster.Children.Clear();
             canvas_Bearbeitungsfenster.Background = System.Windows.Media.Brushes.White;
 
@@ -131,6 +133,9 @@ namespace w19_memecreator {
             a_meme_measurements[3] = d_maxSize_Y;
 
             int canvasChildIndex = 0;
+
+            List<Grid> canvas_kinder_grid = new List<Grid>();
+            List<Label> canvas_kinder_label = new List<Label>();
 
             // Bilder in Meme werden Anhand der Daten im Template ins Canvas geladen und platziert
             foreach (var image in templateData.components.images)
@@ -186,7 +191,7 @@ namespace w19_memecreator {
                 newImage.MouseLeftButtonUp += ImageInCanvasClicked;
 
                 Grid grid_newImage = new Grid();
-                grid_newImage.ShowGridLines = false;
+                grid_newImage.FocusVisualStyle = null;
 
                 grid_newImage.Height = (int)((double)image.height / 100.0 * d_maxSize_Y);
                 grid_newImage.Width = (int)((double)image.width / 100.0 * d_maxSize_X);
@@ -197,7 +202,8 @@ namespace w19_memecreator {
                 int yPos = (int)((double)(image.yPos) / 100.0 * d_maxSize_Y);
                 Canvas.SetLeft(grid_newImage, xPos);
                 Canvas.SetTop(grid_newImage, yPos);
-                canvas_Bearbeitungsfenster.Children.Add(grid_newImage);
+                //canvas_Bearbeitungsfenster.Children.Add(grid_newImage);
+                canvas_kinder_grid.Add(grid_newImage);
             }
             
             // Texte in Meme werden Anhand der Daten im Template als Label ins Canvas geladen und platziert
@@ -224,12 +230,77 @@ namespace w19_memecreator {
                 canvasChildIndex++;
                 Canvas.SetLeft(newLabel, xPos);
                 Canvas.SetTop(newLabel, yPos);
-                canvas_Bearbeitungsfenster.Children.Add(newLabel);
+                //canvas_Bearbeitungsfenster.Children.Add(newLabel);
+                canvas_kinder_label.Add(newLabel);
+            }
+
+            foreach (Grid kind in canvas_kinder_grid)
+            {
+                canvas_Bearbeitungsfenster.Children.Add(kind);
+            }
+            foreach (Label kind in canvas_kinder_label)
+            {
+                canvas_Bearbeitungsfenster.Children.Add(kind);
             }
 
             //canvas_Bearbeitungsfenster.Margin = new Thickness(d_leftPadding, d_topPadding, 0, 0);
             b_meme_is_selected = true;
         }
+
+        // Meme ohne Effekt im Canvas rendern und zuschneiden
+        public CroppedBitmap cb_render_canvas()
+        {
+            // Canvas rendern und Canvas-Maße um Margins beim Rendern erweitert, um Out-of-Bounds-Exception beim Zuschneiden zu verhindern
+            RenderTargetBitmap rtb = new RenderTargetBitmap((int)canvas_Bearbeitungsfenster.RenderSize.Width + (int)a_meme_measurements[0], (int)canvas_Bearbeitungsfenster.RenderSize.Height + (int)a_meme_measurements[1], 96d, 96d, PixelFormats.Default);
+            rtb.Render(canvas_Bearbeitungsfenster);
+            // Render-Ergebnis auf Meme zuschneiden
+            return new CroppedBitmap(rtb, new Int32Rect((int)a_meme_measurements[0] + 2, (int)a_meme_measurements[1] + 2, (int)a_meme_measurements[2] - 2, (int)a_meme_measurements[3] - 2));
+        }
+
+        // Fertiges Meme als Bild exportieren
+        public void saveImage(object sender, RoutedEventArgs e)
+        {
+            if (b_meme_is_selected)
+            {
+                CroppedBitmap crop = cb_render_canvas();
+
+                BitmapEncoder pngEncoder = new PngBitmapEncoder();
+                pngEncoder.Frames.Add(BitmapFrame.Create(crop));
+
+
+                try
+                {
+                    Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog()
+                    {
+                        Filter = "Image Files(*.png)|*.png|All(*.*)|*",
+                        FileName = "meme.png",
+                        InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures)
+                    };
+                    if (saveFileDialog.ShowDialog() == true)
+                    {
+                        using (var fileStream = new FileStream(saveFileDialog.FileName, FileMode.Create))
+                        {
+                            pngEncoder.Save(fileStream);
+                        }
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"There was an error saving the file: {ex.Message}");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Du musst erst ein Meme erstellen, bevor du es speichern kannst!", "Oopsies", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
+
+        }
+
+
+
+
+
 
         //Code Yannic
         public void drawTextContext(Label label)
@@ -282,49 +353,6 @@ namespace w19_memecreator {
             /*Setzt die Mausposi auf den Klickpunkt und malt dann iwas hin (FÜR EFFEKTKONTEXT)
              * effectWindow.set_Cursor(canvas_Bearbeitungsfenster);
             effectWindow.drawSprite(canvas_Bearbeitungsfenster);*/
-        }
-
-        // Fertiges Meme als Bild exportieren
-        public void saveImage(object sender, RoutedEventArgs e)
-        {
-            if (b_meme_is_selected)
-            {
-                // Canvas rendern und Canvas-Maße um Margins beim Rendern erweitert, um Out-of-Bounds-Exception beim Zuschneiden zu verhindern
-                RenderTargetBitmap rtb = new RenderTargetBitmap((int)canvas_Bearbeitungsfenster.RenderSize.Width + (int)a_meme_measurements[0], (int)canvas_Bearbeitungsfenster.RenderSize.Height + (int)a_meme_measurements[1], 96d, 96d, PixelFormats.Default);
-                rtb.Render(canvas_Bearbeitungsfenster);
-                // Render-Ergebnis auf Meme zuschneiden
-                var crop = new CroppedBitmap(rtb, new Int32Rect((int)a_meme_measurements[0]+2, (int)a_meme_measurements[1]+2, (int)a_meme_measurements[2] - 2, (int)a_meme_measurements[3] - 2));
-
-                BitmapEncoder pngEncoder = new PngBitmapEncoder();
-                pngEncoder.Frames.Add(BitmapFrame.Create(crop));
-
-                try
-                {
-                    Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog()
-                    {
-                        Filter = "Image Files(*.png)|*.png|All(*.*)|*",
-                        FileName = "meme.png",
-                        InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures)
-                    };
-                    if (saveFileDialog.ShowDialog() == true)
-                    {
-                        using (var fileStream = new FileStream(saveFileDialog.FileName, FileMode.Create))
-                        {
-                            pngEncoder.Save(fileStream);
-                        }
-                    }
-
-                }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine($"There was an error saving the file: {ex.Message}");
-                }
-            }
-            else
-            {
-                MessageBox.Show("Du musst erst ein Meme erstellen, bevor du es speichern kannst!", "Oopsies", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-            }
-
         }
     }
 }
