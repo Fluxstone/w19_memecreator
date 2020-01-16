@@ -49,7 +49,7 @@ namespace w19_memecreator {
 
             textWindow.setWindowProperties();
             pictureWindow.setWindowProperties();
-            effectWindow.setWindowProperties();
+            effectWindow.setWindowProperties(ref canvas_Bearbeitungsfenster);
 
             // Default-Werte
             a_meme_measurements[0] = d_canvas_margin_left;
@@ -232,19 +232,17 @@ namespace w19_memecreator {
         }
 
         //Code Yannic
+        
         public void drawTextContext(Label label)
         {
             textWindow.set_targetLbl(label);
-                grid_Kontextfenster.Children.Add(textWindow.get_btn_txtField_Apply());
-                grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontMenu(label.FontFamily.ToString()));
-                grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontSize(label.FontSize.ToString()));
-                grid_Kontextfenster.Children.Add(textWindow.get_txtField_Text(label.Content.ToString()));         
-        }
-
-        public void drawEffectContext()
-        {
-            grid_Kontextfenster.Children.Add(effectWindow.get_btn_effectField_Apply());
-            grid_Kontextfenster.Children.Add(effectWindow.get_btn_effectField_Brightness());
+            grid_Kontextfenster.Children.Add(textWindow.get_btn_txtField_Apply());
+            grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontMenu(label.FontFamily.ToString()));
+            grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontSize(label.FontSize.ToString()));
+            grid_Kontextfenster.Children.Add(textWindow.get_txtField_Text(label.Content.ToString()));
+            grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontColor(label.Content.ToString()));
+            grid_Kontextfenster.Children.Add(textWindow.get_lbl_Color());
+            grid_Kontextfenster.Children.Add(textWindow.get_lbl_Text());
         }
 
         public void drawBildKontext(Image img_in)
@@ -255,9 +253,25 @@ namespace w19_memecreator {
 
         //Eventhandler
         //Menuitem
-        public void addSprite_Click(object sender, RoutedEventArgs e)
-        {
 
+        private void drawEffectContext(object sender, RoutedEventArgs e)
+        {
+            //BufferImage generieren und in Temp speichern
+            RenderTargetBitmap bmp = new RenderTargetBitmap((int)canvas_Bearbeitungsfenster.ActualWidth, (int)canvas_Bearbeitungsfenster.ActualHeight, 100.0, 100.0, PixelFormats.Default);
+            bmp.Render(canvas_Bearbeitungsfenster);
+
+            PngBitmapEncoder encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(bmp));
+
+            System.IO.FileStream stream = System.IO.File.Create(Environment.CurrentDirectory + "\\..\\..\\MemeResources\\temp\\img_TargetImage.jpeg");
+            encoder.Save(stream);
+            stream.Close();
+
+            grid_Kontextfenster.Children.Clear();
+            grid_Kontextfenster.Children.Add(effectWindow.get_btn_effectField_Apply());
+            grid_Kontextfenster.Children.Add(effectWindow.get_sld_Brightness());
+            grid_Kontextfenster.Children.Add(effectWindow.get_txtBox_Brightness());
+            grid_Kontextfenster.Children.Add(effectWindow.get_lbl_Brightness());
         }
 
         private void LabelInCanvasClicked(object sender, MouseButtonEventArgs e)

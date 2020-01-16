@@ -20,13 +20,15 @@
 
         <!-- Kontextfenster Design -->
         <ScrollViewer Margin="636,146,10,97" >
-            <Grid x:Name="grid_Kontextfenster" Margin="0,0,0,0" ScrollViewer.CanContentScroll="True" Background="#232323">
-
-            </Grid>
+            <Grid x:Name="grid_Kontextfenster" Margin="0,0,0,0" ScrollViewer.CanContentScroll="True" Background="#232323"/>
         </ScrollViewer>
 
-        <Button x:Name="button_Speichern" Content="Speichern" Margin="636,574,10,10" Click="saveImage" Background="#232323" Foreground="#828282" FontSize="24" FontWeight="Bold" BorderBrush="#00707070" >
+        <Button x:Name="button_Speichern" Content="Speichern" Margin="636,574,174,10" Click="saveImage" Background="#232323" Foreground="#828282" FontSize="24" FontWeight="Bold" BorderBrush="#00707070" >
         </Button>
+
+        <Button x:Name="button_effects" Content="Effekte" Margin="825,574,10,10" Click="drawEffectContext" Background="#232323" Foreground="#828282" FontSize="24" FontWeight="Bold" BorderBrush="#00707070" >
+        </Button>
+        <Slider HorizontalAlignment="Left" VerticalAlignment="Top"/>
 
         <!--StackPanel x:Name="stackP_Kontext" Orientation="Horizontal" HorizontalAlignment="Left" Height="437" VerticalAlignment="Top" Width="344" Margin="636,173,0,160" Background="#232323" /-->
 

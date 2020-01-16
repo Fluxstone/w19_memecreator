@@ -1,4 +1,4 @@
-﻿//using ImageProcessor;
+﻿using ImageProcessor;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace w19_memecreator
@@ -14,71 +16,122 @@ namespace w19_memecreator
     class EffektKontext
     {
         //Variables
-        //ImageFactory imgFactory = new ImageFactory();
-        const string path_lmao_emoji = "C:/Users/yanni/Source/Repos/Fluxstone/w19_memecreator/w19_memecreator/Resources/4506313_0.jpg";
-
-        Point cursor = new Point(0, 0);
-        Button btn_effectField_Apply = new Button();
-        Button btn_effectField_Brightness = new Button();
-
-        Image img_LMAO_Emoj = new Image();
+        Button btn_effectField_Preview = new Button();
+        Canvas canvas_TargetCanvas;
         
+        Slider sld_Brightness = new Slider();
+        TextBox txtBox_Brightness = new TextBox();
+        Label lbl_Brightness = new Label();
+
+        ImageFactory imgFac_Main = new ImageFactory();
+        string pth_TargetFile = Environment.CurrentDirectory + "\\..\\..\\MemeResources\\temp\\img_TargetImage.jpeg";
+        string pth_BufferFile = Environment.CurrentDirectory + "\\..\\..\\MemeResources\\temp\\img_BufferImage.jpeg";
+
         //Constructor
         public EffektKontext()
         {
-            //img_LMAO_Emoj.Source = new BitmapImage(new Uri(path_lmao_emoji));
+
         }
 
-        public void setWindowProperties()
+        //Functions
+        public void setWindowProperties(ref Canvas canvas_in)
         {
-            btn_effectField_Apply.Height = 25;
-            btn_effectField_Apply.Width = 90;
-            btn_effectField_Apply.Content = "Apply Changes";
-            btn_effectField_Apply.HorizontalAlignment = HorizontalAlignment.Left;
-            btn_effectField_Apply.VerticalAlignment = VerticalAlignment.Top;
-            btn_effectField_Apply.Margin = new Thickness(10, 130, 0, 0);
+            canvas_TargetCanvas = canvas_in;
 
-            btn_effectField_Brightness.Height = 25;
-            btn_effectField_Brightness.Width = 90;
-            btn_effectField_Brightness.Content = "Brightness";
-            btn_effectField_Brightness.HorizontalAlignment = HorizontalAlignment.Left;
-            btn_effectField_Brightness.VerticalAlignment = VerticalAlignment.Top;
-            btn_effectField_Brightness.Margin = new Thickness(10, 170, 0, 0);
+            btn_effectField_Preview.Height = 25;
+            btn_effectField_Preview.Width = 100;
+            btn_effectField_Preview.Content = "Preview Changes";
+            btn_effectField_Preview.HorizontalAlignment = HorizontalAlignment.Left;
+            btn_effectField_Preview.VerticalAlignment = VerticalAlignment.Top;
+            btn_effectField_Preview.Margin = new Thickness(10, 10, 0, 0);
+            btn_effectField_Preview.AddHandler(Button.ClickEvent, new RoutedEventHandler(btn_effectField_Preview_Click));
+
+            sld_Brightness.Height = 20;
+            sld_Brightness.Width = 200;
+            sld_Brightness.HorizontalAlignment = HorizontalAlignment.Left;
+            sld_Brightness.VerticalAlignment = VerticalAlignment.Top;
+            sld_Brightness.Margin = new Thickness(10, 70, 0, 0);
+            sld_Brightness.TickFrequency = 1;
+            sld_Brightness.TickPlacement = System.Windows.Controls.Primitives.TickPlacement.BottomRight;
+            sld_Brightness.IsSnapToTickEnabled = true;
+            sld_Brightness.Maximum = 100;
+            sld_Brightness.ValueChanged += sliderValueChanged_event;
+
+            txtBox_Brightness.Height = 20;
+            txtBox_Brightness.Width = 60;
+            txtBox_Brightness.HorizontalAlignment = HorizontalAlignment.Left;
+            txtBox_Brightness.VerticalAlignment = VerticalAlignment.Top;
+            txtBox_Brightness.Margin = new Thickness(230, 70, 0, 0);
+            txtBox_Brightness.TextWrapping = TextWrapping.Wrap;
+            txtBox_Brightness.TextChanged += textBoxValueChanged_event;
+
+            lbl_Brightness.Height = 30;
+            lbl_Brightness.Width = 80;
+            lbl_Brightness.HorizontalAlignment = HorizontalAlignment.Left;
+            lbl_Brightness.VerticalAlignment = VerticalAlignment.Top;
+            lbl_Brightness.Margin = new Thickness(10, 40, 0, 0);
+            lbl_Brightness.Content = "Brightness";
+            lbl_Brightness.Foreground = Brushes.White;
         }
-       
-        public void drawSprite(Canvas targetCanvas)
+
+        public void generateEffect(Image img_in)
         {
-            targetCanvas.Children.Add(img_LMAO_Emoj);
-            Canvas.SetLeft(get_img_LMAO_Emoj(), cursor.X);
-            Canvas.SetTop(get_img_LMAO_Emoj(), cursor.Y);
-        }
+            int imgFac_Brightness = (int)sld_Brightness.Value;
 
+            //Applying effects
+            imgFac_Main.Load(pth_TargetFile);
+            imgFac_Main.Brightness(imgFac_Brightness);
+            imgFac_Main.Save(pth_BufferFile); //2x Eingeben und GDI stirbt
+
+            //Loading modified Picture on canvas
+            /*BitmapImage bpm_BufferImage = new BitmapImage(new Uri(pth_BufferFile));
+            img_in.Source = bpm_BufferImage; //Muss noch auf MainCanvas*/
+        }
         //Getter und Setter
-        public Point get_Cursor()
-        {
-            return cursor;
-        }
-
-        public void set_Cursor(Canvas canvas_in)
-        {
-            Point p = Mouse.GetPosition(canvas_in);
-            cursor = p;
-        }
-
         public Button get_btn_effectField_Apply()
         {
-            return btn_effectField_Apply;
+            return btn_effectField_Preview;
         }
-
-        public Button get_btn_effectField_Brightness()
+        public Slider get_sld_Brightness()
         {
-            return btn_effectField_Brightness;
+            return sld_Brightness;
         }
-
-        public Image get_img_LMAO_Emoj()
+        public TextBox get_txtBox_Brightness()
         {
-            return img_LMAO_Emoj;
+            return txtBox_Brightness;
+        }
+        public Label get_lbl_Brightness()
+        {
+            return lbl_Brightness;
         }
         //Event Handler
+        private void sliderValueChanged_event(object sender, RoutedEventArgs e)
+        {
+            txtBox_Brightness.Text = sld_Brightness.Value.ToString();
+        }
+
+        private void btn_effectField_Preview_Click(object sender, RoutedEventArgs e)
+        {
+            Uri uri_ImgIn = new Uri(pth_TargetFile);
+            Image img_in = new Image();
+            img_in.Source = new BitmapImage(uri_ImgIn);
+            
+            generateEffect(img_in);
+        }
+
+        private void textBoxValueChanged_event(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                sld_Brightness.Value = Convert.ToInt32(txtBox_Brightness.Text);
+            } catch (Exception ex)
+            {
+                if(txtBox_Brightness.Text != "") 
+                {
+                    MessageBox.Show("Only integers between 0 and 100 are allowed!");
+                    sld_Brightness.Value = 0;
+                }
+            }
+        }
     }
 }
