@@ -29,7 +29,8 @@
                     "xPos": 50,
                     "yPos": 0,
                     "width": 50,
-                    "height": 50
+                    "height": 50,
+                    "color": "Black"
                 },
                 {
                     "content": "Unix",
@@ -38,7 +39,8 @@
                     "xPos": 50,
                     "yPos": 50,
                     "width": 50,
-                    "height": 50
+                    "height": 50,
+                    "color": "Black"
                 }
             ]
         }
@@ -67,22 +69,24 @@
             ],
             "text": [
                 {
-                    "content": "Insert text here",
+                    "content": "You're not a pidgeon!",
                     "font": "Arial",
                     "fontsize": 16,
                     "xPos": 0,
                     "yPos": 80,
                     "width": 50,
-                    "height": 20
+                    "height": 20,
+                    "color": "White"
                 },
                 {
-                    "content": "Insert text here",
+                    "content": "I'm clearly a cat, Susan.",
                     "font": "Arial",
                     "fontsize": 16,
                     "xPos": 50,
                     "yPos": 80,
                     "width": 50,
-                    "height": 20
+                    "height": 20,
+                    "color": "White"
                 }
             ]
         }
@@ -110,7 +114,8 @@
                     "xPos": 0,
                     "yPos": 85,
                     "width": 100,
-                    "height": 15
+                    "height": 15,
+                    "color": "Black"
                 },
                 {
                     "content": "Butterfly",
@@ -119,16 +124,18 @@
                     "xPos": 70,
                     "yPos": 5,
                     "width": 30,
-                    "height": 20
+                    "height": 20,
+                    "color": "Black"
                 },
                 {
-                    "content": "Me, an intellectual",
+                    "content": "Me, an\nintellectual",
                     "font": "Impact",
                     "fontsize": 30,
                     "xPos": 10,
                     "yPos": 15,
                     "width": 30,
-                    "height": 20
+                    "height": 20,
+                    "color": "Black"
                 }
             ]
         }
@@ -156,7 +163,8 @@
                     "xPos": 0,
                     "yPos": 0,
                     "width": 100,
-                    "height": 20
+                    "height": 20,
+                    "color": "White"
                 },
                 {
                     "content": "walk into Mordor",
@@ -165,7 +173,8 @@
                     "xPos": 0,
                     "yPos": 80,
                     "width": 100,
-                    "height": 20
+                    "height": 20,
+                    "color": "White"
                 }
             ]
         }

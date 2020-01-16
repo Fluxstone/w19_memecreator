@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,14 +14,7 @@ using w19_memecreator.Classes;
 using Cursors = System.Windows.Input.Cursors;
 using Image = System.Windows.Controls.Image;
 
-
-//Musste Shit auskommentieren damits funktioniert
-
-
 namespace w19_memecreator {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
 
       
     public partial class MainWindow : Window
@@ -36,7 +30,14 @@ namespace w19_memecreator {
         
         double[] a_meme_measurements = new double[4];
         bool b_meme_is_selected = false;
-        
+
+        List<Grid> canvas_kinder_grid = new List<Grid>();
+        List<Label> canvas_kinder_label = new List<Label>();
+        int i_border_index_in_canvas = -1;
+
+        List<SolidColorBrush> brushes = new List<SolidColorBrush>();
+        List<String> brush_namen = new List<String>();
+
         public MainWindow()
         {
             InitializeComponent();
@@ -51,6 +52,18 @@ namespace w19_memecreator {
             textWindow.setWindowProperties();
             pictureWindow.setWindowProperties();
             effectWindow.setWindowProperties();
+            
+            Type brushesType = typeof(System.Windows.Media.Brushes);
+
+            // Get all static properties
+            var properties = brushesType.GetProperties(BindingFlags.Static | BindingFlags.Public);
+            
+            foreach (var prop in properties)
+            {
+                brush_namen.Add(prop.Name);
+                brushes.Add((SolidColorBrush)prop.GetValue(null, null));
+            }
+
 
             // Default-Werte
             a_meme_measurements[0] = d_canvas_margin_left;
@@ -90,7 +103,9 @@ namespace w19_memecreator {
         private void LoadTemplateToCanvas(object sender, MouseButtonEventArgs e)
         {
             grid_Kontextfenster.Children.Clear();
-            canvas_Bearbeitungsfenster.Children.Clear();
+            canvas_kinder_grid.Clear();
+            canvas_kinder_label.Clear();
+
             canvas_Bearbeitungsfenster.Background = System.Windows.Media.Brushes.White;
 
             Image selectedTemplateImage = (Image)sender;
@@ -133,9 +148,6 @@ namespace w19_memecreator {
             a_meme_measurements[3] = d_maxSize_Y;
 
             int canvasChildIndex = 0;
-
-            List<Grid> canvas_kinder_grid = new List<Grid>();
-            List<Label> canvas_kinder_label = new List<Label>();
 
             // Bilder in Meme werden Anhand der Daten im Template ins Canvas geladen und platziert
             foreach (var image in templateData.components.images)
@@ -186,70 +198,125 @@ namespace w19_memecreator {
 
                 //set image source
                 newImage.Source = myBitmapImage;
-                //newImage.Height = myBitmapImage.DecodePixelHeight;
                 newImage.Tag = canvasChildIndex;
                 newImage.MouseLeftButtonUp += ImageInCanvasClicked;
 
                 Grid grid_newImage = new Grid();
-                grid_newImage.FocusVisualStyle = null;
 
-                grid_newImage.Height = (int)((double)image.height / 100.0 * d_maxSize_Y);
-                grid_newImage.Width = (int)((double)image.width / 100.0 * d_maxSize_X);
+                grid_newImage.Height = (double)image.height / 100.0 * d_maxSize_Y;
+                grid_newImage.Width = (double)image.width / 100.0 * d_maxSize_X;
                 grid_newImage.Children.Add(newImage);
-                canvasChildIndex++;
                 
-                int xPos = (int)((double)(image.xPos) / 100.0 * d_maxSize_X);
-                int yPos = (int)((double)(image.yPos) / 100.0 * d_maxSize_Y);
+                double xPos = (double)image.xPos / 100.0 * d_maxSize_X;
+                double yPos = (double)image.yPos / 100.0 * d_maxSize_Y;
                 Canvas.SetLeft(grid_newImage, xPos);
                 Canvas.SetTop(grid_newImage, yPos);
-                //canvas_Bearbeitungsfenster.Children.Add(grid_newImage);
+                newImage.Tag = $"{canvasChildIndex}##{xPos}##{yPos}##{grid_newImage.Width}##{grid_newImage.Height}";
+                canvasChildIndex++;
                 canvas_kinder_grid.Add(grid_newImage);
             }
-            
+
             // Texte in Meme werden Anhand der Daten im Template als Label ins Canvas geladen und platziert
             foreach (var text in templateData.components.text)
             {
+
                 Label newLabel = new Label();
                 newLabel.Cursor = Cursors.Hand;
                 newLabel.Content = text.content;
-                
                 newLabel.FontFamily = text.font;
                 newLabel.FontSize = text.fontsize;
-                newLabel.Foreground = System.Windows.Media.Brushes.Black;
-                newLabel.HorizontalAlignment = HorizontalAlignment.Center;
-                newLabel.VerticalAlignment = VerticalAlignment.Center;
+                newLabel.Foreground = brushes[brush_namen.IndexOf((string)text.color)];
                 newLabel.HorizontalContentAlignment = HorizontalAlignment.Center;
                 newLabel.VerticalContentAlignment = VerticalAlignment.Center;
-                newLabel.Height = (int)((double)text.height / 100.0 * d_maxSize_Y);
-                newLabel.Width = (int)((double)text.width / 100.0 * d_maxSize_X);
-                int xPos = (int)((double)(text.xPos) / 100.0 * d_maxSize_X);
-                int yPos = (int)((double)(text.yPos) / 100.0 * d_maxSize_Y);
-                // LabelInCanvasClicked wird ausgeführt, wenn man auf ein Label im Canvas klickt
+                newLabel.Height = (double)text.height / 100.0 * d_maxSize_Y;
+                newLabel.Width = (double)text.width / 100.0 * d_maxSize_X;
+                double xPos = (double)text.xPos / 100.0 * d_maxSize_X;
+                double yPos = (double)text.yPos / 100.0 * d_maxSize_Y;
+                // labelincanvasclicked wird ausgeführt, wenn man auf ein label im canvas klickt
                 newLabel.MouseLeftButtonUp += LabelInCanvasClicked;
-                newLabel.Tag = canvasChildIndex;
-                canvasChildIndex++;
                 Canvas.SetLeft(newLabel, xPos);
                 Canvas.SetTop(newLabel, yPos);
-                //canvas_Bearbeitungsfenster.Children.Add(newLabel);
+                newLabel.Tag = $"{canvasChildIndex}##{xPos}##{yPos}";
+                canvasChildIndex++;
+                //canvas_bearbeitungsfenster.children.add(newlabel);
                 canvas_kinder_label.Add(newLabel);
             }
 
+            PopulateCanvas();
+            b_meme_is_selected = true;
+        }
+
+        private void PopulateCanvas()
+        {
+            canvas_Bearbeitungsfenster.Children.Clear();
             foreach (Grid kind in canvas_kinder_grid)
             {
                 canvas_Bearbeitungsfenster.Children.Add(kind);
             }
+
             foreach (Label kind in canvas_kinder_label)
             {
                 canvas_Bearbeitungsfenster.Children.Add(kind);
             }
+        }
 
-            //canvas_Bearbeitungsfenster.Margin = new Thickness(d_leftPadding, d_topPadding, 0, 0);
-            b_meme_is_selected = true;
+        private void LabelInCanvasClicked(object sender, MouseButtonEventArgs e)
+        {
+            // Das angeklickte Label wird als globale Variable in der Klasse gespeichert, um es später direkt ansprechen und im Kontextfenster verändern zu können
+            Label label = (Label)sender;
+
+            // Kontextfenster leeren und mit Label-Kontext-Controls füllen
+            grid_Kontextfenster.Children.Clear();
+            drawTextContext(label);
+            DrawBorder(label);
+        }
+
+        private void ImageInCanvasClicked(object sender, MouseButtonEventArgs e)
+        {
+            Image image = (Image)sender;
+            grid_Kontextfenster.Children.Clear();
+            drawBildKontext(image);
+            DrawBorder(image);
+        }
+
+        // Rahmen malen, wenn Bild angeklickt
+        private void DrawBorder(Image image_clicked)
+        {
+            String[] separator = { "##" };
+            String[] tags = image_clicked.Tag.ToString().Split(separator, StringSplitOptions.None); // child index, xPos in canvas, xPos in canvas
+            Border imageBorder = new Border();
+            imageBorder.Height = Double.Parse(tags[4]);
+            imageBorder.Width = Double.Parse(tags[3]);
+            imageBorder.BorderBrush = new SolidColorBrush(Colors.Aquamarine);
+            imageBorder.BorderThickness = new Thickness(3,3,3,3);
+            Canvas.SetLeft(imageBorder, Double.Parse(tags[1]));
+            Canvas.SetTop(imageBorder, Double.Parse(tags[2]));
+            PopulateCanvas();
+            canvas_Bearbeitungsfenster.Children.Insert(Int32.Parse(tags[0])+1, imageBorder);
+        }
+
+        // Rahmen malen, wenn Label angeklickt
+        private void DrawBorder(Label label_clicked)
+        {
+            String[] separator = { "##" };
+            String[] tags = label_clicked.Tag.ToString().Split(separator, StringSplitOptions.None); // child index, xPos in canvas, xPos in canvas
+            Border imageBorder = new Border();
+            imageBorder.Height = label_clicked.Height;
+            imageBorder.Width = label_clicked.Width;
+            imageBorder.BorderBrush = new SolidColorBrush(Colors.Aquamarine);
+            imageBorder.BorderThickness = new Thickness(3, 3, 3, 3);
+            Canvas.SetLeft(imageBorder, Double.Parse(tags[1]));
+            Canvas.SetTop(imageBorder, Double.Parse(tags[2]));
+            PopulateCanvas();
+            i_border_index_in_canvas = Int32.Parse(tags[0]) + 1;
+            canvas_Bearbeitungsfenster.Children.Insert(Int32.Parse(tags[0]) + 1, imageBorder);
         }
 
         // Meme ohne Effekt im Canvas rendern und zuschneiden
         public CroppedBitmap cb_render_canvas()
         {
+            PopulateCanvas();
+
             // Canvas rendern und Canvas-Maße um Margins beim Rendern erweitert, um Out-of-Bounds-Exception beim Zuschneiden zu verhindern
             RenderTargetBitmap rtb = new RenderTargetBitmap((int)canvas_Bearbeitungsfenster.RenderSize.Width + (int)a_meme_measurements[0], (int)canvas_Bearbeitungsfenster.RenderSize.Height + (int)a_meme_measurements[1], 96d, 96d, PixelFormats.Default);
             rtb.Render(canvas_Bearbeitungsfenster);
@@ -306,16 +373,16 @@ namespace w19_memecreator {
         public void drawTextContext(Label label)
         {
             textWindow.set_targetLbl(label);
-                grid_Kontextfenster.Children.Add(textWindow.get_btn_txtField_Apply());
-                grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontMenu(label.FontFamily.ToString()));
-                grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontSize(label.FontSize.ToString()));
-                grid_Kontextfenster.Children.Add(textWindow.get_txtField_Text(label.Content.ToString()));         
+            grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontMenu(label.FontFamily.ToString()));
+            grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontSize(label.FontSize.ToString()));
+            grid_Kontextfenster.Children.Add(textWindow.get_txtField_Text(label.Content.ToString()));
+            grid_Kontextfenster.Children.Add(textWindow.get_btn_txtField_Apply());
         }
 
         public void drawEffectContext()
         {
-            grid_Kontextfenster.Children.Add(effectWindow.get_btn_effectField_Apply());
             grid_Kontextfenster.Children.Add(effectWindow.get_btn_effectField_Brightness());
+            grid_Kontextfenster.Children.Add(effectWindow.get_btn_effectField_Apply());
         }
 
         public void drawBildKontext(Image img_in)
@@ -329,23 +396,6 @@ namespace w19_memecreator {
         public void addSprite_Click(object sender, RoutedEventArgs e)
         {
 
-        }
-
-        private void LabelInCanvasClicked(object sender, MouseButtonEventArgs e)
-        {
-            // Das angeklickte Label wird als globale Variable in der Klasse gespeichert, um es später direkt ansprechen und im Kontextfenster verändern zu können
-            Label label = (Label)sender;
-
-            // Kontextfenster leeren und mit Label-Kontext-Controls füllen
-            grid_Kontextfenster.Children.Clear();
-            drawTextContext(label);
-        }
-
-        private void ImageInCanvasClicked(object sender, MouseButtonEventArgs e)
-        {
-            Image image = (Image)sender;
-            grid_Kontextfenster.Children.Clear();
-            drawBildKontext(image);
         }
 
         public void canvas_Bearbeitungsfenster_MouseLeftButtonDown(object sender, RoutedEventArgs e)

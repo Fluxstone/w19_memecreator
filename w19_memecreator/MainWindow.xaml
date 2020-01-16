@@ -17,16 +17,14 @@
 
         <!-- Meme-Anzeige -->
         <Label x:Name="CanvasLabel" Content="See the the meme" HorizontalAlignment="Left" Margin="10,146,0,0" VerticalAlignment="Top" Background="#232323" Foreground="#828282"/>
-        <Border Background="#232323" Margin="10,172,358,10" ClipToBounds="True">
-            <Canvas x:Name="canvas_Bearbeitungsfenster" Margin="0,0,0,0" Width="626" Height="489"/>
+        <Border Background="#232323" Margin="10,172,370,10" ClipToBounds="True">
+            <Canvas x:Name="canvas_Bearbeitungsfenster" Margin="0,0,0,0" Height="479" Width="604" />
         </Border>
 
         <!-- Kontextfenster Design -->
         <Label x:Name="ContextLabel" Content="Edit the the meme" HorizontalAlignment="Left" Margin="636,146,0,0" VerticalAlignment="Top" Background="#232323" Foreground="#828282"/>
         <ScrollViewer Margin="636,172,10,97" >
-            <Grid x:Name="grid_Kontextfenster" Margin="0,0,0,0" ScrollViewer.CanContentScroll="True" Background="#232323">
-
-            </Grid>
+            <Grid x:Name="grid_Kontextfenster" Margin="0,0,0,0" ScrollViewer.CanContentScroll="True" Background="#232323"/>
         </ScrollViewer>
 
         <Button x:Name="button_Speichern" Content="Save the meme" Margin="636,574,10,10" Click="saveImage" Background="#232323" Foreground="#828282" FontSize="20" FontWeight="DemiBold" BorderBrush="#00707070" >
