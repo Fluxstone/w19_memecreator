@@ -1,4 +1,5 @@
 ﻿using ImageProcessor;
+using ImageProcessor.Imaging.Filters.Photo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,13 +18,22 @@ namespace w19_memecreator
     {
         //Variables
         Button btn_effectField_Preview = new Button();
-        Canvas canvas_TargetCanvas;
         
         Slider sld_Brightness = new Slider();
         TextBox txtBox_Brightness = new TextBox();
         Label lbl_Brightness = new Label();
 
+        Slider sld_Quality = new Slider();
+        TextBox txtBox_Quality = new TextBox();
+        Label lbl_Quality = new Label();
+
+        ComboBox cmBox_Filter = new ComboBox();
+        Label lbl_Filter = new Label();
+        String[] mat_Filters = {"BlackWhite", "Comic", "Gotham", "GreyScale", "HiSatch", "Invert", "Lomograph", "LoSatch", "Polaroid", "Sepia"};
+
         ImageFactory imgFac_Main = new ImageFactory();
+        
+
         string pth_TargetFile = Environment.CurrentDirectory + "\\..\\..\\MemeResources\\temp\\img_TargetImage.jpeg";
         string pth_BufferFile = Environment.CurrentDirectory + "\\..\\..\\MemeResources\\temp\\img_BufferImage.jpeg";
 
@@ -32,12 +42,9 @@ namespace w19_memecreator
         {
 
         }
-
         //Functions
-        public void setWindowProperties(ref Canvas canvas_in)
+        public void setWindowProperties()
         {
-            canvas_TargetCanvas = canvas_in;
-
             btn_effectField_Preview.Height = 25;
             btn_effectField_Preview.Width = 100;
             btn_effectField_Preview.Content = "Preview Changes";
@@ -55,7 +62,8 @@ namespace w19_memecreator
             sld_Brightness.TickPlacement = System.Windows.Controls.Primitives.TickPlacement.BottomRight;
             sld_Brightness.IsSnapToTickEnabled = true;
             sld_Brightness.Maximum = 100;
-            sld_Brightness.ValueChanged += sliderValueChanged_event;
+            sld_Brightness.AddHandler(Slider.ValueChangedEvent, new RoutedEventHandler(sliderValueChanged_event_Brightness));
+            sld_Brightness.Value = 0;
 
             txtBox_Brightness.Height = 20;
             txtBox_Brightness.Width = 60;
@@ -63,7 +71,7 @@ namespace w19_memecreator
             txtBox_Brightness.VerticalAlignment = VerticalAlignment.Top;
             txtBox_Brightness.Margin = new Thickness(230, 70, 0, 0);
             txtBox_Brightness.TextWrapping = TextWrapping.Wrap;
-            txtBox_Brightness.TextChanged += textBoxValueChanged_event;
+            txtBox_Brightness.AddHandler(TextBox.TextChangedEvent, new RoutedEventHandler(textBoxValueChanged_event_Brightness));
 
             lbl_Brightness.Height = 30;
             lbl_Brightness.Width = 80;
@@ -72,20 +80,121 @@ namespace w19_memecreator
             lbl_Brightness.Margin = new Thickness(10, 40, 0, 0);
             lbl_Brightness.Content = "Brightness";
             lbl_Brightness.Foreground = Brushes.White;
-        }
 
+            sld_Quality.Height = 20;
+            sld_Quality.Width = 200;
+            sld_Quality.HorizontalAlignment = HorizontalAlignment.Left;
+            sld_Quality.VerticalAlignment = VerticalAlignment.Top;
+            sld_Quality.Margin = new Thickness(10, 120, 0, 0);
+            sld_Quality.TickFrequency = 1;
+            sld_Quality.TickPlacement = System.Windows.Controls.Primitives.TickPlacement.BottomRight;
+            sld_Quality.IsSnapToTickEnabled = true;
+            sld_Quality.Maximum = 100;
+            sld_Quality.AddHandler(Slider.ValueChangedEvent, new RoutedEventHandler(sliderValueChanged_event_Quality));
+            sld_Quality.Value = 0;
+
+            txtBox_Quality.Height = 20;
+            txtBox_Quality.Width = 60;
+            txtBox_Quality.HorizontalAlignment = HorizontalAlignment.Left;
+            txtBox_Quality.VerticalAlignment = VerticalAlignment.Top;
+            txtBox_Quality.Margin = new Thickness(230, 120, 0, 0);
+            txtBox_Quality.TextWrapping = TextWrapping.Wrap;
+            txtBox_Quality.AddHandler(TextBox.TextChangedEvent, new RoutedEventHandler(textBoxValueChanged_event_Quality));
+
+            lbl_Quality.Height = 30;
+            lbl_Quality.Width = 80;
+            lbl_Quality.HorizontalAlignment = HorizontalAlignment.Left;
+            lbl_Quality.VerticalAlignment = VerticalAlignment.Top;
+            lbl_Quality.Margin = new Thickness(10, 90, 0, 0);
+            lbl_Quality.Content = "Quality";
+            lbl_Quality.Foreground = Brushes.White;
+
+            cmBox_Filter.Height = 30;
+            cmBox_Filter.Width = 150;
+            cmBox_Filter.HorizontalAlignment = HorizontalAlignment.Left;
+            cmBox_Filter.VerticalAlignment = VerticalAlignment.Top;
+            cmBox_Filter.Margin = new Thickness(10, 170, 0, 0);
+            cmBox_Filter.ItemsSource = mat_Filters;
+            cmBox_Filter.SelectedItem = 0;
+
+            lbl_Filter.Height = 30;
+            lbl_Filter.Width = 80;
+            lbl_Filter.HorizontalAlignment = HorizontalAlignment.Left;
+            lbl_Filter.VerticalAlignment = VerticalAlignment.Top;
+            lbl_Filter.Margin = new Thickness(10, 140, 0, 0);
+            lbl_Filter.Content = "Filter";
+            lbl_Filter.Foreground = Brushes.White;
+        }
         public void generateEffect(Image img_in)
         {
             int imgFac_Brightness = (int)sld_Brightness.Value;
-
+            int imgFac_Quality = (int)sld_Quality.Value;
             //Applying effects
             imgFac_Main.Load(pth_TargetFile);
             imgFac_Main.Brightness(imgFac_Brightness);
-            imgFac_Main.Save(pth_BufferFile); //2x Eingeben und GDI stirbt
+            imgFac_Main.Quality(imgFac_Quality);
 
-            //Loading modified Picture on canvas
-            /*BitmapImage bpm_BufferImage = new BitmapImage(new Uri(pth_BufferFile));
-            img_in.Source = bpm_BufferImage; //Muss noch auf MainCanvas*/
+            if ((string)cmBox_Filter.SelectedItem == "BlackWhite")
+            {
+                imgFac_Main.Filter(MatrixFilters.BlackWhite);
+            }
+            else if ((string)cmBox_Filter.SelectedItem == "Comic") 
+            {
+                imgFac_Main.Filter(MatrixFilters.Comic);
+            }
+            else if ((string)cmBox_Filter.SelectedItem == "Gotham")
+            {
+                imgFac_Main.Filter(MatrixFilters.Gotham );
+            }
+            else if ((string)cmBox_Filter.SelectedItem == "GreyScale")
+            {
+                imgFac_Main.Filter(MatrixFilters.GreyScale);
+            }
+            else if ((string)cmBox_Filter.SelectedItem == "HiSatch")
+            {
+                imgFac_Main.Filter(MatrixFilters.HiSatch);
+            }
+            else if ((string)cmBox_Filter.SelectedItem == "Invert")
+            {
+                imgFac_Main.Filter(MatrixFilters.Invert);
+            }
+            else if ((string)cmBox_Filter.SelectedItem == "Lomograph")
+            {
+                imgFac_Main.Filter(MatrixFilters.Lomograph);
+            }
+            else if ((string)cmBox_Filter.SelectedItem == "LoSatch")
+            {
+                imgFac_Main.Filter(MatrixFilters.LoSatch);
+            }
+            else if ((string)cmBox_Filter.SelectedItem == "Polaroid")
+            {
+                imgFac_Main.Filter(MatrixFilters.Polaroid);
+            }
+            else if ((string)cmBox_Filter.SelectedItem == "Sepia")
+            {
+                imgFac_Main.Filter(MatrixFilters.Sepia);
+            }
+            else
+            {
+                Console.WriteLine("No Filter selected");
+            }
+
+            imgFac_Main.Save(pth_BufferFile);
+        }
+        private int check_txtBoxValidNumber(string str)
+        {
+            //sld_Brightness.Value = Convert.ToInt32(txtBox_Brightness.Text);
+            int i = 0;
+            try
+            {
+                i = Convert.ToInt32(str);
+                return i;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Only integers between 0 and 100 are allowed!");
+                return 0;
+            }
         }
         //Getter und Setter
         public Button get_btn_effectField_Apply()
@@ -104,12 +213,27 @@ namespace w19_memecreator
         {
             return lbl_Brightness;
         }
-        //Event Handler
-        private void sliderValueChanged_event(object sender, RoutedEventArgs e)
+        public ComboBox get_cmBox_Filter()
         {
-            txtBox_Brightness.Text = sld_Brightness.Value.ToString();
+            return cmBox_Filter;
         }
-
+        public Label get_lbl_Filter()
+        {
+            return lbl_Filter;
+        }
+        public Slider get_sld_Quality()
+        {
+            return sld_Quality;
+        }
+        public TextBox get_txtBox_Quality()
+        {
+            return txtBox_Quality;
+        }
+        public Label get_lbl_Quality()
+        {
+            return lbl_Quality;
+        }
+        //Event Handler
         private void btn_effectField_Preview_Click(object sender, RoutedEventArgs e)
         {
             Uri uri_ImgIn = new Uri(pth_TargetFile);
@@ -118,20 +242,23 @@ namespace w19_memecreator
             
             generateEffect(img_in);
         }
-
-        private void textBoxValueChanged_event(object sender, RoutedEventArgs e)
+        //---------------------------------
+        private void sliderValueChanged_event_Brightness(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                sld_Brightness.Value = Convert.ToInt32(txtBox_Brightness.Text);
-            } catch (Exception ex)
-            {
-                if(txtBox_Brightness.Text != "") 
-                {
-                    MessageBox.Show("Only integers between 0 and 100 are allowed!");
-                    sld_Brightness.Value = 0;
-                }
-            }
+            txtBox_Brightness.Text = sld_Brightness.Value.ToString();
         }
+        private void sliderValueChanged_event_Quality(object sender, RoutedEventArgs e)
+        {
+            txtBox_Quality.Text = sld_Quality.Value.ToString();
+        }
+        private void textBoxValueChanged_event_Brightness(object sender, RoutedEventArgs e)
+        {
+            sld_Brightness.Value = check_txtBoxValidNumber(txtBox_Brightness.Text);
+        }
+        private void textBoxValueChanged_event_Quality(object sender, RoutedEventArgs e)
+        {
+            sld_Quality.Value = check_txtBoxValidNumber(txtBox_Quality.Text);
+        }
+
     }
 }

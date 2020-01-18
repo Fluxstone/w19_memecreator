@@ -97,7 +97,7 @@ namespace w19_memecreator
             cmBox_fontColor.VerticalAlignment = VerticalAlignment.Top;
             cmBox_fontColor.Margin = new Thickness(10, 250, 0, 0);
             List<string> lst_colors = new List<string>();
-            foreach (System.Reflection.PropertyInfo info in typeof(Colors).GetProperties())
+            foreach (System.Reflection.PropertyInfo info in typeof(Color).GetProperties())
             {
                 lst_colors.Add(info.Name);
             }

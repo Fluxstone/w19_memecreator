@@ -20,8 +20,7 @@ namespace w19_memecreator {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-
-      
+  
     public partial class MainWindow : Window
     {
         TextKontext textWindow = new TextKontext();
@@ -49,7 +48,7 @@ namespace w19_memecreator {
 
             textWindow.setWindowProperties();
             pictureWindow.setWindowProperties();
-            effectWindow.setWindowProperties(ref canvas_Bearbeitungsfenster);
+            effectWindow.setWindowProperties();
 
             // Default-Werte
             a_meme_measurements[0] = d_canvas_margin_left;
@@ -272,6 +271,12 @@ namespace w19_memecreator {
             grid_Kontextfenster.Children.Add(effectWindow.get_sld_Brightness());
             grid_Kontextfenster.Children.Add(effectWindow.get_txtBox_Brightness());
             grid_Kontextfenster.Children.Add(effectWindow.get_lbl_Brightness());
+            grid_Kontextfenster.Children.Add(effectWindow.get_cmBox_Filter());
+            grid_Kontextfenster.Children.Add(effectWindow.get_lbl_Filter());
+            grid_Kontextfenster.Children.Add(effectWindow.get_sld_Quality());
+            grid_Kontextfenster.Children.Add(effectWindow.get_txtBox_Quality());
+            grid_Kontextfenster.Children.Add(effectWindow.get_lbl_Quality());
+
         }
 
         private void LabelInCanvasClicked(object sender, MouseButtonEventArgs e)
