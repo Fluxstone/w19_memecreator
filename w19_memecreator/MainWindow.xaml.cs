@@ -29,14 +29,14 @@ namespace w19_memecreator {
         double d_canvas_margin_left;
         
         double[] a_meme_measurements = new double[4];
-        bool b_meme_is_selected = false;
+        bool bool_meme_is_selected = false;
 
-        List<Grid> canvas_kinder_grid = new List<Grid>();
-        List<Label> canvas_kinder_label = new List<Label>();
+        List<Grid> li_canvas_child_grid = new List<Grid>();
+        List<Label> li_canvas_child_label = new List<Label>();
         int i_border_index_in_canvas = -1;
 
-        List<SolidColorBrush> brushes = new List<SolidColorBrush>();
-        List<String> brush_namen = new List<String>();
+        List<SolidColorBrush> li_brushes = new List<SolidColorBrush>();
+        List<String> li_brushes_names = new List<String>();
 
         public MainWindow()
         {
@@ -53,15 +53,15 @@ namespace w19_memecreator {
             pictureWindow.setWindowProperties();
             effectWindow.setWindowProperties();
             
-            Type brushesType = typeof(System.Windows.Media.Brushes);
+            Type type_brushes = typeof(System.Windows.Media.Brushes);
 
-            // Get all static properties
-            var properties = brushesType.GetProperties(BindingFlags.Static | BindingFlags.Public);
+            // Get all static properties of Brushes
+            var properties = type_brushes.GetProperties(BindingFlags.Static | BindingFlags.Public);
             
             foreach (var prop in properties)
             {
-                brush_namen.Add(prop.Name);
-                brushes.Add((SolidColorBrush)prop.GetValue(null, null));
+                li_brushes_names.Add(prop.Name);
+                li_brushes.Add((SolidColorBrush)prop.GetValue(null, null));
             }
 
 
@@ -75,26 +75,26 @@ namespace w19_memecreator {
             using (StreamReader r = new StreamReader(Environment.CurrentDirectory + "\\..\\..\\Templates\\templates.json"))
             {
                 string json = r.ReadToEnd();
-                dynamic templates = JsonConvert.DeserializeObject(json);
+                dynamic json_templates = JsonConvert.DeserializeObject(json);
 
-                foreach (var template in templates)
+                foreach (var template in json_templates)
                 {
-                    Image myImage = new Image();
-                    myImage.Height = 100;
-                    myImage.Width = 120;
-                    myImage.Cursor = Cursors.Hand;
+                    Image img_template_thumbnail = new Image();
+                    img_template_thumbnail.Height = 100;
+                    img_template_thumbnail.Width = 120;
+                    img_template_thumbnail.Cursor = Cursors.Hand;
                     
-                    BitmapImage myBitmapImage = new BitmapImage();
+                    BitmapImage bmp_thumbnail_source = new BitmapImage();
                     // BitmapImage.UriSource must be in a BeginInit/EndInit block
-                    myBitmapImage.BeginInit();
-                    myBitmapImage.UriSource = new Uri(Environment.CurrentDirectory + "\\..\\..\\Templates\\Previews\\" + template.previewSource, UriKind.Absolute);
-                    myBitmapImage.DecodePixelHeight = 100;
-                    myBitmapImage.EndInit();
+                    bmp_thumbnail_source.BeginInit();
+                    bmp_thumbnail_source.UriSource = new Uri(Environment.CurrentDirectory + "\\..\\..\\Templates\\Previews\\" + template.previewSource, UriKind.Absolute);
+                    bmp_thumbnail_source.DecodePixelHeight = 100;
+                    bmp_thumbnail_source.EndInit();
                     //set image source
-                    myImage.Source = myBitmapImage;
-                    myImage.MouseLeftButtonUp += LoadTemplateToCanvas; // Handler für Klick auf Thumbnail
-                    myImage.Tag = JsonConvert.SerializeObject(template); // Meme-Daten aus Template als Json-Text in Thumbnail-Tag gespeichert zur Weiterverarbeitung
-                    stackP_Timeline.Children.Add(myImage);
+                    img_template_thumbnail.Source = bmp_thumbnail_source;
+                    img_template_thumbnail.MouseLeftButtonUp += LoadTemplateToCanvas; // Handler für Klick auf Thumbnail
+                    img_template_thumbnail.Tag = JsonConvert.SerializeObject(template); // Meme-Daten aus Template als Json-Text in Thumbnail-Tag gespeichert zur Weiterverarbeitung
+                    stackP_Timeline.Children.Add(img_template_thumbnail);
                 }
             }
         }
@@ -103,213 +103,213 @@ namespace w19_memecreator {
         private void LoadTemplateToCanvas(object sender, MouseButtonEventArgs e)
         {
             grid_Kontextfenster.Children.Clear();
-            canvas_kinder_grid.Clear();
-            canvas_kinder_label.Clear();
+            li_canvas_child_grid.Clear();
+            li_canvas_child_label.Clear();
 
             canvas_Bearbeitungsfenster.Background = System.Windows.Media.Brushes.White;
 
-            Image selectedTemplateImage = (Image)sender;
-            dynamic templateData = JsonConvert.DeserializeObject(selectedTemplateImage.Tag.ToString()); // Meme-Daten aus der Template-Datei
+            Image img_selected_template = (Image)sender;
+            dynamic json_template = JsonConvert.DeserializeObject(img_selected_template.Tag.ToString()); // Meme-Daten aus der Template-Datei
 
             // Default-Werte für quadratisches Meme
-            double d_maxSize_Y = d_canvas_initial_height;
-            double d_maxSize_X = d_canvas_initial_height;
-            double d_leftPadding = (d_canvas_initial_width - d_canvas_initial_height) / 2;
-            double d_topPadding = d_canvas_margin_top;
+            double d_max_size_Y = d_canvas_initial_height;
+            double d_max_size_X = d_canvas_initial_height;
+            double d_left_padding = (d_canvas_initial_width - d_canvas_initial_height) / 2;
+            double d_top_padding = d_canvas_margin_top;
             canvas_Bearbeitungsfenster.Width = d_canvas_initial_height;
             canvas_Bearbeitungsfenster.Height = d_canvas_initial_height;
 
-            double d_template_format = ((double)templateData.formatWidth / (double)templateData.formatHeight) / (d_canvas_initial_width / d_canvas_initial_height);
+            double d_template_aspect_ratio = ((double)json_template.formatWidth / (double)json_template.formatHeight) / (d_canvas_initial_width / d_canvas_initial_height);
 
-            // Wenn Format des Memes höher ist als breit
-            if (d_template_format < 1)
+            // Wenn Seitenverhältnis des Memes höher ist als breit
+            if (d_template_aspect_ratio < 1)
             {
-                d_maxSize_Y = d_canvas_initial_height;
-                canvas_Bearbeitungsfenster.Width = (double)templateData.formatWidth / (double)templateData.formatHeight * d_canvas_initial_height;
-                d_maxSize_X = canvas_Bearbeitungsfenster.Width;
-                d_leftPadding = (d_canvas_initial_width - d_maxSize_X) / 2;
+                d_max_size_Y = d_canvas_initial_height;
+                canvas_Bearbeitungsfenster.Width = (double)json_template.formatWidth / (double)json_template.formatHeight * d_canvas_initial_height;
+                d_max_size_X = canvas_Bearbeitungsfenster.Width;
+                d_left_padding = (d_canvas_initial_width - d_max_size_X) / 2;
 
             }
 
-            // Wenn Format des Memes breiter ist als hoch
-            if (d_template_format > 1)
+            // Wenn Seitenverhältnis des Memes breiter ist als hoch
+            if (d_template_aspect_ratio > 1)
             {
-                d_maxSize_X = d_canvas_initial_width;
+                d_max_size_X = d_canvas_initial_width;
                 canvas_Bearbeitungsfenster.Width = d_canvas_initial_width;
-                canvas_Bearbeitungsfenster.Height = (double)templateData.formatHeight / (double)templateData.formatWidth * d_canvas_initial_width;
-                d_maxSize_Y = canvas_Bearbeitungsfenster.Height;
-                d_topPadding = (d_canvas_initial_height - d_maxSize_Y) / 2;
-                d_leftPadding = d_canvas_margin_left;
+                canvas_Bearbeitungsfenster.Height = (double)json_template.formatHeight / (double)json_template.formatWidth * d_canvas_initial_width;
+                d_max_size_Y = canvas_Bearbeitungsfenster.Height;
+                d_top_padding = (d_canvas_initial_height - d_max_size_Y) / 2;
+                d_left_padding = d_canvas_margin_left;
             }
 
-            a_meme_measurements[0] = d_leftPadding;
-            a_meme_measurements[1] = d_topPadding;
-            a_meme_measurements[2] = d_maxSize_X;
-            a_meme_measurements[3] = d_maxSize_Y;
+            a_meme_measurements[0] = d_left_padding;
+            a_meme_measurements[1] = d_top_padding;
+            a_meme_measurements[2] = d_max_size_X;
+            a_meme_measurements[3] = d_max_size_Y;
 
-            int canvasChildIndex = 0;
+            int i_canvas_child_index = 0;
 
             // Bilder in Meme werden Anhand der Daten im Template ins Canvas geladen und platziert
-            foreach (var image in templateData.components.images)
+            foreach (var image in json_template.components.images)
             {
-                Image newImage = new Image();
-                newImage.Cursor = Cursors.Hand;
-                newImage.Stretch = Stretch.UniformToFill;
-                newImage.VerticalAlignment = VerticalAlignment.Center;
-                newImage.HorizontalAlignment = HorizontalAlignment.Center;
+                Image img_meme_component = new Image();
+                img_meme_component.Cursor = Cursors.Hand;
+                img_meme_component.Stretch = Stretch.UniformToFill;
+                img_meme_component.VerticalAlignment = VerticalAlignment.Center;
+                img_meme_component.HorizontalAlignment = HorizontalAlignment.Center;
 
                 // Create source
-                BitmapImage myBitmapImage = new BitmapImage();
+                BitmapImage bmp_meme_component_source = new BitmapImage();
 
                 // BitmapImage.UriSource must be in a BeginInit/EndInit block
-                myBitmapImage.BeginInit();
-                myBitmapImage.UriSource = new Uri(Environment.CurrentDirectory + "\\..\\..\\Templates\\Images\\" + image.relSource, UriKind.Absolute);
-                myBitmapImage.EndInit();
+                bmp_meme_component_source.BeginInit();
+                bmp_meme_component_source.UriSource = new Uri(Environment.CurrentDirectory + "\\..\\..\\Templates\\Images\\" + image.relSource, UriKind.Absolute);
+                bmp_meme_component_source.EndInit();
 
-                double d_sourceImageFormat = (double)myBitmapImage.PixelHeight / (double)myBitmapImage.PixelWidth; // höher als breit wenn > 1, breiter als hoch wenn < 1
-                double d_imageFormat = ((double)image.height/100d * d_maxSize_Y) / ((double)image.width/100d * d_maxSize_X); // im Canvas höher als breit wenn > 1, breiter als hoch wenn < 1
+                double d_source_ascpect_ratio = (double)bmp_meme_component_source.PixelHeight / (double)bmp_meme_component_source.PixelWidth; // höher als breit wenn > 1, breiter als hoch wenn < 1
+                double d_meme_component_aspect_ratio = ((double)image.height/100d * d_max_size_Y) / ((double)image.width/100d * d_max_size_X); // im Canvas höher als breit wenn > 1, breiter als hoch wenn < 1
 
-                if (d_sourceImageFormat < 1) // Source breiter als hoch
+                if (d_source_ascpect_ratio < 1) // Source breiter als hoch
                 {
-                    if (d_sourceImageFormat < d_imageFormat) // Source breiter als Canvas-Slot
+                    if (d_source_ascpect_ratio < d_meme_component_aspect_ratio) // Source breiter als Canvas-Slot
                     {
-                        newImage.Height = (int)((double)image.height / 100d * d_maxSize_X);
-                        newImage.Width = newImage.Height * (2d - d_sourceImageFormat);
+                        img_meme_component.Height = (int)((double)image.height / 100d * d_max_size_X);
+                        img_meme_component.Width = img_meme_component.Height * (2d - d_source_ascpect_ratio);
                     }
                     else // gleich groß oder höher als Canvas-Slot
                     {
-                        newImage.Height = (int)((double)image.height / 100d * d_maxSize_X);
-                        newImage.Width = newImage.Height * (2d - d_sourceImageFormat);
+                        img_meme_component.Height = (int)((double)image.height / 100d * d_max_size_X);
+                        img_meme_component.Width = img_meme_component.Height * (2d - d_source_ascpect_ratio);
                     }
                     
                 } else // Quadrat oder höher als breit
                 {
-                    if (d_sourceImageFormat < d_imageFormat) // Source breiter als Canvas-Slot
+                    if (d_source_ascpect_ratio < d_meme_component_aspect_ratio) // Source breiter als Canvas-Slot
                     {
-                        newImage.Width = (double)image.width / 100d * d_maxSize_X;
-                        newImage.Height = newImage.Width * d_sourceImageFormat;
+                        img_meme_component.Width = (double)image.width / 100d * d_max_size_X;
+                        img_meme_component.Height = img_meme_component.Width * d_source_ascpect_ratio;
                     }
                     else // gleich groß oder höher als Canvas-Slot
                     {
-                        newImage.Width = (double)image.width / 100d * d_maxSize_X;
-                        newImage.Height = newImage.Width * d_sourceImageFormat;
+                        img_meme_component.Width = (double)image.width / 100d * d_max_size_X;
+                        img_meme_component.Height = img_meme_component.Width * d_source_ascpect_ratio;
                     }
                 }
 
                 //set image source
-                newImage.Source = myBitmapImage;
-                newImage.Tag = canvasChildIndex;
-                newImage.MouseLeftButtonUp += ImageInCanvasClicked;
+                img_meme_component.Source = bmp_meme_component_source;
+                img_meme_component.Tag = i_canvas_child_index;
+                img_meme_component.MouseLeftButtonUp += ImageInCanvasClicked;
 
-                Grid grid_newImage = new Grid();
+                Grid grid_meme_component_img = new Grid();
 
-                grid_newImage.Height = (double)image.height / 100.0 * d_maxSize_Y;
-                grid_newImage.Width = (double)image.width / 100.0 * d_maxSize_X;
-                grid_newImage.Children.Add(newImage);
+                grid_meme_component_img.Height = (double)image.height / 100.0 * d_max_size_Y;
+                grid_meme_component_img.Width = (double)image.width / 100.0 * d_max_size_X;
+                grid_meme_component_img.Children.Add(img_meme_component);
                 
-                double xPos = (double)image.xPos / 100.0 * d_maxSize_X;
-                double yPos = (double)image.yPos / 100.0 * d_maxSize_Y;
-                Canvas.SetLeft(grid_newImage, xPos);
-                Canvas.SetTop(grid_newImage, yPos);
-                newImage.Tag = $"{canvasChildIndex}##{xPos}##{yPos}##{grid_newImage.Width}##{grid_newImage.Height}";
-                canvasChildIndex++;
-                canvas_kinder_grid.Add(grid_newImage);
+                double d_position_x = (double)image.xPos / 100.0 * d_max_size_X;
+                double d_position_y = (double)image.yPos / 100.0 * d_max_size_Y;
+                Canvas.SetLeft(grid_meme_component_img, d_position_x);
+                Canvas.SetTop(grid_meme_component_img, d_position_y);
+                img_meme_component.Tag = $"{i_canvas_child_index}##{d_position_x}##{d_position_y}##{grid_meme_component_img.Width}##{grid_meme_component_img.Height}";
+                i_canvas_child_index++;
+                li_canvas_child_grid.Add(grid_meme_component_img);
             }
 
             // Texte in Meme werden Anhand der Daten im Template als Label ins Canvas geladen und platziert
-            foreach (var text in templateData.components.text)
+            foreach (var data_text_component in json_template.components.text)
             {
 
-                Label newLabel = new Label();
-                newLabel.Cursor = Cursors.Hand;
-                newLabel.Content = text.content;
-                newLabel.FontFamily = text.font;
-                newLabel.FontSize = text.fontsize;
-                newLabel.Foreground = brushes[brush_namen.IndexOf((string)text.color)];
-                newLabel.HorizontalContentAlignment = HorizontalAlignment.Center;
-                newLabel.VerticalContentAlignment = VerticalAlignment.Center;
-                newLabel.Height = (double)text.height / 100.0 * d_maxSize_Y;
-                newLabel.Width = (double)text.width / 100.0 * d_maxSize_X;
-                double xPos = (double)text.xPos / 100.0 * d_maxSize_X;
-                double yPos = (double)text.yPos / 100.0 * d_maxSize_Y;
-                // labelincanvasclicked wird ausgeführt, wenn man auf ein label im canvas klickt
-                newLabel.MouseLeftButtonUp += LabelInCanvasClicked;
-                Canvas.SetLeft(newLabel, xPos);
-                Canvas.SetTop(newLabel, yPos);
-                newLabel.Tag = $"{canvasChildIndex}##{xPos}##{yPos}";
-                canvasChildIndex++;
-                //canvas_bearbeitungsfenster.children.add(newlabel);
-                canvas_kinder_label.Add(newLabel);
+                Label lbl_meme_component_text = new Label();
+                lbl_meme_component_text.Cursor = Cursors.Hand;
+                lbl_meme_component_text.Content = data_text_component.content;
+                lbl_meme_component_text.FontFamily = data_text_component.font;
+                lbl_meme_component_text.FontSize = data_text_component.fontsize;
+                lbl_meme_component_text.Foreground = li_brushes[li_brushes_names.IndexOf((string)data_text_component.color)];
+                lbl_meme_component_text.HorizontalContentAlignment = HorizontalAlignment.Center;
+                lbl_meme_component_text.VerticalContentAlignment = VerticalAlignment.Center;
+                lbl_meme_component_text.Height = (double)data_text_component.height / 100.0 * d_max_size_Y;
+                lbl_meme_component_text.Width = (double)data_text_component.width / 100.0 * d_max_size_X;
+                lbl_meme_component_text.MouseLeftButtonUp += LabelInCanvasClicked;
+
+                double d_position_x = (double)data_text_component.xPos / 100.0 * d_max_size_X;
+                double d_position_y = (double)data_text_component.yPos / 100.0 * d_max_size_Y;
+                Canvas.SetLeft(lbl_meme_component_text, d_position_x);
+                Canvas.SetTop(lbl_meme_component_text, d_position_y);
+
+                lbl_meme_component_text.Tag = $"{i_canvas_child_index}##{d_position_x}##{d_position_y}";
+                i_canvas_child_index++;
+                li_canvas_child_label.Add(lbl_meme_component_text);
             }
 
             PopulateCanvas();
-            b_meme_is_selected = true;
+            bool_meme_is_selected = true;
         }
 
         private void PopulateCanvas()
         {
             canvas_Bearbeitungsfenster.Children.Clear();
-            foreach (Grid kind in canvas_kinder_grid)
+            foreach (Grid grid_canvas_child in li_canvas_child_grid)
             {
-                canvas_Bearbeitungsfenster.Children.Add(kind);
+                canvas_Bearbeitungsfenster.Children.Add(grid_canvas_child);
             }
 
-            foreach (Label kind in canvas_kinder_label)
+            foreach (Label lbl_canvas_child in li_canvas_child_label)
             {
-                canvas_Bearbeitungsfenster.Children.Add(kind);
+                canvas_Bearbeitungsfenster.Children.Add(lbl_canvas_child);
             }
         }
 
         private void LabelInCanvasClicked(object sender, MouseButtonEventArgs e)
         {
             // Das angeklickte Label wird als globale Variable in der Klasse gespeichert, um es später direkt ansprechen und im Kontextfenster verändern zu können
-            Label label = (Label)sender;
+            Label lbl_clicked = (Label)sender;
 
             // Kontextfenster leeren und mit Label-Kontext-Controls füllen
             grid_Kontextfenster.Children.Clear();
-            drawTextContext(label);
-            DrawBorder(label);
+            drawTextContext(lbl_clicked);
+            DrawBorder(lbl_clicked);
         }
 
         private void ImageInCanvasClicked(object sender, MouseButtonEventArgs e)
         {
-            Image image = (Image)sender;
+            Image img_clicked = (Image)sender;
             grid_Kontextfenster.Children.Clear();
-            drawBildKontext(image);
-            DrawBorder(image);
+            drawBildKontext(img_clicked);
+            DrawBorder(img_clicked);
         }
 
         // Rahmen malen, wenn Bild angeklickt
-        private void DrawBorder(Image image_clicked)
+        private void DrawBorder(Image img_clicked)
         {
             String[] separator = { "##" };
-            String[] tags = image_clicked.Tag.ToString().Split(separator, StringSplitOptions.None); // child index, xPos in canvas, xPos in canvas
-            Border imageBorder = new Border();
-            imageBorder.Height = Double.Parse(tags[4]);
-            imageBorder.Width = Double.Parse(tags[3]);
-            imageBorder.BorderBrush = new SolidColorBrush(Colors.Aquamarine);
-            imageBorder.BorderThickness = new Thickness(3,3,3,3);
-            Canvas.SetLeft(imageBorder, Double.Parse(tags[1]));
-            Canvas.SetTop(imageBorder, Double.Parse(tags[2]));
+            String[] tags = img_clicked.Tag.ToString().Split(separator, StringSplitOptions.None); // Reihenfolge: child index, xPos in canvas, xPos in canvas
+            Border border_image = new Border();
+            border_image.Height = Double.Parse(tags[4]);
+            border_image.Width = Double.Parse(tags[3]);
+            border_image.BorderBrush = new SolidColorBrush(Colors.Aquamarine);
+            border_image.BorderThickness = new Thickness(3,3,3,3);
+            Canvas.SetLeft(border_image, Double.Parse(tags[1]));
+            Canvas.SetTop(border_image, Double.Parse(tags[2]));
             PopulateCanvas();
-            canvas_Bearbeitungsfenster.Children.Insert(Int32.Parse(tags[0])+1, imageBorder);
+            canvas_Bearbeitungsfenster.Children.Insert(Int32.Parse(tags[0])+1, border_image);
         }
 
         // Rahmen malen, wenn Label angeklickt
-        private void DrawBorder(Label label_clicked)
+        private void DrawBorder(Label lbl_clicked)
         {
             String[] separator = { "##" };
-            String[] tags = label_clicked.Tag.ToString().Split(separator, StringSplitOptions.None); // child index, xPos in canvas, xPos in canvas
-            Border imageBorder = new Border();
-            imageBorder.Height = label_clicked.Height;
-            imageBorder.Width = label_clicked.Width;
-            imageBorder.BorderBrush = new SolidColorBrush(Colors.Aquamarine);
-            imageBorder.BorderThickness = new Thickness(3, 3, 3, 3);
-            Canvas.SetLeft(imageBorder, Double.Parse(tags[1]));
-            Canvas.SetTop(imageBorder, Double.Parse(tags[2]));
+            String[] tags = lbl_clicked.Tag.ToString().Split(separator, StringSplitOptions.None); // child index, xPos in canvas, xPos in canvas
+            Border border_label = new Border();
+            border_label.Height = lbl_clicked.Height;
+            border_label.Width = lbl_clicked.Width;
+            border_label.BorderBrush = new SolidColorBrush(Colors.Aquamarine);
+            border_label.BorderThickness = new Thickness(3, 3, 3, 3);
+            Canvas.SetLeft(border_label, Double.Parse(tags[1]));
+            Canvas.SetTop(border_label, Double.Parse(tags[2]));
             PopulateCanvas();
             i_border_index_in_canvas = Int32.Parse(tags[0]) + 1;
-            canvas_Bearbeitungsfenster.Children.Insert(Int32.Parse(tags[0]) + 1, imageBorder);
+            canvas_Bearbeitungsfenster.Children.Insert(Int32.Parse(tags[0]) + 1, border_label);
         }
 
         // Meme ohne Effekt im Canvas rendern und zuschneiden
@@ -320,19 +320,20 @@ namespace w19_memecreator {
             // Canvas rendern und Canvas-Maße um Margins beim Rendern erweitert, um Out-of-Bounds-Exception beim Zuschneiden zu verhindern
             RenderTargetBitmap rtb = new RenderTargetBitmap((int)canvas_Bearbeitungsfenster.RenderSize.Width + (int)a_meme_measurements[0], (int)canvas_Bearbeitungsfenster.RenderSize.Height + (int)a_meme_measurements[1], 96d, 96d, PixelFormats.Default);
             rtb.Render(canvas_Bearbeitungsfenster);
+
             // Render-Ergebnis auf Meme zuschneiden
             return new CroppedBitmap(rtb, new Int32Rect((int)a_meme_measurements[0] + 2, (int)a_meme_measurements[1] + 2, (int)a_meme_measurements[2] - 2, (int)a_meme_measurements[3] - 2));
         }
 
         // Fertiges Meme als Bild exportieren
-        public void saveImage(object sender, RoutedEventArgs e)
+        public void SaveImage(object sender, RoutedEventArgs e)
         {
-            if (b_meme_is_selected)
+            if (bool_meme_is_selected)
             {
-                CroppedBitmap crop = cb_render_canvas();
+                CroppedBitmap cb_crop = cb_render_canvas();
 
                 BitmapEncoder pngEncoder = new PngBitmapEncoder();
-                pngEncoder.Frames.Add(BitmapFrame.Create(crop));
+                pngEncoder.Frames.Add(BitmapFrame.Create(cb_crop));
 
 
                 try
@@ -359,7 +360,7 @@ namespace w19_memecreator {
             }
             else
             {
-                MessageBox.Show("Du musst erst ein Meme erstellen, bevor du es speichern kannst!", "Oopsies", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                MessageBox.Show("You gotta select the meme before you can save the meme!", "Oopsies", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
 
         }

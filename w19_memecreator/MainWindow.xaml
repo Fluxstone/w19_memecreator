@@ -12,22 +12,22 @@
     <Grid>
 
         <!-- Template-Anzeige -->
-        <Label x:Name="TemplatesLabel" Content="Choose the meme" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Background="#232323" Foreground="#828282"/>
+        <Label x:Name="templatesLabel" Content="Choose the meme" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Background="#232323" Foreground="#828282"/>
         <StackPanel x:Name="stackP_Timeline" Orientation="Horizontal" HorizontalAlignment="Left" Height="100" Margin="10,36,0,0" VerticalAlignment="Top" Width="964" Background="#232323" />
 
         <!-- Meme-Anzeige -->
-        <Label x:Name="CanvasLabel" Content="See the the meme" HorizontalAlignment="Left" Margin="10,146,0,0" VerticalAlignment="Top" Background="#232323" Foreground="#828282"/>
+        <Label x:Name="canvasLabel" Content="See the the meme" HorizontalAlignment="Left" Margin="10,146,0,0" VerticalAlignment="Top" Background="#232323" Foreground="#828282"/>
         <Border Background="#232323" Margin="10,172,370,10" ClipToBounds="True">
             <Canvas x:Name="canvas_Bearbeitungsfenster" Margin="0,0,0,0" Height="479" Width="604" />
         </Border>
 
         <!-- Kontextfenster Design -->
-        <Label x:Name="ContextLabel" Content="Edit the the meme" HorizontalAlignment="Left" Margin="636,146,0,0" VerticalAlignment="Top" Background="#232323" Foreground="#828282"/>
+        <Label x:Name="contextLabel" Content="Edit the the meme" HorizontalAlignment="Left" Margin="636,146,0,0" VerticalAlignment="Top" Background="#232323" Foreground="#828282"/>
         <ScrollViewer Margin="636,172,10,97" >
             <Grid x:Name="grid_Kontextfenster" Margin="0,0,0,0" ScrollViewer.CanContentScroll="True" Background="#232323"/>
         </ScrollViewer>
 
-        <Button x:Name="button_Speichern" Content="Save the meme" Margin="636,574,10,10" Click="saveImage" Background="#232323" Foreground="#828282" FontSize="20" FontWeight="DemiBold" BorderBrush="#00707070" >
+        <Button x:Name="button_Save" Content="Save the meme" Margin="636,574,10,10" Click="SaveImage" Background="#232323" Foreground="#828282" FontSize="20" FontWeight="DemiBold" BorderBrush="#00707070" >
         </Button>
 
         <!--Menu x:Name="menu_mainMenu" HorizontalAlignment="Left" Height="21" VerticalAlignment="Top" Width="116">
