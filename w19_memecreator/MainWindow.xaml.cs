@@ -34,7 +34,10 @@ namespace w19_memecreator {
         
         double[] a_meme_measurements = new double[4];
         bool b_meme_is_selected = false;
-        
+
+        Image img_current;
+
+
         public MainWindow()
         {
             InitializeComponent();
@@ -251,7 +254,6 @@ namespace w19_memecreator {
         }
 
         //Eventhandler
-        //Menuitem
 
         private void drawEffectContext(object sender, RoutedEventArgs e)
         {
@@ -262,9 +264,11 @@ namespace w19_memecreator {
             PngBitmapEncoder encoder = new PngBitmapEncoder();
             encoder.Frames.Add(BitmapFrame.Create(bmp));
 
-            System.IO.FileStream stream = System.IO.File.Create(Environment.CurrentDirectory + "\\..\\..\\MemeResources\\temp\\img_TargetImage.jpeg");
+            System.IO.FileStream stream = System.IO.File.Create(Environment.CurrentDirectory + "\\..\\..\\MemeResources\\temp\\img_TargetImage.jpeg"); //usedbyanotherprocess exception
             encoder.Save(stream);
             stream.Close();
+
+            effectWindow.set_canvas_target(canvas_Bearbeitungsfenster);
 
             grid_Kontextfenster.Children.Clear();
             grid_Kontextfenster.Children.Add(effectWindow.get_btn_effectField_Apply());
@@ -273,9 +277,9 @@ namespace w19_memecreator {
             grid_Kontextfenster.Children.Add(effectWindow.get_lbl_Brightness());
             grid_Kontextfenster.Children.Add(effectWindow.get_cmBox_Filter());
             grid_Kontextfenster.Children.Add(effectWindow.get_lbl_Filter());
-            grid_Kontextfenster.Children.Add(effectWindow.get_sld_Quality());
-            grid_Kontextfenster.Children.Add(effectWindow.get_txtBox_Quality());
-            grid_Kontextfenster.Children.Add(effectWindow.get_lbl_Quality());
+            grid_Kontextfenster.Children.Add(effectWindow.get_sld_Contrast());
+            grid_Kontextfenster.Children.Add(effectWindow.get_txtBox_Contrast());
+            grid_Kontextfenster.Children.Add(effectWindow.get_lbl_Contrast());
 
         }
 

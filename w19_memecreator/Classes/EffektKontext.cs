@@ -12,6 +12,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
+using System.IO;
+
+
 namespace w19_memecreator
 {
     class EffektKontext
@@ -23,15 +26,20 @@ namespace w19_memecreator
         TextBox txtBox_Brightness = new TextBox();
         Label lbl_Brightness = new Label();
 
-        Slider sld_Quality = new Slider();
-        TextBox txtBox_Quality = new TextBox();
-        Label lbl_Quality = new Label();
+        Slider sld_Contrast = new Slider();
+        TextBox txtBox_Contrast = new TextBox();
+        Label lbl_Contrast = new Label();
 
         ComboBox cmBox_Filter = new ComboBox();
         Label lbl_Filter = new Label();
         String[] mat_Filters = {"BlackWhite", "Comic", "Gotham", "GreyScale", "HiSatch", "Invert", "Lomograph", "LoSatch", "Polaroid", "Sepia"};
 
+        Image target_img;
+        Canvas canvas_target;
         ImageFactory imgFac_Main = new ImageFactory();
+        
+        
+        
         
 
         string pth_TargetFile = Environment.CurrentDirectory + "\\..\\..\\MemeResources\\temp\\img_TargetImage.jpeg";
@@ -81,33 +89,33 @@ namespace w19_memecreator
             lbl_Brightness.Content = "Brightness";
             lbl_Brightness.Foreground = Brushes.White;
 
-            sld_Quality.Height = 20;
-            sld_Quality.Width = 200;
-            sld_Quality.HorizontalAlignment = HorizontalAlignment.Left;
-            sld_Quality.VerticalAlignment = VerticalAlignment.Top;
-            sld_Quality.Margin = new Thickness(10, 120, 0, 0);
-            sld_Quality.TickFrequency = 1;
-            sld_Quality.TickPlacement = System.Windows.Controls.Primitives.TickPlacement.BottomRight;
-            sld_Quality.IsSnapToTickEnabled = true;
-            sld_Quality.Maximum = 100;
-            sld_Quality.AddHandler(Slider.ValueChangedEvent, new RoutedEventHandler(sliderValueChanged_event_Quality));
-            sld_Quality.Value = 0;
+            sld_Contrast.Height = 20;
+            sld_Contrast.Width = 200;
+            sld_Contrast.HorizontalAlignment = HorizontalAlignment.Left;
+            sld_Contrast.VerticalAlignment = VerticalAlignment.Top;
+            sld_Contrast.Margin = new Thickness(10, 120, 0, 0);
+            sld_Contrast.TickFrequency = 1;
+            sld_Contrast.TickPlacement = System.Windows.Controls.Primitives.TickPlacement.BottomRight;
+            sld_Contrast.IsSnapToTickEnabled = true;
+            sld_Contrast.Maximum = 100;
+            sld_Contrast.AddHandler(Slider.ValueChangedEvent, new RoutedEventHandler(sliderValueChanged_event_Quality));
+            sld_Contrast.Value = 0;
 
-            txtBox_Quality.Height = 20;
-            txtBox_Quality.Width = 60;
-            txtBox_Quality.HorizontalAlignment = HorizontalAlignment.Left;
-            txtBox_Quality.VerticalAlignment = VerticalAlignment.Top;
-            txtBox_Quality.Margin = new Thickness(230, 120, 0, 0);
-            txtBox_Quality.TextWrapping = TextWrapping.Wrap;
-            txtBox_Quality.AddHandler(TextBox.TextChangedEvent, new RoutedEventHandler(textBoxValueChanged_event_Quality));
+            txtBox_Contrast.Height = 20;
+            txtBox_Contrast.Width = 60;
+            txtBox_Contrast.HorizontalAlignment = HorizontalAlignment.Left;
+            txtBox_Contrast.VerticalAlignment = VerticalAlignment.Top;
+            txtBox_Contrast.Margin = new Thickness(230, 120, 0, 0);
+            txtBox_Contrast.TextWrapping = TextWrapping.Wrap;
+            txtBox_Contrast.AddHandler(TextBox.TextChangedEvent, new RoutedEventHandler(textBoxValueChanged_event_Quality));
 
-            lbl_Quality.Height = 30;
-            lbl_Quality.Width = 80;
-            lbl_Quality.HorizontalAlignment = HorizontalAlignment.Left;
-            lbl_Quality.VerticalAlignment = VerticalAlignment.Top;
-            lbl_Quality.Margin = new Thickness(10, 90, 0, 0);
-            lbl_Quality.Content = "Quality";
-            lbl_Quality.Foreground = Brushes.White;
+            lbl_Contrast.Height = 30;
+            lbl_Contrast.Width = 80;
+            lbl_Contrast.HorizontalAlignment = HorizontalAlignment.Left;
+            lbl_Contrast.VerticalAlignment = VerticalAlignment.Top;
+            lbl_Contrast.Margin = new Thickness(10, 90, 0, 0);
+            lbl_Contrast.Content = "Quality";
+            lbl_Contrast.Foreground = Brushes.White;
 
             cmBox_Filter.Height = 30;
             cmBox_Filter.Width = 150;
@@ -125,62 +133,98 @@ namespace w19_memecreator
             lbl_Filter.Content = "Filter";
             lbl_Filter.Foreground = Brushes.White;
         }
-        public void generateEffect(Image img_in)
+
+        public void generateEffect(Image img_in) 
         {
+            byte[] phBytes = File.ReadAllBytes(pth_TargetFile);
+
             int imgFac_Brightness = (int)sld_Brightness.Value;
-            int imgFac_Quality = (int)sld_Quality.Value;
-            //Applying effects
-            imgFac_Main.Load(pth_TargetFile);
-            imgFac_Main.Brightness(imgFac_Brightness);
-            imgFac_Main.Quality(imgFac_Quality);
+            int imgFac_Contrast = (int)sld_Contrast.Value;
 
-            if ((string)cmBox_Filter.SelectedItem == "BlackWhite")
+
+
+
+
+
+
+
+            //Open the File and apply filters
+            using (MemoryStream inStream = new MemoryStream(phBytes))
             {
-                imgFac_Main.Filter(MatrixFilters.BlackWhite);
-            }
-            else if ((string)cmBox_Filter.SelectedItem == "Comic") 
-            {
-                imgFac_Main.Filter(MatrixFilters.Comic);
-            }
-            else if ((string)cmBox_Filter.SelectedItem == "Gotham")
-            {
-                imgFac_Main.Filter(MatrixFilters.Gotham );
-            }
-            else if ((string)cmBox_Filter.SelectedItem == "GreyScale")
-            {
-                imgFac_Main.Filter(MatrixFilters.GreyScale);
-            }
-            else if ((string)cmBox_Filter.SelectedItem == "HiSatch")
-            {
-                imgFac_Main.Filter(MatrixFilters.HiSatch);
-            }
-            else if ((string)cmBox_Filter.SelectedItem == "Invert")
-            {
-                imgFac_Main.Filter(MatrixFilters.Invert);
-            }
-            else if ((string)cmBox_Filter.SelectedItem == "Lomograph")
-            {
-                imgFac_Main.Filter(MatrixFilters.Lomograph);
-            }
-            else if ((string)cmBox_Filter.SelectedItem == "LoSatch")
-            {
-                imgFac_Main.Filter(MatrixFilters.LoSatch);
-            }
-            else if ((string)cmBox_Filter.SelectedItem == "Polaroid")
-            {
-                imgFac_Main.Filter(MatrixFilters.Polaroid);
-            }
-            else if ((string)cmBox_Filter.SelectedItem == "Sepia")
-            {
-                imgFac_Main.Filter(MatrixFilters.Sepia);
-            }
-            else
-            {
-                Console.WriteLine("No Filter selected");
+                using (MemoryStream outStream = new MemoryStream())
+                {
+                    // Initialize the ImageFactory using the overload to preserve EXIF metadata.
+                    using (ImageFactory imageFactory = new ImageFactory(preserveExifData: true))
+                    {
+                        // Load, resize, set the format and quality and save an image.
+                        imageFactory.Load(inStream)
+                                    .Brightness(imgFac_Brightness)
+                                    .Contrast(imgFac_Contrast);
+
+                        if ((string)cmBox_Filter.SelectedItem == "BlackWhite")
+                        {
+                            imageFactory.Filter(MatrixFilters.BlackWhite);
+                        }
+                        else if ((string)cmBox_Filter.SelectedItem == "Comic")
+                        {
+                            imageFactory.Filter(MatrixFilters.Comic);
+                        }
+                        else if ((string)cmBox_Filter.SelectedItem == "Gotham")
+                        {
+                            imageFactory.Filter(MatrixFilters.Gotham);
+                        }
+                        else if ((string)cmBox_Filter.SelectedItem == "GreyScale")
+                        {
+                            imageFactory.Filter(MatrixFilters.GreyScale);
+                        }
+                        else if ((string)cmBox_Filter.SelectedItem == "HiSatch")
+                        {
+                            imageFactory.Filter(MatrixFilters.HiSatch);
+                        }
+                        else if ((string)cmBox_Filter.SelectedItem == "Invert")
+                        {
+                            imageFactory.Filter(MatrixFilters.Invert);
+                        }
+                        else if ((string)cmBox_Filter.SelectedItem == "Lomograph")
+                        {
+                            imageFactory.Filter(MatrixFilters.Lomograph);
+                        }
+                        else if ((string)cmBox_Filter.SelectedItem == "LoSatch")
+                        {
+                            imageFactory.Filter(MatrixFilters.LoSatch);
+                        }
+                        else if ((string)cmBox_Filter.SelectedItem == "Polaroid")
+                        {
+                            imageFactory.Filter(MatrixFilters.Polaroid);
+                        }
+                        else if ((string)cmBox_Filter.SelectedItem == "Sepia")
+                        {
+                            imageFactory.Filter(MatrixFilters.Sepia);
+                        }
+                        else
+                        {
+                            Console.WriteLine("No Filter selected");
+                        }
+
+                        imageFactory.Save(outStream);
+                    }
+                    // Do something with the stream.
+                    System.Drawing.Bitmap btm = new System.Drawing.Bitmap(outStream);
+                    btm.Save(pth_BufferFile);
+                }
             }
 
-            imgFac_Main.Save(pth_BufferFile);
+            //updateCanvasPicture(img_in); --GDI Error here
+
         }
+
+        private void updateCanvasPicture(Image img_in)
+        {
+            img_in.Source = null;
+            img_in.Source = new BitmapImage(new Uri(pth_BufferFile));
+            canvas_target.Children.Add(img_in);  //Provisorischer "Preview"
+        }
+
         private int check_txtBoxValidNumber(string str)
         {
             //sld_Brightness.Value = Convert.ToInt32(txtBox_Brightness.Text);
@@ -221,17 +265,25 @@ namespace w19_memecreator
         {
             return lbl_Filter;
         }
-        public Slider get_sld_Quality()
+        public Slider get_sld_Contrast()
         {
-            return sld_Quality;
+            return sld_Contrast;
         }
-        public TextBox get_txtBox_Quality()
+        public TextBox get_txtBox_Contrast()
         {
-            return txtBox_Quality;
+            return txtBox_Contrast;
         }
-        public Label get_lbl_Quality()
+        public Label get_lbl_Contrast()
         {
-            return lbl_Quality;
+            return lbl_Contrast;
+        }
+        public void set_target_img(Image img_in)
+        {
+            target_img = img_in;
+        }
+        public void set_canvas_target(Canvas canvas_in)
+        {
+            canvas_target = canvas_in;
         }
         //Event Handler
         private void btn_effectField_Preview_Click(object sender, RoutedEventArgs e)
@@ -249,7 +301,7 @@ namespace w19_memecreator
         }
         private void sliderValueChanged_event_Quality(object sender, RoutedEventArgs e)
         {
-            txtBox_Quality.Text = sld_Quality.Value.ToString();
+            txtBox_Contrast.Text = sld_Contrast.Value.ToString();
         }
         private void textBoxValueChanged_event_Brightness(object sender, RoutedEventArgs e)
         {
@@ -257,7 +309,7 @@ namespace w19_memecreator
         }
         private void textBoxValueChanged_event_Quality(object sender, RoutedEventArgs e)
         {
-            sld_Quality.Value = check_txtBoxValidNumber(txtBox_Quality.Text);
+            sld_Contrast.Value = check_txtBoxValidNumber(txtBox_Contrast.Text);
         }
 
     }
