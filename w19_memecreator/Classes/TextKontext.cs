@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing.Text;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -14,6 +15,13 @@ namespace w19_memecreator
         ComboBox cmBox_fontMenu = new ComboBox();
         ComboBox cmBox_fontSize = new ComboBox();
         Button btn_txtField_Apply = new Button();
+
+        ComboBox cmBox_fontColor = new ComboBox();
+        Label lbl_Text = new Label();
+        Label lbl_Color = new Label();
+
+        Dictionary<String, SolidColorBrush> dict_lbl_colors = new Dictionary<String, SolidColorBrush>();
+
         Label lbl_targetLbl;
 
         //Constructor
@@ -25,6 +33,22 @@ namespace w19_memecreator
         //Set KontextWindow Controls
         public void setWindowProperties()
         {
+            lbl_Color.Height = 30;
+            lbl_Color.Width = 120;
+            lbl_Color.Content = "Color options";
+            lbl_Color.Foreground = Brushes.LightGray;
+            lbl_Color.HorizontalAlignment = HorizontalAlignment.Left;
+            lbl_Color.VerticalAlignment = VerticalAlignment.Top;
+            lbl_Color.Margin = new Thickness(10, 220, 0, 0);
+
+            lbl_Text.Height = 30;
+            lbl_Text.Width = 120;
+            lbl_Text.Content = "Text options";
+            lbl_Text.Foreground = Brushes.LightGray;
+            lbl_Text.HorizontalAlignment = HorizontalAlignment.Left;
+            lbl_Text.VerticalAlignment = VerticalAlignment.Top;
+            lbl_Text.Margin = new Thickness(10, 160, 0, 0);
+
             txtBox_txtField_Text.Height = 100;
             txtBox_txtField_Text.Width = 300;
             txtBox_txtField_Text.Text = "";
@@ -37,7 +61,7 @@ namespace w19_memecreator
             cmBox_fontMenu.Width = 120;
             cmBox_fontMenu.HorizontalAlignment = HorizontalAlignment.Left;
             cmBox_fontMenu.VerticalAlignment = VerticalAlignment.Top;
-            cmBox_fontMenu.Margin = new Thickness(10, 160, 0, 0);
+            cmBox_fontMenu.Margin = new Thickness(10, 190, 0, 0);
 
             List<string> fonts = new List<string>();
             using (InstalledFontCollection fontsCollection = new InstalledFontCollection())
@@ -55,7 +79,7 @@ namespace w19_memecreator
             cmBox_fontSize.Width = 120;
             cmBox_fontSize.HorizontalAlignment = HorizontalAlignment.Left;
             cmBox_fontSize.VerticalAlignment = VerticalAlignment.Top;
-            cmBox_fontSize.Margin = new Thickness(160, 160, 0, 0);
+            cmBox_fontSize.Margin = new Thickness(160, 190, 0, 0);
             List<string> fontSizeList = new List<string>();
             for (int i = 4; i < 70; i++)
             {
@@ -63,6 +87,22 @@ namespace w19_memecreator
             }
             cmBox_fontSize.ItemsSource = fontSizeList;
             cmBox_fontSize.SelectedIndex = 0;
+
+
+            cmBox_fontColor.Height = 25;
+            cmBox_fontColor.Width = 120;
+            cmBox_fontColor.HorizontalAlignment = HorizontalAlignment.Left;
+            cmBox_fontColor.VerticalAlignment = VerticalAlignment.Top;
+            cmBox_fontColor.Margin = new Thickness(10, 250, 0, 0);
+            List<string> lst_colors = new List<string>();
+            Type type_brushes = typeof(Brushes);
+            var properties = type_brushes.GetProperties(BindingFlags.Static | BindingFlags.Public);
+            foreach (var prop in properties)
+            {
+                dict_lbl_colors[prop.Name] = (SolidColorBrush)prop.GetValue(null, null);
+            }
+            cmBox_fontColor.ItemsSource = dict_lbl_colors.Keys;
+            cmBox_fontColor.SelectedIndex = 0;
 
             btn_txtField_Apply.Height = 25;
             btn_txtField_Apply.Width = 90;
@@ -79,6 +119,7 @@ namespace w19_memecreator
             lbl_targetLbl.FontFamily = new FontFamily(cmBox_fontMenu.SelectedValue.ToString());
             lbl_targetLbl.FontSize = i_fontSize;
             lbl_targetLbl.Content = txtBox_txtField_Text.Text;
+            lbl_targetLbl.Foreground = dict_lbl_colors[cmBox_fontColor.SelectedValue.ToString()];
         }
 
         public void set_targetLbl(Label lbl_in)
@@ -104,10 +145,26 @@ namespace w19_memecreator
             return cmBox_fontMenu;
         }
 
+        public ComboBox get_cmBox_fontColor(String font)
+        {
+            cmBox_fontColor.SelectedValue = font;
+            return cmBox_fontColor;
+        }
+
         public ComboBox get_cmBox_fontSize(String fontSize)
         {
             cmBox_fontSize.SelectedValue = fontSize;
             return cmBox_fontSize;
+        }
+
+        public Label get_lbl_Text()
+        {
+            return lbl_Text;
+        }
+
+        public Label get_lbl_Color()
+        {
+            return lbl_Color;
         }
 
         //Event Handler

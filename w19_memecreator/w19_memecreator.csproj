@@ -153,5 +153,8 @@
   <ItemGroup>
     <Resource Include="MemeResources\mm.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="MemeResources\temp\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

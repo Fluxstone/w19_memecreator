@@ -31,15 +31,15 @@ namespace w19_memecreator {
         List<Grid> li_canvas_child_grid = new List<Grid>();
         List<Label> li_canvas_child_label = new List<Label>();
         int i_border_index_in_canvas = -1;
+        int i_effect_counter = -1;
 
-        List<SolidColorBrush> li_brushes = new List<SolidColorBrush>();
-        List<String> li_brushes_names = new List<String>();
+
+        Dictionary<string, SolidColorBrush> dict_brushes_str_scb = new Dictionary<string, SolidColorBrush>();
+        Dictionary<SolidColorBrush, string> dict_brushes_scb_str = new Dictionary<SolidColorBrush, string>();
 
         public MainWindow()
         {
             InitializeComponent();
-            //Der Befehl soll was auf das Bearbeitungsfenster malen
-            //canvas_Bearbeitungsfenster.AddHandler(Canvas.MouseLeftButtonDownEvent, new RoutedEventHandler(canvas_Bearbeitungsfenster_MouseLeftButtonDown));
 
             d_canvas_initial_height = canvas_Bearbeitungsfenster.Height;
             d_canvas_initial_width = canvas_Bearbeitungsfenster.Width;
@@ -49,19 +49,29 @@ namespace w19_memecreator {
             textWindow.setWindowProperties();
             pictureWindow.setWindowProperties();
             effectWindow.setWindowProperties();
-            
-            Type type_brushes = typeof(System.Windows.Media.Brushes);
+
+            // temp-Ordner leeren
+            DirectoryInfo di = new DirectoryInfo(Environment.CurrentDirectory + "\\..\\..\\MemeResources\\temp");
+            foreach (FileInfo file in di.GetFiles())
+            {
+                file.Delete();
+            }
+            foreach (DirectoryInfo dir in di.GetDirectories())
+            {
+                dir.Delete(true);
+            }
+
+            Type type_brushes = typeof(Brushes);
 
             // Get all static properties of Brushes
             var properties = type_brushes.GetProperties(BindingFlags.Static | BindingFlags.Public);
             
             foreach (var prop in properties)
             {
-                li_brushes_names.Add(prop.Name);
-                li_brushes.Add((SolidColorBrush)prop.GetValue(null, null));
+                dict_brushes_str_scb[prop.Name] = (SolidColorBrush)prop.GetValue(null, null);
+                dict_brushes_scb_str[(SolidColorBrush)prop.GetValue(null, null)] = prop.Name;
             }
-
-
+            
             // Default-Werte
             a_meme_measurements[0] = d_canvas_margin_left;
             a_meme_measurements[1] = d_canvas_margin_top; // Canvas obere Margin
@@ -203,7 +213,7 @@ namespace w19_memecreator {
                     lbl_meme_component_text.Content = data_text_component.content;
                     lbl_meme_component_text.FontFamily = data_text_component.font;
                     lbl_meme_component_text.FontSize = data_text_component.fontsize;
-                    lbl_meme_component_text.Foreground = li_brushes[li_brushes_names.IndexOf((string)data_text_component.color)];
+                    lbl_meme_component_text.Foreground = dict_brushes_str_scb[(string)data_text_component.color];
                     lbl_meme_component_text.HorizontalContentAlignment = HorizontalAlignment.Center;
                     lbl_meme_component_text.VerticalContentAlignment = VerticalAlignment.Center;
                     lbl_meme_component_text.Height = (double)data_text_component.height / 100.0 * d_max_size_Y;
@@ -348,7 +358,7 @@ namespace w19_memecreator {
         // Meme ohne Effekt im Canvas rendern und zuschneiden
         public CroppedBitmap cb_render_canvas()
         {
-            PopulateCanvas();
+            //PopulateCanvas();
 
             // Canvas rendern und Canvas-Maße um Margins beim Rendern erweitert, um Out-of-Bounds-Exception beim Zuschneiden zu verhindern
             RenderTargetBitmap rtb = new RenderTargetBitmap((int)canvas_Bearbeitungsfenster.RenderSize.Width + (int)a_meme_measurements[0], (int)canvas_Bearbeitungsfenster.RenderSize.Height + (int)a_meme_measurements[1], 96d, 96d, PixelFormats.Default);
@@ -411,13 +421,12 @@ namespace w19_memecreator {
             grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontSize(label.FontSize.ToString()));
             grid_Kontextfenster.Children.Add(textWindow.get_txtField_Text(label.Content.ToString()));
             grid_Kontextfenster.Children.Add(textWindow.get_btn_txtField_Apply());
+            grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontColor(dict_brushes_scb_str[(SolidColorBrush)label.Foreground]));
+            grid_Kontextfenster.Children.Add(textWindow.get_lbl_Color());
+            grid_Kontextfenster.Children.Add(textWindow.get_lbl_Text());
         }
 
-        public void drawEffectContext()
-        {
-            grid_Kontextfenster.Children.Add(effectWindow.get_btn_effectField_Brightness());
-            grid_Kontextfenster.Children.Add(effectWindow.get_btn_effectField_Apply());
-        }
+
 
         public void drawBildKontext(Image img_in)
         {
@@ -432,20 +441,48 @@ namespace w19_memecreator {
             pictureWindow.d_parent_grid_width = Double.Parse(tags[3]);
             grid_Kontextfenster.Children.Add(pictureWindow.get_wrapP_content());
         }
+        
+        // Canvas für Effekt rendern und zuschneiden
+        public CroppedBitmap cb_render_canvas_eff()
+        {
+            //PopulateCanvas();
+
+            // Canvas rendern und Canvas-Maße um Margins beim Rendern erweitert, um Out-of-Bounds-Exception beim Zuschneiden zu verhindern
+            RenderTargetBitmap rtb = new RenderTargetBitmap((int)canvas_Bearbeitungsfenster.RenderSize.Width + (int)a_meme_measurements[0], (int)canvas_Bearbeitungsfenster.RenderSize.Height + (int)a_meme_measurements[1], 96d, 96d, PixelFormats.Default);
+            rtb.Render(canvas_Bearbeitungsfenster);
+
+            // Render-Ergebnis auf Meme zuschneiden
+            return new CroppedBitmap(rtb, new Int32Rect((int)a_meme_measurements[0], (int)a_meme_measurements[1], (int)a_meme_measurements[2], (int)a_meme_measurements[3]));
+        }
 
         //Eventhandler
-        //Menuitem
-        public void addSprite_Click(object sender, RoutedEventArgs e)
+        private void event_effects_buttonClicked(object sender, RoutedEventArgs e)
         {
-            
-        }
 
-        public void canvas_Bearbeitungsfenster_MouseLeftButtonDown(object sender, RoutedEventArgs e)
-        {
-            /*Setzt die Mausposi auf den Klickpunkt und malt dann iwas hin (FÜR EFFEKTKONTEXT)
-             * effectWindow.set_Cursor(canvas_Bearbeitungsfenster);
-            effectWindow.drawSprite(canvas_Bearbeitungsfenster);*/
+            CroppedBitmap cb_crop = cb_render_canvas_eff();
+
+            BitmapEncoder pngEncoder = new PngBitmapEncoder();
+            pngEncoder.Frames.Add(BitmapFrame.Create(cb_crop));
+            i_effect_counter++;
+
+            FileStream stream = File.Create(Environment.CurrentDirectory + "\\..\\..\\MemeResources\\temp\\img_TargetImage" + i_effect_counter + ".jpg"); //usedbyanotherprocess exception
+            pngEncoder.Save(stream);
+            stream.Close();
+
+            effectWindow.set_canvas_target(canvas_Bearbeitungsfenster);
+            
+            grid_Kontextfenster.Children.Clear();
+            grid_Kontextfenster.Children.Add(effectWindow.get_btn_effectField_Apply());
+            grid_Kontextfenster.Children.Add(effectWindow.get_sld_Brightness());
+            grid_Kontextfenster.Children.Add(effectWindow.get_txtBox_Brightness());
+            grid_Kontextfenster.Children.Add(effectWindow.get_lbl_Brightness());
+            grid_Kontextfenster.Children.Add(effectWindow.get_cmBox_Filter());
+            grid_Kontextfenster.Children.Add(effectWindow.get_lbl_Filter());
+            grid_Kontextfenster.Children.Add(effectWindow.get_sld_Contrast());
+            grid_Kontextfenster.Children.Add(effectWindow.get_txtBox_Contrast());
+            grid_Kontextfenster.Children.Add(effectWindow.get_lbl_Contrast());
+
+            }
         }
-    }
 }
 

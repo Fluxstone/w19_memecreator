@@ -77,7 +77,7 @@ namespace w19_memecreator.Classes
             canvas_plus.Height = 100;
             canvas_plus.Width = 100;
 
-            SolidColorBrush brush = new SolidColorBrush(Color.FromRgb(22, 22, 22));
+            SolidColorBrush brush = new SolidColorBrush(Color.FromRgb(130, 130, 130));
 
             Rectangle rect = new Rectangle();
             rect.Stroke = new SolidColorBrush(Color.FromRgb(35, 35, 35));
@@ -102,7 +102,7 @@ namespace w19_memecreator.Classes
             line_hor.Y2 = 50;
 
             Ellipse circle = new Ellipse();
-            circle.StrokeThickness = 7;
+            circle.StrokeThickness = 5;
             circle.Stroke = brush;
             circle.Width = 80;
             circle.Height = 80;
