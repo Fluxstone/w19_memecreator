@@ -83,7 +83,7 @@
                     "font": "Arial",
                     "fontsize": 16,
                     "xPos": 50,
-                    "yPos": 80,
+                    "yPos": 0,
                     "width": 50,
                     "height": 20,
                     "color": "White"

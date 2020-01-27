@@ -30,7 +30,7 @@
         <Button x:Name="button_Save" Content="Save the meme" Margin="636,574,179,10" Click="SaveImage" Background="#232323" Foreground="#828282" FontSize="20" FontWeight="DemiBold" BorderBrush="#00707070" >
         </Button>
         <Button x:Name="button_Save_Effect" Content="Save with effect" Margin="820,574,10,10" Click="event_effects_buttonClicked" Background="#232323" Foreground="#828282" FontSize="20" FontWeight="DemiBold" BorderBrush="#00707070" />
-        <Button x:Name="button_Save_Effect_Copy" Content="Save with effect" Margin="820,574,10,10" Click="event_effects_buttonClicked" Background="#232323" Foreground="#828282" FontSize="20" FontWeight="DemiBold" BorderBrush="#00707070" />
+        <Button x:Name="button_Remove_Effect" Content="Remove effect" Margin="820,574,10,10" Click="event_remove_effects" Background="#232323" Foreground="#828282" FontSize="20" FontWeight="DemiBold" BorderBrush="#00707070" Visibility="Hidden"/>
 
         <!--Menu x:Name="menu_mainMenu" HorizontalAlignment="Left" Height="21" VerticalAlignment="Top" Width="116">
             <MenuItem Header="File">

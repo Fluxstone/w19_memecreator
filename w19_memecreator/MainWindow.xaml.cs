@@ -303,6 +303,14 @@ namespace w19_memecreator {
             }
         }
 
+        public void event_remove_effects(object sender, RoutedEventArgs e)
+        {
+            PopulateCanvas();
+            grid_Kontextfenster.Children.Clear();
+            button_Save_Effect.Visibility = Visibility.Visible;
+            button_Remove_Effect.Visibility = Visibility.Hidden;
+        }
+
         private void LabelInCanvasClicked(object sender, MouseButtonEventArgs e)
         {
             // Das angeklickte Label wird als globale Variable in der Klasse gespeichert, um es später direkt ansprechen und im Kontextfenster verändern zu können
@@ -458,6 +466,8 @@ namespace w19_memecreator {
         //Eventhandler
         private void event_effects_buttonClicked(object sender, RoutedEventArgs e)
         {
+            button_Remove_Effect.Visibility = Visibility.Visible;
+            button_Save_Effect.Visibility = Visibility.Hidden;
 
             CroppedBitmap cb_crop = cb_render_canvas_eff();
 

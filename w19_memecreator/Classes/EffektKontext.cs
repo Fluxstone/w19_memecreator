@@ -47,7 +47,7 @@ namespace w19_memecreator
 
 
         string pth_TargetFile = Environment.CurrentDirectory + "\\..\\..\\MemeResources\\temp\\img_TargetImage";
-        string pth_BufferFile = Environment.CurrentDirectory + "\\..\\..\\MemeResources\\temp\\img_BufferImage.jpeg";
+        string pth_BufferFile = Environment.CurrentDirectory + "\\..\\..\\MemeResources\\temp\\img_BufferImage";
 
         //Constructor
         public EffektKontext()
