@@ -13,7 +13,7 @@ using Cursors = System.Windows.Input.Cursors;
 using Image = System.Windows.Controls.Image;
 
 namespace w19_memecreator {
-    
+
     public partial class MainWindow : Window
     {
         TextKontext textWindow = new TextKontext();
@@ -26,6 +26,12 @@ namespace w19_memecreator {
         double d_canvas_margin_left;
         
         double[] a_meme_measurements = new double[4];
+
+      
+
+        Image img_current;
+
+
         bool bool_meme_is_selected = false;
 
         List<Grid> li_canvas_child_grid = new List<Grid>();
@@ -34,6 +40,7 @@ namespace w19_memecreator {
 
         List<SolidColorBrush> li_brushes = new List<SolidColorBrush>();
         List<String> li_brushes_names = new List<String>();
+
 
         public MainWindow()
         {
@@ -235,6 +242,20 @@ namespace w19_memecreator {
             bool_meme_is_selected = true;
         }
 
+        //Code Yannic
+        
+        public void drawTextContext(Label label)
+        {
+            textWindow.set_targetLbl(label);
+            grid_Kontextfenster.Children.Add(textWindow.get_btn_txtField_Apply());
+            grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontMenu(label.FontFamily.ToString()));
+            grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontSize(label.FontSize.ToString()));
+            grid_Kontextfenster.Children.Add(textWindow.get_txtField_Text(label.Content.ToString()));
+            grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontColor(label.Content.ToString()));
+            grid_Kontextfenster.Children.Add(textWindow.get_lbl_Color());
+            grid_Kontextfenster.Children.Add(textWindow.get_lbl_Text());
+        }
+
         public Image GenerateImageComponent(String source_uri, double d_img_height, double d_img_width, double d_canvas_width, int i_canvas_child_index)
         {
             Image img_meme_component = new Image();
@@ -245,6 +266,7 @@ namespace w19_memecreator {
 
             // Create source
             BitmapImage bmp_meme_component_source = new BitmapImage();
+
 
             // BitmapImage.UriSource must be in a BeginInit/EndInit block
             try
@@ -279,6 +301,34 @@ namespace w19_memecreator {
             return img_meme_component;
         }
 
+        //Eventhandler
+
+        private void drawEffectContext(object sender, RoutedEventArgs e)
+        {
+            //BufferImage generieren und in Temp speichern
+            RenderTargetBitmap bmp = new RenderTargetBitmap((int)canvas_Bearbeitungsfenster.ActualWidth, (int)canvas_Bearbeitungsfenster.ActualHeight, 100.0, 100.0, PixelFormats.Default);
+            bmp.Render(canvas_Bearbeitungsfenster);
+
+            PngBitmapEncoder encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(bmp));
+
+            System.IO.FileStream stream = System.IO.File.Create(Environment.CurrentDirectory + "\\..\\..\\MemeResources\\temp\\img_TargetImage.jpeg"); //usedbyanotherprocess exception
+            encoder.Save(stream);
+            stream.Close();
+
+            effectWindow.set_canvas_target(canvas_Bearbeitungsfenster);
+
+            grid_Kontextfenster.Children.Clear();
+            grid_Kontextfenster.Children.Add(effectWindow.get_btn_effectField_Apply());
+            grid_Kontextfenster.Children.Add(effectWindow.get_sld_Brightness());
+            grid_Kontextfenster.Children.Add(effectWindow.get_txtBox_Brightness());
+            grid_Kontextfenster.Children.Add(effectWindow.get_lbl_Brightness());
+            grid_Kontextfenster.Children.Add(effectWindow.get_cmBox_Filter());
+            grid_Kontextfenster.Children.Add(effectWindow.get_lbl_Filter());
+            grid_Kontextfenster.Children.Add(effectWindow.get_sld_Contrast());
+            grid_Kontextfenster.Children.Add(effectWindow.get_txtBox_Contrast());
+            grid_Kontextfenster.Children.Add(effectWindow.get_lbl_Contrast());
+
         public void PopulateCanvas()
         {
             canvas_Bearbeitungsfenster.Children.Clear();
@@ -286,6 +336,7 @@ namespace w19_memecreator {
             {
                 canvas_Bearbeitungsfenster.Children.Add(grid_canvas_child);
             }
+
 
             foreach (Label lbl_canvas_child in li_canvas_child_label)
             {

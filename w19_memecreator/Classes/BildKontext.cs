@@ -133,12 +133,12 @@ namespace w19_memecreator.Classes
             img_targetImg = img_in;
         }
         //Event Handler
-        public void imgClicked_MouseDownEvent(object sender, RoutedEventArgs e)
+        private void imgClicked_MouseDownEvent(object sender, RoutedEventArgs e)
         {
             generatePicture((Image)sender);
         }
 
-        public void Icon_Add_MouseDownEvent(object sender, RoutedEventArgs e)
+        private void Icon_Add_MouseDownEvent(object sender, RoutedEventArgs e)
         {
             try
             {

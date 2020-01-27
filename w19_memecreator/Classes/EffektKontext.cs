@@ -1,4 +1,5 @@
-﻿//using ImageProcessor;
+﻿using ImageProcessor;
+using ImageProcessor.Imaging.Filters.Photo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,79 +7,310 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
+
+using System.IO;
+
 
 namespace w19_memecreator
 {
     class EffektKontext
     {
         //Variables
-        //ImageFactory imgFactory = new ImageFactory();
-        const string path_lmao_emoji = "C:/Users/yanni/Source/Repos/Fluxstone/w19_memecreator/w19_memecreator/Resources/4506313_0.jpg";
-
-        Point cursor = new Point(0, 0);
-        Button btn_effectField_Apply = new Button();
-        Button btn_effectField_Brightness = new Button();
-
-        Image img_LMAO_Emoj = new Image();
+        Button btn_effectField_Preview = new Button();
         
+        Slider sld_Brightness = new Slider();
+        TextBox txtBox_Brightness = new TextBox();
+        Label lbl_Brightness = new Label();
+
+        Slider sld_Contrast = new Slider();
+        TextBox txtBox_Contrast = new TextBox();
+        Label lbl_Contrast = new Label();
+
+        ComboBox cmBox_Filter = new ComboBox();
+        Label lbl_Filter = new Label();
+        String[] mat_Filters = {"BlackWhite", "Comic", "Gotham", "GreyScale", "HiSatch", "Invert", "Lomograph", "LoSatch", "Polaroid", "Sepia"};
+
+        Image target_img;
+        Canvas canvas_target;
+        ImageFactory imgFac_Main = new ImageFactory();
+        
+        
+        
+        
+
+        string pth_TargetFile = Environment.CurrentDirectory + "\\..\\..\\MemeResources\\temp\\img_TargetImage.jpeg";
+        string pth_BufferFile = Environment.CurrentDirectory + "\\..\\..\\MemeResources\\temp\\img_BufferImage.jpeg";
+
         //Constructor
         public EffektKontext()
         {
-            //img_LMAO_Emoj.Source = new BitmapImage(new Uri(path_lmao_emoji));
-        }
 
+        }
+        //Functions
         public void setWindowProperties()
         {
-            btn_effectField_Apply.Height = 25;
-            btn_effectField_Apply.Width = 90;
-            btn_effectField_Apply.Content = "Apply Changes";
-            btn_effectField_Apply.HorizontalAlignment = HorizontalAlignment.Left;
-            btn_effectField_Apply.VerticalAlignment = VerticalAlignment.Top;
-            btn_effectField_Apply.Margin = new Thickness(10, 130, 0, 0);
+            btn_effectField_Preview.Height = 25;
+            btn_effectField_Preview.Width = 100;
+            btn_effectField_Preview.Content = "Preview Changes";
+            btn_effectField_Preview.HorizontalAlignment = HorizontalAlignment.Left;
+            btn_effectField_Preview.VerticalAlignment = VerticalAlignment.Top;
+            btn_effectField_Preview.Margin = new Thickness(10, 10, 0, 0);
+            btn_effectField_Preview.AddHandler(Button.ClickEvent, new RoutedEventHandler(btn_effectField_Preview_Click));
 
-            btn_effectField_Brightness.Height = 25;
-            btn_effectField_Brightness.Width = 90;
-            btn_effectField_Brightness.Content = "Brightness";
-            btn_effectField_Brightness.HorizontalAlignment = HorizontalAlignment.Left;
-            btn_effectField_Brightness.VerticalAlignment = VerticalAlignment.Top;
-            btn_effectField_Brightness.Margin = new Thickness(10, 170, 0, 0);
+            sld_Brightness.Height = 20;
+            sld_Brightness.Width = 200;
+            sld_Brightness.HorizontalAlignment = HorizontalAlignment.Left;
+            sld_Brightness.VerticalAlignment = VerticalAlignment.Top;
+            sld_Brightness.Margin = new Thickness(10, 70, 0, 0);
+            sld_Brightness.TickFrequency = 1;
+            sld_Brightness.TickPlacement = System.Windows.Controls.Primitives.TickPlacement.BottomRight;
+            sld_Brightness.IsSnapToTickEnabled = true;
+            sld_Brightness.Maximum = 100;
+            sld_Brightness.AddHandler(Slider.ValueChangedEvent, new RoutedEventHandler(sliderValueChanged_event_Brightness));
+            sld_Brightness.Value = 0;
+
+            txtBox_Brightness.Height = 20;
+            txtBox_Brightness.Width = 60;
+            txtBox_Brightness.HorizontalAlignment = HorizontalAlignment.Left;
+            txtBox_Brightness.VerticalAlignment = VerticalAlignment.Top;
+            txtBox_Brightness.Margin = new Thickness(230, 70, 0, 0);
+            txtBox_Brightness.TextWrapping = TextWrapping.Wrap;
+            txtBox_Brightness.AddHandler(TextBox.TextChangedEvent, new RoutedEventHandler(textBoxValueChanged_event_Brightness));
+
+            lbl_Brightness.Height = 30;
+            lbl_Brightness.Width = 80;
+            lbl_Brightness.HorizontalAlignment = HorizontalAlignment.Left;
+            lbl_Brightness.VerticalAlignment = VerticalAlignment.Top;
+            lbl_Brightness.Margin = new Thickness(10, 40, 0, 0);
+            lbl_Brightness.Content = "Brightness";
+            lbl_Brightness.Foreground = Brushes.White;
+
+            sld_Contrast.Height = 20;
+            sld_Contrast.Width = 200;
+            sld_Contrast.HorizontalAlignment = HorizontalAlignment.Left;
+            sld_Contrast.VerticalAlignment = VerticalAlignment.Top;
+            sld_Contrast.Margin = new Thickness(10, 120, 0, 0);
+            sld_Contrast.TickFrequency = 1;
+            sld_Contrast.TickPlacement = System.Windows.Controls.Primitives.TickPlacement.BottomRight;
+            sld_Contrast.IsSnapToTickEnabled = true;
+            sld_Contrast.Maximum = 100;
+            sld_Contrast.AddHandler(Slider.ValueChangedEvent, new RoutedEventHandler(sliderValueChanged_event_Quality));
+            sld_Contrast.Value = 0;
+
+            txtBox_Contrast.Height = 20;
+            txtBox_Contrast.Width = 60;
+            txtBox_Contrast.HorizontalAlignment = HorizontalAlignment.Left;
+            txtBox_Contrast.VerticalAlignment = VerticalAlignment.Top;
+            txtBox_Contrast.Margin = new Thickness(230, 120, 0, 0);
+            txtBox_Contrast.TextWrapping = TextWrapping.Wrap;
+            txtBox_Contrast.AddHandler(TextBox.TextChangedEvent, new RoutedEventHandler(textBoxValueChanged_event_Quality));
+
+            lbl_Contrast.Height = 30;
+            lbl_Contrast.Width = 80;
+            lbl_Contrast.HorizontalAlignment = HorizontalAlignment.Left;
+            lbl_Contrast.VerticalAlignment = VerticalAlignment.Top;
+            lbl_Contrast.Margin = new Thickness(10, 90, 0, 0);
+            lbl_Contrast.Content = "Quality";
+            lbl_Contrast.Foreground = Brushes.White;
+
+            cmBox_Filter.Height = 30;
+            cmBox_Filter.Width = 150;
+            cmBox_Filter.HorizontalAlignment = HorizontalAlignment.Left;
+            cmBox_Filter.VerticalAlignment = VerticalAlignment.Top;
+            cmBox_Filter.Margin = new Thickness(10, 170, 0, 0);
+            cmBox_Filter.ItemsSource = mat_Filters;
+            cmBox_Filter.SelectedItem = 0;
+
+            lbl_Filter.Height = 30;
+            lbl_Filter.Width = 80;
+            lbl_Filter.HorizontalAlignment = HorizontalAlignment.Left;
+            lbl_Filter.VerticalAlignment = VerticalAlignment.Top;
+            lbl_Filter.Margin = new Thickness(10, 140, 0, 0);
+            lbl_Filter.Content = "Filter";
+            lbl_Filter.Foreground = Brushes.White;
         }
-       
-        public void drawSprite(Canvas targetCanvas)
+
+        public void generateEffect(Image img_in) 
         {
-            targetCanvas.Children.Add(img_LMAO_Emoj);
-            Canvas.SetLeft(get_img_LMAO_Emoj(), cursor.X);
-            Canvas.SetTop(get_img_LMAO_Emoj(), cursor.Y);
+            byte[] phBytes = File.ReadAllBytes(pth_TargetFile);
+
+            int imgFac_Brightness = (int)sld_Brightness.Value;
+            int imgFac_Contrast = (int)sld_Contrast.Value;
+
+
+
+
+
+
+
+
+            //Open the File and apply filters
+            using (MemoryStream inStream = new MemoryStream(phBytes))
+            {
+                using (MemoryStream outStream = new MemoryStream())
+                {
+                    // Initialize the ImageFactory using the overload to preserve EXIF metadata.
+                    using (ImageFactory imageFactory = new ImageFactory(preserveExifData: true))
+                    {
+                        // Load, resize, set the format and quality and save an image.
+                        imageFactory.Load(inStream)
+                                    .Brightness(imgFac_Brightness)
+                                    .Contrast(imgFac_Contrast);
+
+                        if ((string)cmBox_Filter.SelectedItem == "BlackWhite")
+                        {
+                            imageFactory.Filter(MatrixFilters.BlackWhite);
+                        }
+                        else if ((string)cmBox_Filter.SelectedItem == "Comic")
+                        {
+                            imageFactory.Filter(MatrixFilters.Comic);
+                        }
+                        else if ((string)cmBox_Filter.SelectedItem == "Gotham")
+                        {
+                            imageFactory.Filter(MatrixFilters.Gotham);
+                        }
+                        else if ((string)cmBox_Filter.SelectedItem == "GreyScale")
+                        {
+                            imageFactory.Filter(MatrixFilters.GreyScale);
+                        }
+                        else if ((string)cmBox_Filter.SelectedItem == "HiSatch")
+                        {
+                            imageFactory.Filter(MatrixFilters.HiSatch);
+                        }
+                        else if ((string)cmBox_Filter.SelectedItem == "Invert")
+                        {
+                            imageFactory.Filter(MatrixFilters.Invert);
+                        }
+                        else if ((string)cmBox_Filter.SelectedItem == "Lomograph")
+                        {
+                            imageFactory.Filter(MatrixFilters.Lomograph);
+                        }
+                        else if ((string)cmBox_Filter.SelectedItem == "LoSatch")
+                        {
+                            imageFactory.Filter(MatrixFilters.LoSatch);
+                        }
+                        else if ((string)cmBox_Filter.SelectedItem == "Polaroid")
+                        {
+                            imageFactory.Filter(MatrixFilters.Polaroid);
+                        }
+                        else if ((string)cmBox_Filter.SelectedItem == "Sepia")
+                        {
+                            imageFactory.Filter(MatrixFilters.Sepia);
+                        }
+                        else
+                        {
+                            Console.WriteLine("No Filter selected");
+                        }
+
+                        imageFactory.Save(outStream);
+                    }
+                    // Do something with the stream.
+                    System.Drawing.Bitmap btm = new System.Drawing.Bitmap(outStream);
+                    btm.Save(pth_BufferFile);
+                }
+            }
+
+            //updateCanvasPicture(img_in); --GDI Error here
+
         }
 
+        private void updateCanvasPicture(Image img_in)
+        {
+            img_in.Source = null;
+            img_in.Source = new BitmapImage(new Uri(pth_BufferFile));
+            canvas_target.Children.Add(img_in);  //Provisorischer "Preview"
+        }
+
+        private int check_txtBoxValidNumber(string str)
+        {
+            //sld_Brightness.Value = Convert.ToInt32(txtBox_Brightness.Text);
+            int i = 0;
+            try
+            {
+                i = Convert.ToInt32(str);
+                return i;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Only integers between 0 and 100 are allowed!");
+                return 0;
+            }
+        }
         //Getter und Setter
-        public Point get_Cursor()
-        {
-            return cursor;
-        }
-
-        public void set_Cursor(Canvas canvas_in)
-        {
-            Point p = Mouse.GetPosition(canvas_in);
-            cursor = p;
-        }
-
         public Button get_btn_effectField_Apply()
         {
-            return btn_effectField_Apply;
+            return btn_effectField_Preview;
         }
-
-        public Button get_btn_effectField_Brightness()
+        public Slider get_sld_Brightness()
         {
-            return btn_effectField_Brightness;
+            return sld_Brightness;
         }
-
-        public Image get_img_LMAO_Emoj()
+        public TextBox get_txtBox_Brightness()
         {
-            return img_LMAO_Emoj;
+            return txtBox_Brightness;
+        }
+        public Label get_lbl_Brightness()
+        {
+            return lbl_Brightness;
+        }
+        public ComboBox get_cmBox_Filter()
+        {
+            return cmBox_Filter;
+        }
+        public Label get_lbl_Filter()
+        {
+            return lbl_Filter;
+        }
+        public Slider get_sld_Contrast()
+        {
+            return sld_Contrast;
+        }
+        public TextBox get_txtBox_Contrast()
+        {
+            return txtBox_Contrast;
+        }
+        public Label get_lbl_Contrast()
+        {
+            return lbl_Contrast;
+        }
+        public void set_target_img(Image img_in)
+        {
+            target_img = img_in;
+        }
+        public void set_canvas_target(Canvas canvas_in)
+        {
+            canvas_target = canvas_in;
         }
         //Event Handler
+        private void btn_effectField_Preview_Click(object sender, RoutedEventArgs e)
+        {
+            Uri uri_ImgIn = new Uri(pth_TargetFile);
+            Image img_in = new Image();
+            img_in.Source = new BitmapImage(uri_ImgIn);
+            
+            generateEffect(img_in);
+        }
+        //---------------------------------
+        private void sliderValueChanged_event_Brightness(object sender, RoutedEventArgs e)
+        {
+            txtBox_Brightness.Text = sld_Brightness.Value.ToString();
+        }
+        private void sliderValueChanged_event_Quality(object sender, RoutedEventArgs e)
+        {
+            txtBox_Contrast.Text = sld_Contrast.Value.ToString();
+        }
+        private void textBoxValueChanged_event_Brightness(object sender, RoutedEventArgs e)
+        {
+            sld_Brightness.Value = check_txtBoxValidNumber(txtBox_Brightness.Text);
+        }
+        private void textBoxValueChanged_event_Quality(object sender, RoutedEventArgs e)
+        {
+            sld_Contrast.Value = check_txtBoxValidNumber(txtBox_Contrast.Text);
+        }
+
     }
 }
