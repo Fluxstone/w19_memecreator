@@ -11,12 +11,15 @@ namespace w19_memecreator
     {
         //Variables
         TextBox txtBox_txtField_Text = new TextBox();
-        Button btn_txtField_Apply = new Button();
         ComboBox cmBox_fontMenu = new ComboBox();
         ComboBox cmBox_fontSize = new ComboBox();
+
         ComboBox cmBox_fontColor = new ComboBox();
         Label lbl_Text = new Label();
         Label lbl_Color = new Label();
+
+        Button btn_txtField_Apply = new Button();
+
         Label lbl_targetLbl;
 
         //Constructor
@@ -52,14 +55,6 @@ namespace w19_memecreator
             txtBox_txtField_Text.AcceptsReturn = true;
             txtBox_txtField_Text.Margin = new Thickness(10, 20, 0, 0);
 
-            btn_txtField_Apply.Height = 25;
-            btn_txtField_Apply.Width = 90;
-            btn_txtField_Apply.Content = "Apply Changes";
-            btn_txtField_Apply.HorizontalAlignment = HorizontalAlignment.Left;
-            btn_txtField_Apply.VerticalAlignment = VerticalAlignment.Top;
-            btn_txtField_Apply.Margin = new Thickness(10, 130, 0, 0);
-            btn_txtField_Apply.AddHandler(Button.ClickEvent, new RoutedEventHandler(btn_txtField_Apply_Click));
-
             cmBox_fontMenu.Height = 25;
             cmBox_fontMenu.Width = 120;
             cmBox_fontMenu.HorizontalAlignment = HorizontalAlignment.Left;
@@ -91,6 +86,7 @@ namespace w19_memecreator
             cmBox_fontSize.ItemsSource = fontSizeList;
             cmBox_fontSize.SelectedIndex = 0;
 
+
             cmBox_fontColor.Height = 25;
             cmBox_fontColor.Width = 120;
             cmBox_fontColor.HorizontalAlignment = HorizontalAlignment.Left;
@@ -103,6 +99,15 @@ namespace w19_memecreator
             }
             cmBox_fontColor.ItemsSource = lst_colors;
             cmBox_fontColor.SelectedIndex = 0; //DEBUG: This isnt working
+
+            btn_txtField_Apply.Height = 25;
+            btn_txtField_Apply.Width = 90;
+            btn_txtField_Apply.Content = "Apply Changes";
+            btn_txtField_Apply.HorizontalAlignment = HorizontalAlignment.Left;
+            btn_txtField_Apply.VerticalAlignment = VerticalAlignment.Top;
+            btn_txtField_Apply.Margin = new Thickness(10, 130, 0, 0);
+            btn_txtField_Apply.AddHandler(Button.ClickEvent, new RoutedEventHandler(btn_txtField_Apply_Click));
+
         }
 
         public void generateLabel()
