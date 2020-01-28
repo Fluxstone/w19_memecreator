@@ -37,6 +37,7 @@ namespace w19_memecreator
         Image target_img;
         Canvas canvas_target;
         ImageFactory imgFac_Main = new ImageFactory();
+        SolidColorBrush brush_bright = new SolidColorBrush(Color.FromRgb(130, 130, 130));
 
         int i_effect_counter = -1;
         int i_buffer_counter = -1;
@@ -57,19 +58,19 @@ namespace w19_memecreator
         //Functions
         public void setWindowProperties()
         {
-            btn_effectField_Preview.Height = 25;
-            btn_effectField_Preview.Width = 100;
-            btn_effectField_Preview.Content = "Preview Changes";
-            btn_effectField_Preview.HorizontalAlignment = HorizontalAlignment.Left;
-            btn_effectField_Preview.VerticalAlignment = VerticalAlignment.Top;
-            btn_effectField_Preview.Margin = new Thickness(10, 10, 0, 0);
-            btn_effectField_Preview.AddHandler(Button.ClickEvent, new RoutedEventHandler(btn_effectField_Preview_Click));
+            lbl_Brightness.Height = 30;
+            lbl_Brightness.Width = 80;
+            lbl_Brightness.HorizontalAlignment = HorizontalAlignment.Left;
+            lbl_Brightness.VerticalAlignment = VerticalAlignment.Top;
+            lbl_Brightness.Margin = new Thickness(10, 10, 0, 0);
+            lbl_Brightness.Content = "Brightness";
+            lbl_Brightness.Foreground = brush_bright;
 
             sld_Brightness.Height = 20;
             sld_Brightness.Width = 200;
             sld_Brightness.HorizontalAlignment = HorizontalAlignment.Left;
             sld_Brightness.VerticalAlignment = VerticalAlignment.Top;
-            sld_Brightness.Margin = new Thickness(10, 70, 0, 0);
+            sld_Brightness.Margin = new Thickness(10, 40, 0, 0);
             sld_Brightness.TickFrequency = 1;
             sld_Brightness.TickPlacement = TickPlacement.BottomRight;
             sld_Brightness.IsSnapToTickEnabled = true;
@@ -81,23 +82,25 @@ namespace w19_memecreator
             txtBox_Brightness.Width = 60;
             txtBox_Brightness.HorizontalAlignment = HorizontalAlignment.Left;
             txtBox_Brightness.VerticalAlignment = VerticalAlignment.Top;
-            txtBox_Brightness.Margin = new Thickness(230, 70, 0, 0);
+            txtBox_Brightness.Margin = new Thickness(230, 40, 0, 0);
             txtBox_Brightness.TextWrapping = TextWrapping.Wrap;
+            // TODO:
+            txtBox_Brightness.IsEnabled = false;
             txtBox_Brightness.AddHandler(TextBox.TextChangedEvent, new RoutedEventHandler(textBoxValueChanged_event_Brightness));
-
-            lbl_Brightness.Height = 30;
-            lbl_Brightness.Width = 80;
-            lbl_Brightness.HorizontalAlignment = HorizontalAlignment.Left;
-            lbl_Brightness.VerticalAlignment = VerticalAlignment.Top;
-            lbl_Brightness.Margin = new Thickness(10, 40, 0, 0);
-            lbl_Brightness.Content = "Brightness";
-            lbl_Brightness.Foreground = Brushes.White;
+            
+            lbl_Contrast.Height = 30;
+            lbl_Contrast.Width = 80;
+            lbl_Contrast.HorizontalAlignment = HorizontalAlignment.Left;
+            lbl_Contrast.VerticalAlignment = VerticalAlignment.Top;
+            lbl_Contrast.Margin = new Thickness(10, 70, 0, 0);
+            lbl_Contrast.Content = "Contrast";
+            lbl_Contrast.Foreground = brush_bright;
 
             sld_Contrast.Height = 20;
             sld_Contrast.Width = 200;
             sld_Contrast.HorizontalAlignment = HorizontalAlignment.Left;
             sld_Contrast.VerticalAlignment = VerticalAlignment.Top;
-            sld_Contrast.Margin = new Thickness(10, 120, 0, 0);
+            sld_Contrast.Margin = new Thickness(10, 100, 0, 0);
             sld_Contrast.TickFrequency = 1;
             sld_Contrast.TickPlacement = TickPlacement.BottomRight;
             sld_Contrast.IsSnapToTickEnabled = true;
@@ -109,33 +112,38 @@ namespace w19_memecreator
             txtBox_Contrast.Width = 60;
             txtBox_Contrast.HorizontalAlignment = HorizontalAlignment.Left;
             txtBox_Contrast.VerticalAlignment = VerticalAlignment.Top;
-            txtBox_Contrast.Margin = new Thickness(230, 120, 0, 0);
+            txtBox_Contrast.Margin = new Thickness(230, 100, 0, 0);
             txtBox_Contrast.TextWrapping = TextWrapping.Wrap;
+            // TODO:
+            txtBox_Contrast.IsEnabled = false;
             txtBox_Contrast.AddHandler(TextBox.TextChangedEvent, new RoutedEventHandler(textBoxValueChanged_event_Quality));
 
-            lbl_Contrast.Height = 30;
-            lbl_Contrast.Width = 80;
-            lbl_Contrast.HorizontalAlignment = HorizontalAlignment.Left;
-            lbl_Contrast.VerticalAlignment = VerticalAlignment.Top;
-            lbl_Contrast.Margin = new Thickness(10, 90, 0, 0);
-            lbl_Contrast.Content = "Contrast";
-            lbl_Contrast.Foreground = Brushes.White;
+            lbl_Filter.Height = 30;
+            lbl_Filter.Width = 150;
+            lbl_Filter.HorizontalAlignment = HorizontalAlignment.Left;
+            lbl_Filter.VerticalAlignment = VerticalAlignment.Top;
+            lbl_Filter.Margin = new Thickness(10, 130, 0, 0);
+            lbl_Filter.Content = "Additional filter";
+            lbl_Filter.Foreground = brush_bright;
 
             cmBox_Filter.Height = 30;
             cmBox_Filter.Width = 150;
             cmBox_Filter.HorizontalAlignment = HorizontalAlignment.Left;
             cmBox_Filter.VerticalAlignment = VerticalAlignment.Top;
-            cmBox_Filter.Margin = new Thickness(10, 170, 0, 0);
+            cmBox_Filter.Margin = new Thickness(10, 160, 0, 0);
             cmBox_Filter.ItemsSource = mat_Filters;
             cmBox_Filter.SelectedItem = 1;
 
-            lbl_Filter.Height = 30;
-            lbl_Filter.Width = 80;
-            lbl_Filter.HorizontalAlignment = HorizontalAlignment.Left;
-            lbl_Filter.VerticalAlignment = VerticalAlignment.Top;
-            lbl_Filter.Margin = new Thickness(10, 140, 0, 0);
-            lbl_Filter.Content = "Filter";
-            lbl_Filter.Foreground = Brushes.White;
+            btn_effectField_Preview.Height = 50;
+            btn_effectField_Preview.Width = 140;
+            btn_effectField_Preview.Content = "Apply Changes";
+            btn_effectField_Preview.HorizontalAlignment = HorizontalAlignment.Left;
+            btn_effectField_Preview.VerticalAlignment = VerticalAlignment.Top;
+            btn_effectField_Preview.Margin = new Thickness(10, 200, 0, 0);
+            btn_effectField_Preview.Background = new SolidColorBrush(Color.FromRgb(22, 22, 22));
+            btn_effectField_Preview.Foreground = brush_bright;
+            btn_effectField_Preview.FontSize = 16;
+            btn_effectField_Preview.AddHandler(Button.ClickEvent, new RoutedEventHandler(btn_effectField_Preview_Click));
         }
 
         public void generateEffect(Image img_in)

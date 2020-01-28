@@ -25,7 +25,7 @@
                 {
                     "content": "Windows",
                     "font": "Arial",
-                    "fontsize": 16,
+                    "fontsize": 20,
                     "xPos": 50,
                     "yPos": 0,
                     "width": 50,
@@ -35,7 +35,7 @@
                 {
                     "content": "Unix",
                     "font": "Arial",
-                    "fontsize": 16,
+                    "fontsize": 20,
                     "xPos": 50,
                     "yPos": 50,
                     "width": 50,
@@ -70,8 +70,8 @@
             "text": [
                 {
                     "content": "You're not a pidgeon!",
-                    "font": "Arial",
-                    "fontsize": 16,
+                    "font": "impact",
+                    "fontsize": 20,
                     "xPos": 0,
                     "yPos": 80,
                     "width": 50,
@@ -80,8 +80,8 @@
                 },
                 {
                     "content": "I'm clearly a cat, Susan.",
-                    "font": "Arial",
-                    "fontsize": 16,
+                    "font": "impact",
+                    "fontsize": 20,
                     "xPos": 50,
                     "yPos": 0,
                     "width": 50,

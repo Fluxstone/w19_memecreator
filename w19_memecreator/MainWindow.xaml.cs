@@ -27,6 +27,7 @@ namespace w19_memecreator {
         
         double[] a_meme_measurements = new double[4];
         bool bool_meme_is_selected = false;
+        bool bool_filter_is_added = false;
 
         List<Grid> li_canvas_child_grid = new List<Grid>();
         List<Label> li_canvas_child_label = new List<Label>();
@@ -136,6 +137,7 @@ namespace w19_memecreator {
             grid_Kontextfenster.Children.Clear();
             li_canvas_child_grid.Clear();
             li_canvas_child_label.Clear();
+            no_more_filter();
 
             canvas_Bearbeitungsfenster.Background = Brushes.White;
 
@@ -303,12 +305,18 @@ namespace w19_memecreator {
             }
         }
 
-        public void event_remove_effects(object sender, RoutedEventArgs e)
+        public void event_remove_filter_button_clicked(object sender, RoutedEventArgs e)
         {
             PopulateCanvas();
             grid_Kontextfenster.Children.Clear();
-            button_Save_Effect.Visibility = Visibility.Visible;
-            button_Remove_Effect.Visibility = Visibility.Hidden;
+            no_more_filter();
+        }
+
+        private void no_more_filter()
+        {
+            button_Add_Filter.Visibility = Visibility.Visible;
+            button_Remove_Filter.Visibility = Visibility.Hidden;
+            bool_filter_is_added = false;
         }
 
         private void LabelInCanvasClicked(object sender, MouseButtonEventArgs e)
@@ -320,6 +328,7 @@ namespace w19_memecreator {
             grid_Kontextfenster.Children.Clear();
             drawTextContext(lbl_clicked);
             DrawBorder(lbl_clicked);
+            no_more_filter();
         }
 
         private void ImageInCanvasClicked(object sender, MouseButtonEventArgs e)
@@ -328,6 +337,7 @@ namespace w19_memecreator {
             grid_Kontextfenster.Children.Clear();
             drawBildKontext(img_clicked);
             DrawBorder(img_clicked);
+            no_more_filter();
         }
 
         // Rahmen malen, wenn Bild angeklickt
@@ -366,13 +376,15 @@ namespace w19_memecreator {
         // Meme ohne Effekt im Canvas rendern und zuschneiden
         public CroppedBitmap cb_render_canvas()
         {
-            //PopulateCanvas();
+            // eventuellen Rahmen vorm Rendern entfernen, falls nicht schon ein Filter angewendet wurde
+            if (!bool_filter_is_added)
+                PopulateCanvas();
 
             // Canvas rendern und Canvas-Maße um Margins beim Rendern erweitert, um Out-of-Bounds-Exception beim Zuschneiden zu verhindern
             RenderTargetBitmap rtb = new RenderTargetBitmap((int)canvas_Bearbeitungsfenster.RenderSize.Width + (int)a_meme_measurements[0], (int)canvas_Bearbeitungsfenster.RenderSize.Height + (int)a_meme_measurements[1], 96d, 96d, PixelFormats.Default);
             rtb.Render(canvas_Bearbeitungsfenster);
 
-            // Render-Ergebnis auf Meme zuschneiden
+            // Render-Ergebnis auf Meme zuschneiden und kleine Ränder außen entfernen (+-2)
             return new CroppedBitmap(rtb, new Int32Rect((int)a_meme_measurements[0] + 2, (int)a_meme_measurements[1] + 2, (int)a_meme_measurements[2] - 2, (int)a_meme_measurements[3] - 2));
         }
 
@@ -431,7 +443,9 @@ namespace w19_memecreator {
             grid_Kontextfenster.Children.Add(textWindow.get_btn_txtField_Apply());
             grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontColor(dict_brushes_scb_str[(SolidColorBrush)label.Foreground]));
             grid_Kontextfenster.Children.Add(textWindow.get_lbl_Color());
-            grid_Kontextfenster.Children.Add(textWindow.get_lbl_Text());
+            grid_Kontextfenster.Children.Add(textWindow.get_lbl_Font_Family());
+            grid_Kontextfenster.Children.Add(textWindow.get_lbl_Font_Size());
+            grid_Kontextfenster.Children.Add(textWindow.get_lbl_Content());
         }
 
 
@@ -451,9 +465,9 @@ namespace w19_memecreator {
         }
         
         // Canvas für Effekt rendern und zuschneiden
-        public CroppedBitmap cb_render_canvas_eff()
+        public CroppedBitmap cb_render_canvas_filter()
         {
-            //PopulateCanvas();
+            PopulateCanvas();
 
             // Canvas rendern und Canvas-Maße um Margins beim Rendern erweitert, um Out-of-Bounds-Exception beim Zuschneiden zu verhindern
             RenderTargetBitmap rtb = new RenderTargetBitmap((int)canvas_Bearbeitungsfenster.RenderSize.Width + (int)a_meme_measurements[0], (int)canvas_Bearbeitungsfenster.RenderSize.Height + (int)a_meme_measurements[1], 96d, 96d, PixelFormats.Default);
@@ -464,35 +478,42 @@ namespace w19_memecreator {
         }
 
         //Eventhandler
-        private void event_effects_buttonClicked(object sender, RoutedEventArgs e)
+        private void event_add_filter_button_clicked(object sender, RoutedEventArgs e)
         {
-            button_Remove_Effect.Visibility = Visibility.Visible;
-            button_Save_Effect.Visibility = Visibility.Hidden;
+            if (bool_meme_is_selected)
+            {
+                bool_filter_is_added = true;
+                button_Remove_Filter.Visibility = Visibility.Visible;
+                button_Add_Filter.Visibility = Visibility.Hidden;
 
-            CroppedBitmap cb_crop = cb_render_canvas_eff();
+                CroppedBitmap cb_crop = cb_render_canvas_filter();
 
-            BitmapEncoder pngEncoder = new PngBitmapEncoder();
-            pngEncoder.Frames.Add(BitmapFrame.Create(cb_crop));
-            i_effect_counter++;
+                BitmapEncoder pngEncoder = new PngBitmapEncoder();
+                pngEncoder.Frames.Add(BitmapFrame.Create(cb_crop));
+                i_effect_counter++;
 
-            FileStream stream = File.Create(Environment.CurrentDirectory + "\\..\\..\\MemeResources\\temp\\img_TargetImage" + i_effect_counter + ".jpg"); //usedbyanotherprocess exception
-            pngEncoder.Save(stream);
-            stream.Close();
+                FileStream stream = File.Create(Environment.CurrentDirectory + "\\..\\..\\MemeResources\\temp\\img_TargetImage" + i_effect_counter + ".jpg"); //usedbyanotherprocess exception
+                pngEncoder.Save(stream);
+                stream.Close();
 
-            effectWindow.set_canvas_target(canvas_Bearbeitungsfenster);
+                effectWindow.set_canvas_target(canvas_Bearbeitungsfenster);
             
-            grid_Kontextfenster.Children.Clear();
-            grid_Kontextfenster.Children.Add(effectWindow.get_btn_effectField_Apply());
-            grid_Kontextfenster.Children.Add(effectWindow.get_sld_Brightness());
-            grid_Kontextfenster.Children.Add(effectWindow.get_txtBox_Brightness());
-            grid_Kontextfenster.Children.Add(effectWindow.get_lbl_Brightness());
-            grid_Kontextfenster.Children.Add(effectWindow.get_cmBox_Filter());
-            grid_Kontextfenster.Children.Add(effectWindow.get_lbl_Filter());
-            grid_Kontextfenster.Children.Add(effectWindow.get_sld_Contrast());
-            grid_Kontextfenster.Children.Add(effectWindow.get_txtBox_Contrast());
-            grid_Kontextfenster.Children.Add(effectWindow.get_lbl_Contrast());
-
+                grid_Kontextfenster.Children.Clear();
+                grid_Kontextfenster.Children.Add(effectWindow.get_btn_effectField_Apply());
+                grid_Kontextfenster.Children.Add(effectWindow.get_sld_Brightness());
+                grid_Kontextfenster.Children.Add(effectWindow.get_txtBox_Brightness());
+                grid_Kontextfenster.Children.Add(effectWindow.get_lbl_Brightness());
+                grid_Kontextfenster.Children.Add(effectWindow.get_cmBox_Filter());
+                grid_Kontextfenster.Children.Add(effectWindow.get_lbl_Filter());
+                grid_Kontextfenster.Children.Add(effectWindow.get_sld_Contrast());
+                grid_Kontextfenster.Children.Add(effectWindow.get_txtBox_Contrast());
+                grid_Kontextfenster.Children.Add(effectWindow.get_lbl_Contrast());
             }
+            else
+            {
+                MessageBox.Show("You gotta select the meme before you can filter the meme!", "Oopsies", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
+        }
         }
 }
 
