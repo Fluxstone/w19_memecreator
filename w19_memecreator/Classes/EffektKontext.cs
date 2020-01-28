@@ -143,6 +143,7 @@ namespace w19_memecreator
             btn_effectField_Preview.Background = new SolidColorBrush(Color.FromRgb(22, 22, 22));
             btn_effectField_Preview.Foreground = brush_bright;
             btn_effectField_Preview.FontSize = 16;
+            btn_effectField_Preview.BorderBrush = Brushes.Transparent;
             btn_effectField_Preview.AddHandler(Button.ClickEvent, new RoutedEventHandler(btn_effectField_Preview_Click));
         }
 

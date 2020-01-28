@@ -46,52 +46,6 @@
         }
     },
     {
-        "name": "Women and Cat",
-        "previewSource": "womenandcat.png",
-        "formatWidth": 127,
-        "formatHeight": 72,
-        "components": {
-            "images": [
-                {
-                    "relSource": "woman.jpg",
-                    "xPos": 0,
-                    "yPos": 0,
-                    "width": 50,
-                    "height": 100
-                },
-                {
-                    "relSource": "cat.jpg",
-                    "xPos": 50,
-                    "yPos": 0,
-                    "width": 50,
-                    "height": 100
-                }
-            ],
-            "text": [
-                {
-                    "content": "You're not a pidgeon!",
-                    "font": "impact",
-                    "fontsize": 20,
-                    "xPos": 0,
-                    "yPos": 80,
-                    "width": 50,
-                    "height": 20,
-                    "color": "White"
-                },
-                {
-                    "content": "I'm clearly a cat, Susan.",
-                    "font": "impact",
-                    "fontsize": 20,
-                    "xPos": 50,
-                    "yPos": 0,
-                    "width": 50,
-                    "height": 20,
-                    "color": "White"
-                }
-            ]
-        }
-    },
-    {
         "name": "Butterfly",
         "previewSource": "pidgeon.png",
         "formatWidth": 529,
@@ -136,6 +90,52 @@
                     "width": 30,
                     "height": 20,
                     "color": "Black"
+                }
+            ]
+        }
+    },
+    {
+        "name": "Women and Cat",
+        "previewSource": "womenandcat.png",
+        "formatWidth": 127,
+        "formatHeight": 72,
+        "components": {
+            "images": [
+                {
+                    "relSource": "woman.jpg",
+                    "xPos": 0,
+                    "yPos": 0,
+                    "width": 50,
+                    "height": 100
+                },
+                {
+                    "relSource": "cat.jpg",
+                    "xPos": 50,
+                    "yPos": 0,
+                    "width": 50,
+                    "height": 100
+                }
+            ],
+            "text": [
+                {
+                    "content": "You're not a pidgeon!",
+                    "font": "impact",
+                    "fontsize": 20,
+                    "xPos": 0,
+                    "yPos": 80,
+                    "width": 50,
+                    "height": 20,
+                    "color": "White"
+                },
+                {
+                    "content": "I'm clearly a cat, Susan.",
+                    "font": "impact",
+                    "fontsize": 20,
+                    "xPos": 50,
+                    "yPos": 0,
+                    "width": 50,
+                    "height": 20,
+                    "color": "White"
                 }
             ]
         }

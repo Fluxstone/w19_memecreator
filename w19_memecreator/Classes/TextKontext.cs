@@ -132,6 +132,7 @@ namespace w19_memecreator
             btn_txtField_Apply.Foreground = brush_bright;
             btn_txtField_Apply.FontSize = 16;
             btn_txtField_Apply.FontWeight = FontWeights.DemiBold;
+            btn_txtField_Apply.BorderBrush = Brushes.Transparent;
             btn_txtField_Apply.AddHandler(Button.ClickEvent, new RoutedEventHandler(btn_txtField_Apply_Click));
         }
 

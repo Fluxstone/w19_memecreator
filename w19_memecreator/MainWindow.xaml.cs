@@ -91,7 +91,8 @@ namespace w19_memecreator {
                     {
                         Image img_template_thumbnail = new Image();
                         img_template_thumbnail.Height = 100;
-                        img_template_thumbnail.Width = 120;
+                        //img_template_thumbnail.Width = 120;
+                        img_template_thumbnail.Margin = new Thickness(0, 0, 10, 0);
                         img_template_thumbnail.Cursor = Cursors.Hand;
 
                         BitmapImage bmp_thumbnail_source = new BitmapImage();
