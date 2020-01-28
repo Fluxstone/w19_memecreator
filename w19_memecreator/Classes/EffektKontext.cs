@@ -85,7 +85,7 @@ namespace w19_memecreator
             txtBox_Brightness.Margin = new Thickness(230, 40, 0, 0);
             txtBox_Brightness.TextWrapping = TextWrapping.Wrap;
             // TODO:
-            txtBox_Brightness.IsEnabled = false;
+            //txtBox_Brightness.IsEnabled = false;
             txtBox_Brightness.AddHandler(TextBox.TextChangedEvent, new RoutedEventHandler(textBoxValueChanged_event_Brightness));
             
             lbl_Contrast.Height = 30;
@@ -115,7 +115,7 @@ namespace w19_memecreator
             txtBox_Contrast.Margin = new Thickness(230, 100, 0, 0);
             txtBox_Contrast.TextWrapping = TextWrapping.Wrap;
             // TODO:
-            txtBox_Contrast.IsEnabled = false;
+            //txtBox_Contrast.IsEnabled = false;
             txtBox_Contrast.AddHandler(TextBox.TextChangedEvent, new RoutedEventHandler(textBoxValueChanged_event_Quality));
 
             lbl_Filter.Height = 30;
