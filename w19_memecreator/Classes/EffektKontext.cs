@@ -13,7 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 using System.IO;
-
+using System.Text.RegularExpressions;
 
 namespace w19_memecreator
 {
@@ -85,7 +85,7 @@ namespace w19_memecreator
             txtBox_Brightness.Margin = new Thickness(230, 40, 0, 0);
             txtBox_Brightness.TextWrapping = TextWrapping.Wrap;
             // TODO:
-            //txtBox_Brightness.IsEnabled = false;
+            txtBox_Brightness.IsEnabled = false;
             txtBox_Brightness.AddHandler(TextBox.TextChangedEvent, new RoutedEventHandler(textBoxValueChanged_event_Brightness));
             
             lbl_Contrast.Height = 30;
@@ -115,7 +115,7 @@ namespace w19_memecreator
             txtBox_Contrast.Margin = new Thickness(230, 100, 0, 0);
             txtBox_Contrast.TextWrapping = TextWrapping.Wrap;
             // TODO:
-            //txtBox_Contrast.IsEnabled = false;
+            txtBox_Contrast.IsEnabled = false;
             txtBox_Contrast.AddHandler(TextBox.TextChangedEvent, new RoutedEventHandler(textBoxValueChanged_event_Quality));
 
             lbl_Filter.Height = 30;
@@ -238,19 +238,49 @@ namespace w19_memecreator
         }
 
         private int check_txtBoxValidNumber(string str)
-        {
-            //sld_Brightness.Value = Convert.ToInt32(txtBox_Brightness.Text);
+        {            
             int i = 0;
+
             try
             {
+                if (IsTextAllowed(str) == false)
+                {
+                    MessageBox.Show("++++Only numbers betweeen 0 and 100 are allowed!");
+                    str = "0";
+                    i = 0;
+                    return i;
+                } else
+                {
+                    i = Convert.ToInt32(str);
+                    if (i < 0 || i > 100)
+                    {
+                        MessageBox.Show("++++Only numbers betweeen 0 and 100 are allowed!++++");
+                        i = 0;
+                    }
+                    return i;
+                }
+                
+                
                 i = Convert.ToInt32(str);
+                if (i < 0 || i > 100)
+                {
+                    MessageBox.Show("++++Only numbers betweeen 0 and 100 are allowed!++++");
+                    return 0;
+                }
                 return i;
+                
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Only integers between 0 and 100 are allowed!");
                 return 0;
             }
+        }
+
+        private static bool IsTextAllowed(string text)
+        {
+            Regex regex = new Regex("[^0-9]+");
+            return !regex.IsMatch(text);
         }
         //Getter und Setter
         public Button get_btn_effectField_Apply()
@@ -312,6 +342,7 @@ namespace w19_memecreator
             generateEffect(img_in);
         }
         //---------------------------------
+
         private void sliderValueChanged_event_Brightness(object sender, RoutedEventArgs e)
         {
             txtBox_Brightness.Text = sld_Brightness.Value.ToString();
@@ -321,8 +352,8 @@ namespace w19_memecreator
             txtBox_Contrast.Text = sld_Contrast.Value.ToString();
         }
         private void textBoxValueChanged_event_Brightness(object sender, RoutedEventArgs e)
-        {
-            sld_Brightness.Value = check_txtBoxValidNumber(txtBox_Brightness.Text);
+        {    
+                sld_Brightness.Value = check_txtBoxValidNumber(txtBox_Brightness.Text);
         }
         private void textBoxValueChanged_event_Quality(object sender, RoutedEventArgs e)
         {
