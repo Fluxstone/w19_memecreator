@@ -42,45 +42,53 @@ namespace w19_memecreator {
         {
             InitializeComponent();
 
+            // Ausgangsmaße des Canvas zur späteren Darstellung der Memes speichern
             d_canvas_initial_height = canvas_Bearbeitungsfenster.Height;
             d_canvas_initial_width = canvas_Bearbeitungsfenster.Width;
             d_canvas_margin_top = canvas_Bearbeitungsfenster.Margin.Top;
             d_canvas_margin_left = canvas_Bearbeitungsfenster.Margin.Left;
 
+            // Kontext-Klassen konfigurieren
             textWindow.setWindowProperties();
             pictureWindow.setWindowProperties();
             effectWindow.setWindowProperties();
-
-            // temp-Ordner leeren
-            DirectoryInfo di = new DirectoryInfo(Environment.CurrentDirectory + "\\..\\..\\MemeResources\\temp");
-            foreach (FileInfo file in di.GetFiles())
-            {
-                file.Delete();
-            }
-            foreach (DirectoryInfo dir in di.GetDirectories())
-            {
-                dir.Delete(true);
-            }
-
-            Type type_brushes = typeof(Brushes);
-
-            // Get all static properties of Brushes
-            var properties = type_brushes.GetProperties(BindingFlags.Static | BindingFlags.Public);
             
-            foreach (var prop in properties)
-            {
-                dict_brushes_str_scb[prop.Name] = (SolidColorBrush)prop.GetValue(null, null);
-                dict_brushes_scb_str[(SolidColorBrush)prop.GetValue(null, null)] = prop.Name;
-            }
-            
-            // Default-Werte
-            a_meme_measurements[0] = d_canvas_margin_left;
-            a_meme_measurements[1] = d_canvas_margin_top; // Canvas obere Margin
-            a_meme_measurements[2] = canvas_Bearbeitungsfenster.Height; // Breite
-            a_meme_measurements[3] = canvas_Bearbeitungsfenster.Height; // Höhe
-
             try
             {
+                // temp-Order für Filter-Erstellung leeren oder erstellen, falls er fehlt
+                string s_temp_path = Environment.CurrentDirectory + "\\..\\..\\MemeResources\\temp";
+                DirectoryInfo di = new DirectoryInfo(s_temp_path);
+                if (di.Exists)
+                {
+                    foreach (FileInfo file in di.GetFiles())
+                    {
+                        file.Delete();
+                    }
+                    foreach (DirectoryInfo dir in di.GetDirectories())
+                    {
+                        dir.Delete(true);
+                    }
+                }
+                else
+                {
+                    Directory.CreateDirectory(s_temp_path);
+                }
+            
+                // Dictionaries mit allen SolidColorBrushes und deren Namen für die Schriftfarben der Labels im Meme
+                Type type_brushes = typeof(Brushes);
+                var properties = type_brushes.GetProperties(BindingFlags.Static | BindingFlags.Public);
+                foreach (var prop in properties)
+                {
+                    dict_brushes_str_scb[prop.Name] = (SolidColorBrush)prop.GetValue(null, null);
+                    dict_brushes_scb_str[(SolidColorBrush)prop.GetValue(null, null)] = prop.Name;
+                }
+            
+                // Default-Werte
+                a_meme_measurements[0] = d_canvas_margin_left; // Canvas linke Margin
+                a_meme_measurements[1] = d_canvas_margin_top; // Canvas obere Margin
+                a_meme_measurements[2] = canvas_Bearbeitungsfenster.Height; // Breite
+                a_meme_measurements[3] = canvas_Bearbeitungsfenster.Height; // Höhe
+
                 // Template-Datei lesen und Thumbnails anzeigen
                 using (StreamReader r = new StreamReader(Environment.CurrentDirectory + "\\..\\..\\Templates\\templates.json"))
                 {
@@ -91,17 +99,15 @@ namespace w19_memecreator {
                     {
                         Image img_template_thumbnail = new Image();
                         img_template_thumbnail.Height = 100;
-                        //img_template_thumbnail.Width = 120;
                         img_template_thumbnail.Margin = new Thickness(0, 0, 10, 0);
                         img_template_thumbnail.Cursor = Cursors.Hand;
 
                         BitmapImage bmp_thumbnail_source = new BitmapImage();
-                        // BitmapImage.UriSource must be in a BeginInit/EndInit block
                         bmp_thumbnail_source.BeginInit();
                         bmp_thumbnail_source.UriSource = new Uri(Environment.CurrentDirectory + "\\..\\..\\Templates\\Previews\\" + template.previewSource, UriKind.Absolute);
                         bmp_thumbnail_source.DecodePixelHeight = 100;
                         bmp_thumbnail_source.EndInit();
-                        //set image source
+                        
                         img_template_thumbnail.Source = bmp_thumbnail_source;
                         img_template_thumbnail.MouseLeftButtonUp += LoadTemplateToCanvas; // Handler für Klick auf Thumbnail
                         img_template_thumbnail.Tag = JsonConvert.SerializeObject(template); // Meme-Daten aus Template als Json-Text in Thumbnail-Tag gespeichert zur Weiterverarbeitung
@@ -139,8 +145,6 @@ namespace w19_memecreator {
             li_canvas_child_grid.Clear();
             li_canvas_child_label.Clear();
             no_more_filter();
-
-            canvas_Bearbeitungsfenster.Background = Brushes.White;
 
             Image img_selected_template = (Image)sender;
             dynamic json_template = JsonConvert.DeserializeObject(img_selected_template.Tag.ToString()); // Meme-Daten aus der Template-Datei
@@ -232,10 +236,12 @@ namespace w19_memecreator {
                     i_canvas_child_index++;
                     li_canvas_child_label.Add(lbl_meme_component_text);
                 }
+                
+                canvas_Bearbeitungsfenster.Background = Brushes.White;
             }
-            catch (ArgumentNullException ane)
+            catch (ApplicationException ae)
             {
-                MessageBox.Show(ane.Message, "Oopsies", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                MessageBox.Show(ae.Message, "Oopsies", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
             }
             catch (Exception ex)
@@ -268,7 +274,8 @@ namespace w19_memecreator {
             }
             catch
             {
-                throw new ArgumentNullException("The images are introverts and don't want to play right now D:\nTry a different template?");
+                throw new ApplicationException("The images are introverts and don't want to play right now D:\nTry a different template?");
+
             }
 
             double d_source_ascpect_ratio = (double)bmp_meme_component_source.PixelHeight / (double)bmp_meme_component_source.PixelWidth; // höher als breit wenn > 1, breiter als hoch wenn < 1
@@ -481,40 +488,51 @@ namespace w19_memecreator {
         //Eventhandler
         private void event_add_filter_button_clicked(object sender, RoutedEventArgs e)
         {
+
             if (bool_meme_is_selected)
             {
-                bool_filter_is_added = true;
-                button_Remove_Filter.Visibility = Visibility.Visible;
-                button_Add_Filter.Visibility = Visibility.Hidden;
+                MessageBoxResult result = MessageBox.Show("You can no longer edit images or text in your meme when you apply a filter. Do you still want to proceed?", "Add the filter", MessageBoxButton.YesNo);
+                if (result == MessageBoxResult.Yes)
+                {
+                    bool_filter_is_added = true;
+                    button_Remove_Filter.Visibility = Visibility.Visible;
+                    button_Add_Filter.Visibility = Visibility.Hidden;
 
-                CroppedBitmap cb_crop = cb_render_canvas_filter();
+                    CroppedBitmap cb_crop = cb_render_canvas_filter();
 
-                BitmapEncoder pngEncoder = new PngBitmapEncoder();
-                pngEncoder.Frames.Add(BitmapFrame.Create(cb_crop));
-                i_effect_counter++;
+                    BitmapEncoder pngEncoder = new PngBitmapEncoder();
+                    pngEncoder.Frames.Add(BitmapFrame.Create(cb_crop));
+                    i_effect_counter++;
+                    
+                    FileStream stream = File.Create(Environment.CurrentDirectory + "\\..\\..\\MemeResources\\temp\\img_TargetImage.jpg");
+                    pngEncoder.Save(stream);
+                    stream.Dispose();
+                    stream.Close();
 
-                FileStream stream = File.Create(Environment.CurrentDirectory + "\\..\\..\\MemeResources\\temp\\img_TargetImage" + i_effect_counter + ".jpg"); //usedbyanotherprocess exception
-                pngEncoder.Save(stream);
-                stream.Close();
+                    effectWindow.set_canvas_target(canvas_Bearbeitungsfenster);
 
-                effectWindow.set_canvas_target(canvas_Bearbeitungsfenster);
-            
-                grid_Kontextfenster.Children.Clear();
-                grid_Kontextfenster.Children.Add(effectWindow.get_btn_effectField_Apply());
-                grid_Kontextfenster.Children.Add(effectWindow.get_sld_Brightness());
-                grid_Kontextfenster.Children.Add(effectWindow.get_txtBox_Brightness());
-                grid_Kontextfenster.Children.Add(effectWindow.get_lbl_Brightness());
-                grid_Kontextfenster.Children.Add(effectWindow.get_cmBox_Filter());
-                grid_Kontextfenster.Children.Add(effectWindow.get_lbl_Filter());
-                grid_Kontextfenster.Children.Add(effectWindow.get_sld_Contrast());
-                grid_Kontextfenster.Children.Add(effectWindow.get_txtBox_Contrast());
-                grid_Kontextfenster.Children.Add(effectWindow.get_lbl_Contrast());
+                    grid_Kontextfenster.Children.Clear();
+                    Slider sld_Brightness = effectWindow.get_sld_Brightness();
+                    sld_Brightness.Value = 0;
+                    grid_Kontextfenster.Children.Add(sld_Brightness);
+                    grid_Kontextfenster.Children.Add(effectWindow.get_lbl_Brightness_value());
+                    grid_Kontextfenster.Children.Add(effectWindow.get_lbl_Brightness());
+                    ComboBox cmBox_Filter = effectWindow.get_cmBox_Filter();
+                    cmBox_Filter.SelectedIndex = 0;
+                    grid_Kontextfenster.Children.Add(cmBox_Filter);
+                    grid_Kontextfenster.Children.Add(effectWindow.get_lbl_Filter());
+                    Slider sld_Contrast = effectWindow.get_sld_Contrast();
+                    sld_Contrast.Value = 0;
+                    grid_Kontextfenster.Children.Add(sld_Contrast);
+                    grid_Kontextfenster.Children.Add(effectWindow.get_lbl_Contrast_value());
+                    grid_Kontextfenster.Children.Add(effectWindow.get_lbl_Contrast());
+                }
             }
             else
             {
                 MessageBox.Show("You gotta select the meme before you can filter the meme!", "Oopsies", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
         }
-        }
+    }
 }
 

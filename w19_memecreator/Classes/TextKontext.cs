@@ -12,7 +12,7 @@ namespace w19_memecreator
     {
         //Variables
         TextBox txtBox_txtField_Text = new TextBox();
-        ComboBox cmBox_fontMenu = new ComboBox();
+        ComboBox cmBox_fontFamily = new ComboBox();
         ComboBox cmBox_fontSize = new ComboBox();
         Button btn_txtField_Apply = new Button();
 
@@ -23,21 +23,17 @@ namespace w19_memecreator
         Label lbl_Color = new Label();
         SolidColorBrush brush_bright = new SolidColorBrush(Color.FromRgb(130, 130, 130));
 
-        Dictionary<String, SolidColorBrush> dict_lbl_colors = new Dictionary<String, SolidColorBrush>();
+        Dictionary<string, SolidColorBrush> dict_lbl_colors = new Dictionary<string, SolidColorBrush>();
 
         Label lbl_targetLbl;
 
         //Constructor
-        public TextKontext()
-        {
-
-        }
+        public TextKontext() {}
 
         //Set KontextWindow Controls
         public void setWindowProperties()
         {
             lbl_Content.Height = 30;
-            //lbl_Content.Width = 120;
             lbl_Content.Content = "Content";
             lbl_Content.Foreground = brush_bright;
             lbl_Content.HorizontalAlignment = HorizontalAlignment.Left;
@@ -51,20 +47,20 @@ namespace w19_memecreator
             txtBox_txtField_Text.VerticalAlignment = VerticalAlignment.Top;
             txtBox_txtField_Text.AcceptsReturn = true;
             txtBox_txtField_Text.Margin = new Thickness(10, 40, 0, 0);
+            txtBox_txtField_Text.TextChanged += Text_Changed_event;
 
             lbl_Font_Family.Height = 30;
-            //lbl_Font_Family.Width = 120;
             lbl_Font_Family.Content = "Font family";
             lbl_Font_Family.Foreground = brush_bright;
             lbl_Font_Family.HorizontalAlignment = HorizontalAlignment.Left;
             lbl_Font_Family.VerticalAlignment = VerticalAlignment.Top;
             lbl_Font_Family.Margin = new Thickness(10, 150, 0, 0);
 
-            cmBox_fontMenu.Height = 25;
-            cmBox_fontMenu.Width = 180;
-            cmBox_fontMenu.HorizontalAlignment = HorizontalAlignment.Left;
-            cmBox_fontMenu.VerticalAlignment = VerticalAlignment.Top;
-            cmBox_fontMenu.Margin = new Thickness(10, 180, 0, 0);
+            cmBox_fontFamily.Height = 25;
+            cmBox_fontFamily.Width = 180;
+            cmBox_fontFamily.HorizontalAlignment = HorizontalAlignment.Left;
+            cmBox_fontFamily.VerticalAlignment = VerticalAlignment.Top;
+            cmBox_fontFamily.Margin = new Thickness(10, 180, 0, 0);
 
             List<string> fonts = new List<string>();
             using (InstalledFontCollection fontsCollection = new InstalledFontCollection())
@@ -75,11 +71,11 @@ namespace w19_memecreator
                     fonts.Add(font.Name);
                 }
             }
-            cmBox_fontMenu.ItemsSource = fonts;
-            cmBox_fontMenu.SelectedIndex = 0;
-            
+            cmBox_fontFamily.ItemsSource = fonts;
+            cmBox_fontFamily.SelectedIndex = 0;
+            cmBox_fontFamily.SelectionChanged += FontFamily_Changed_event;
+
             lbl_Font_Size.Height = 30;
-            //lbl_Font_Size.Width = 120;
             lbl_Font_Size.Content = "Font size";
             lbl_Font_Size.Foreground = brush_bright;
             lbl_Font_Size.HorizontalAlignment = HorizontalAlignment.Left;
@@ -97,10 +93,10 @@ namespace w19_memecreator
                 fontSizeList.Add(i.ToString());
             }
             cmBox_fontSize.ItemsSource = fontSizeList;
-            cmBox_fontSize.SelectedIndex = 0;
+            //cmBox_fontSize.SelectedIndex = 0;
+            cmBox_fontSize.SelectionChanged += FontSize_Changed_event;
 
             lbl_Color.Height = 30;
-            //lbl_Color.Width = 120;
             lbl_Color.Content = "Color options";
             lbl_Color.Foreground = brush_bright;
             lbl_Color.HorizontalAlignment = HorizontalAlignment.Left;
@@ -121,6 +117,7 @@ namespace w19_memecreator
             }
             cmBox_fontColor.ItemsSource = dict_lbl_colors.Keys;
             cmBox_fontColor.SelectedIndex = 0;
+            cmBox_fontColor.SelectionChanged += FontColor_Changed_event;
 
             btn_txtField_Apply.Height = 50;
             btn_txtField_Apply.Width = 140;
@@ -136,10 +133,31 @@ namespace w19_memecreator
             btn_txtField_Apply.AddHandler(Button.ClickEvent, new RoutedEventHandler(btn_txtField_Apply_Click));
         }
 
+        private void Text_Changed_event(object sender, RoutedEventArgs e)
+        {
+            lbl_targetLbl.Content = txtBox_txtField_Text.Text;
+        }
+
+        private void FontFamily_Changed_event(object sender, RoutedEventArgs e)
+        {
+            lbl_targetLbl.FontFamily = new FontFamily(cmBox_fontFamily.SelectedValue.ToString());
+        }
+
+        private void FontColor_Changed_event(object sender, RoutedEventArgs e)
+        {
+            lbl_targetLbl.Foreground = dict_lbl_colors[cmBox_fontColor.SelectedValue.ToString()];
+        }
+
+        private void FontSize_Changed_event(object sender, RoutedEventArgs e)
+        {
+            if (cmBox_fontSize.SelectedValue != null)
+                lbl_targetLbl.FontSize = Int32.Parse(cmBox_fontSize.SelectedValue.ToString());
+        }
+
         public void generateLabel()
         {
             int i_fontSize = Int32.Parse(cmBox_fontSize.Text);
-            lbl_targetLbl.FontFamily = new FontFamily(cmBox_fontMenu.SelectedValue.ToString());
+            lbl_targetLbl.FontFamily = new FontFamily(cmBox_fontFamily.SelectedValue.ToString());
             lbl_targetLbl.FontSize = i_fontSize;
             lbl_targetLbl.Content = txtBox_txtField_Text.Text;
             lbl_targetLbl.Foreground = dict_lbl_colors[cmBox_fontColor.SelectedValue.ToString()];
@@ -164,19 +182,22 @@ namespace w19_memecreator
 
         public ComboBox get_cmBox_fontMenu(String font)
         {
-            cmBox_fontMenu.SelectedValue = font;
-            return cmBox_fontMenu;
+            cmBox_fontFamily.SelectedValue = font;
+            FontFamily_Changed_event(cmBox_fontFamily, new RoutedEventArgs());
+            return cmBox_fontFamily;
         }
 
         public ComboBox get_cmBox_fontColor(String font)
         {
             cmBox_fontColor.SelectedValue = font;
+            FontColor_Changed_event(cmBox_fontColor, new RoutedEventArgs());
             return cmBox_fontColor;
         }
 
         public ComboBox get_cmBox_fontSize(String fontSize)
         {
             cmBox_fontSize.SelectedValue = fontSize;
+            FontSize_Changed_event(cmBox_fontSize, new RoutedEventArgs());
             return cmBox_fontSize;
         }
 

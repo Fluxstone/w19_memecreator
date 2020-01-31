@@ -119,7 +119,7 @@
             "text": [
                 {
                     "content": "You're not a pidgeon!",
-                    "font": "impact",
+                    "font": "Impact",
                     "fontsize": 20,
                     "xPos": 0,
                     "yPos": 80,
@@ -129,7 +129,7 @@
                 },
                 {
                     "content": "I'm clearly a cat, Susan.",
-                    "font": "impact",
+                    "font": "Impact",
                     "fontsize": 20,
                     "xPos": 50,
                     "yPos": 0,

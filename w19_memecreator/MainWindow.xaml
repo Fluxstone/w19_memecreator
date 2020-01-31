@@ -9,7 +9,7 @@
         Icon="MemeResources/mm.ico">
     <Window.Resources>
     </Window.Resources>
-    <Grid>
+    <Grid x:Name="maingrid">
 
         <!-- Template-Anzeige -->
         <Label x:Name="templatesLabel" Content="Choose the meme" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Background="#232323" Foreground="#828282"/>
@@ -25,32 +25,9 @@
         <Label x:Name="contextLabel" Content="Edit the meme" HorizontalAlignment="Left" Margin="636,146,0,0" VerticalAlignment="Top" Background="#232323" Foreground="#828282"/>
         <Grid x:Name="grid_Kontextfenster" Margin="636,172,10,97" Background="#232323" ScrollViewer.VerticalScrollBarVisibility="Disabled"/>
 
-        <Button x:Name="button_Save" Content="Save the meme" Margin="636,574,179,10" Click="SaveImage" Background="#232323" Foreground="#828282" FontSize="20" FontWeight="DemiBold" BorderBrush="#00707070" >
-        </Button>
+        <!-- Buttons zum Speichern und für Filter -->
+        <Button x:Name="button_Save" Content="Save the meme" Margin="636,574,179,10" Click="SaveImage" Background="#232323" Foreground="#828282" FontSize="20" FontWeight="DemiBold" BorderBrush="#00707070" />
         <Button x:Name="button_Add_Filter" Content="Add filter" Margin="820,574,10,10" Click="event_add_filter_button_clicked" Background="#232323" Foreground="#828282" FontSize="20" FontWeight="DemiBold" BorderBrush="#00707070" />
         <Button x:Name="button_Remove_Filter" Content="Remove filter" Margin="820,574,10,10" Click="event_remove_filter_button_clicked" Background="#232323" Foreground="#828282" FontSize="20" FontWeight="DemiBold" BorderBrush="#00707070" Visibility="Hidden"/>
-
-        <!--Menu x:Name="menu_mainMenu" HorizontalAlignment="Left" Height="21" VerticalAlignment="Top" Width="116">
-            <MenuItem Header="File">
-                <MenuItem Header="Load"></MenuItem>
-                <MenuItem Header="Save" Click="saveImage"></MenuItem>
-                <Separator Margin="3,2,-3,2"></Separator>
-                <MenuItem Header="Exit"></MenuItem>
-            </MenuItem>
-            <MenuItem Header="Edit">
-                <MenuItem Header="Create">
-                    <MenuItem Header="Template"></MenuItem>
-                </MenuItem>
-            </MenuItem>
-            <MenuItem Header="Effects">
-                <MenuItem Header="Add Sprite" Click="addSprite_Click"></MenuItem>
-                <MenuItem Header="Add Filter">
-                    <MenuItem Header="Film Grain"></MenuItem>
-                    <MenuItem Header="Sharpen"></MenuItem>
-                    <MenuItem Header="Black and White"></MenuItem>
-                    <MenuItem Header="Color Saturation"></MenuItem>
-                </MenuItem>
-            </MenuItem>
-        </-->
     </Grid>
 </Window>

@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
@@ -25,27 +20,27 @@ namespace w19_memecreator.Classes
         public double d_parent_grid_height;
         public double d_parent_grid_width;
 
-        string[] path_memeRes_Files;
-        List<Uri> uri_Container = new List<Uri>();
-        List<Image> img_Container = new List<Image>();
-
-        public string Filter { get; private set; }
-        public string FileName { get; private set; }
-        public string InitialDirectory { get; private set; }
-
         //Constructor
         public BildKontext()
         {
+            // Versuche Ersatzbilder für Memes zu laden
+            // Nichts tun, falls keine gefunden werden, der Benutzer kann ja manuell welche nachladen
             try {
-                path_memeRes_Files = Directory.GetFiles(Environment.CurrentDirectory + "\\..\\..\\MemeResources\\PictureContext\\", "*", SearchOption.AllDirectories);
+                string[] path_memeRes_Files = Directory.GetFiles(Environment.CurrentDirectory + "\\..\\..\\MemeResources\\PictureContext\\", "*", SearchOption.AllDirectories);
                 //Scan PictureContext folder for images and set their properties
-                for (int i = 0; i<path_memeRes_Files.Length; i++)
+                foreach (string path in path_memeRes_Files)
                 {
-                    uri_Container.Add(new Uri(path_memeRes_Files[i], UriKind.Absolute));
-                    img_Container.Add(new Image());
-                    img_Container[i].Source = new BitmapImage(uri_Container[i]);
-                    img_Container[i].Width = 100;
-                    img_Container[i].Height = 100;
+                    BitmapImage bmp_meme_component_source = new BitmapImage();
+                    bmp_meme_component_source.BeginInit();
+                    bmp_meme_component_source.UriSource = new Uri(path, UriKind.Absolute);
+                    bmp_meme_component_source.EndInit();
+                    Image context_image = new Image();
+                    context_image.Source = bmp_meme_component_source;
+                    context_image.Height = 100;
+                    context_image.Tag = path;
+                    context_image.MouseLeftButtonUp += imgClicked_MouseUpEvent;
+                    context_image.Margin = new Thickness(5, 0, 5, 0);
+                    wrapP_content.Children.Add(context_image);
                 }
             }
             catch {}
@@ -59,24 +54,6 @@ namespace w19_memecreator.Classes
             wrapP_content.HorizontalAlignment = HorizontalAlignment.Left;
             wrapP_content.VerticalAlignment = VerticalAlignment.Top;
             
-            foreach (Image img in img_Container)
-            {
-                wrapP_content.Children.Add(img);
-                img.MouseDown += imgClicked_MouseDownEvent;
-            }
-           
-            string path_Icon_add = Environment.CurrentDirectory + "\\..\\..\\MemeResources\\OtherResources\\add_icon.png";
-            Uri uri_Icon_add = new Uri(path_Icon_add, UriKind.Absolute);
-            Image img_Icon_add = new Image();
-            img_Icon_add.Source = new BitmapImage(uri_Icon_add);
-            img_Icon_add.Width = 100;
-            img_Icon_add.Height = 100;
-            img_Icon_add.AddHandler(Image.MouseDownEvent, new RoutedEventHandler(Icon_Add_MouseDownEvent));
-
-            Canvas canvas_plus = new Canvas();
-            canvas_plus.Height = 100;
-            canvas_plus.Width = 100;
-
             SolidColorBrush brush = new SolidColorBrush(Color.FromRgb(130, 130, 130));
 
             Rectangle rect = new Rectangle();
@@ -97,7 +74,7 @@ namespace w19_memecreator.Classes
             line_hor.Stroke = brush;
             line_hor.StrokeThickness = 5;
             line_hor.X1 = 20;
-            line_hor.X2 = 80;  // 150 too far
+            line_hor.X2 = 80;
             line_hor.Y1 = 50;
             line_hor.Y2 = 50;
 
@@ -109,18 +86,21 @@ namespace w19_memecreator.Classes
             Canvas.SetLeft(circle, 10);
             Canvas.SetTop(circle, 10);
 
+            Canvas canvas_plus = new Canvas();
+            canvas_plus.Height = 100;
+            canvas_plus.Width = 100;
             canvas_plus.Children.Add(rect);
             canvas_plus.Children.Add(line_vert);
             canvas_plus.Children.Add(line_hor);
             canvas_plus.Children.Add(circle);
-            canvas_plus.MouseLeftButtonUp += Icon_Add_MouseDownEvent;
+            canvas_plus.MouseLeftButtonUp += mouseUp_plus_icon;
 
             wrapP_content.Children.Add(canvas_plus);
         }
 
         public void generatePicture(Image img_in){
             img_targetImg.Source = null;
-            img_targetImg.Source = img_in.Source; 
+            img_targetImg.Source = img_in.Source;
         }
 
         //Getter und Setter
@@ -128,24 +108,28 @@ namespace w19_memecreator.Classes
         {
             return wrapP_content;
         }
+
         public void set_img_targetImg(Image img_in)
         {
             img_targetImg = img_in;
         }
+
         //Event Handler
-        public void imgClicked_MouseDownEvent(object sender, RoutedEventArgs e)
+        public void imgClicked_MouseUpEvent(object sender, RoutedEventArgs e)
         {
+            Image img_in = (Image)sender;
+            ReplaceImage(img_in.Tag.ToString());
             generatePicture((Image)sender);
         }
 
-        public void Icon_Add_MouseDownEvent(object sender, RoutedEventArgs e)
+        public void mouseUp_plus_icon(object sender, RoutedEventArgs e)
         {
             try
             {
                 Microsoft.Win32.OpenFileDialog dialog_openUserFile = new Microsoft.Win32.OpenFileDialog()
                 {
                     Filter = "Image Files(*.png)|*.png|All(*.*)|*",
-                    FileName = "meme.png",
+                    //FileName = "meme.png",
                     InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures)
                 };
                 if (dialog_openUserFile.ShowDialog() == true)
@@ -157,7 +141,7 @@ namespace w19_memecreator.Classes
                     ReplaceImage(dialog_openUserFile.FileName);
                 }
             } 
-            catch (Exception ex)
+            catch
             {
                 MessageBox.Show("This image seems to have a bad day.\nTry a different one?", "Oopsies", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
@@ -181,8 +165,9 @@ namespace w19_memecreator.Classes
                 throw new ArgumentNullException("The images are introverts and don't want to play right now D:\nTry a different template?");
             }
 
-            double d_source_aspect_ratio = (double)bmp_meme_component_source.PixelHeight / (double)bmp_meme_component_source.PixelWidth; // höher als breit wenn > 1, breiter als hoch wenn < 1
-            double d_grid_aspect_ratio = d_parent_grid_height / d_parent_grid_width; // höher als breit wenn > 1, breiter als hoch wenn < 1
+            // höher als breit wenn > 1, breiter als hoch wenn < 1
+            double d_source_aspect_ratio = (double)bmp_meme_component_source.PixelHeight / (double)bmp_meme_component_source.PixelWidth;
+            double d_grid_aspect_ratio = d_parent_grid_height / d_parent_grid_width;
 
             if (d_grid_aspect_ratio < 1) // Grid breiter als hoch
             {
