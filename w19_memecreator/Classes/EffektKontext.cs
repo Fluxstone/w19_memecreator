@@ -28,6 +28,7 @@ namespace w19_memecreator
         string[] mat_Filters = { "No filter", "BlackWhite", "Comic", "Gotham", "GreyScale", "HiSatch", "Invert", "Lomograph", "LoSatch", "Polaroid", "Sepia" };
         
         Canvas canvas_target;
+        Image img_target = new Image();
         SolidColorBrush brush_bright = new SolidColorBrush(Color.FromRgb(130, 130, 130));
         
         string pth_TargetFile = Environment.CurrentDirectory + "\\..\\..\\MemeResources\\temp\\img_TargetImage.jpg";
@@ -59,6 +60,7 @@ namespace w19_memecreator
             sld_Brightness.AddHandler(Slider.ValueChangedEvent, new RoutedEventHandler(sliderValueChanged_event_Brightness));
             sld_Brightness.Value = 0;
 
+            lbl_Brightness_value.Content = "+0%";
             lbl_Brightness_value.Height = 30;
             lbl_Brightness_value.Width = 60;
             lbl_Brightness_value.HorizontalAlignment = HorizontalAlignment.Left;
@@ -87,6 +89,7 @@ namespace w19_memecreator
             sld_Contrast.AddHandler(Slider.ValueChangedEvent, new RoutedEventHandler(sliderValueChanged_event_Quality));
             sld_Contrast.Value = 0;
 
+            lbl_Contrast_value.Content = "+0%";
             lbl_Contrast_value.Height = 30;
             lbl_Contrast_value.Width = 60;
             lbl_Contrast_value.HorizontalAlignment = HorizontalAlignment.Left;
@@ -178,10 +181,10 @@ namespace w19_memecreator
                     }
                     PngBitmapDecoder decoder = new PngBitmapDecoder(outStream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
                     BitmapSource bitmapSource = decoder.Frames[0];
-                    Image img_in = new Image();
-                    img_in.Source = bitmapSource;
+                    //Image img_in = new Image();
+                    img_target.Source = bitmapSource;
                     canvas_target.Children.Clear();
-                    canvas_target.Children.Add(img_in);
+                    canvas_target.Children.Add(img_target);
                     outStream.Close();
                 }
                 inStream.Close();
