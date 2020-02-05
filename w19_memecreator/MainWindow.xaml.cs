@@ -447,6 +447,7 @@ namespace w19_memecreator {
             textWindow.set_targetLbl(label);
             grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontMenu(label.FontFamily.ToString()));
             grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontSize(label.FontSize.ToString()));
+            grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontStyle(label.FontStyle.ToString()));
             grid_Kontextfenster.Children.Add(textWindow.get_txtField_Text(label.Content.ToString()));
             grid_Kontextfenster.Children.Add(textWindow.get_btn_txtField_Apply());
             grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontColor(dict_brushes_scb_str[(SolidColorBrush)label.Foreground]));
