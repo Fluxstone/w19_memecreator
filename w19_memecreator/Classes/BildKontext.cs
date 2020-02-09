@@ -118,7 +118,7 @@ namespace w19_memecreator.Classes
         public void imgClicked_MouseUpEvent(object sender, RoutedEventArgs e)
         {
             Image img_in = (Image)sender;
-            ReplaceImage(img_in.Tag.ToString());
+            resizeImage(img_in.Tag.ToString());
             generatePicture((Image)sender);
         }
 
@@ -137,7 +137,7 @@ namespace w19_memecreator.Classes
                     Image img_GetFileName = new Image();
                     img_GetFileName.Source = new BitmapImage(uri_GetFileName);
                     generatePicture(img_GetFileName);
-                    ReplaceImage(dialog_openUserFile.FileName);
+                    resizeImage(dialog_openUserFile.FileName);
                 }
             } 
             catch
@@ -147,7 +147,7 @@ namespace w19_memecreator.Classes
             }
         }
         
-        public void ReplaceImage(String source_uri)
+        public void resizeImage(String source_uri)
         {
             // Create source
             BitmapImage bmp_meme_component_source = new BitmapImage();
