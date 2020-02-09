@@ -17,7 +17,7 @@ namespace w19_memecreator {
     public partial class MainWindow : Window
     {
         TextKontext textWindow = new TextKontext();
-        EffektKontext effectWindow = new EffektKontext();
+        FilterKontext filterWindow = new FilterKontext();
         BildKontext pictureWindow = new BildKontext();
 
         double d_canvas_initial_width;
@@ -51,7 +51,7 @@ namespace w19_memecreator {
             // Kontext-Klassen konfigurieren
             textWindow.setWindowProperties();
             pictureWindow.setWindowProperties();
-            effectWindow.setWindowProperties();
+            filterWindow.setWindowProperties();
             
             try
             {
@@ -435,13 +435,7 @@ namespace w19_memecreator {
             }
 
         }
-
-
-
-
-
-        
-        //Code Yannic
+  
         public void drawTextContext(Label label)
         {
             textWindow.set_targetLbl(label);
@@ -449,12 +443,12 @@ namespace w19_memecreator {
             grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontSize(label.FontSize.ToString()));
             grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontStyle(label.FontStyle.ToString()));
             grid_Kontextfenster.Children.Add(textWindow.get_txtField_Text(label.Content.ToString()));
-            grid_Kontextfenster.Children.Add(textWindow.get_btn_txtField_Apply());
             grid_Kontextfenster.Children.Add(textWindow.get_cmBox_fontColor(dict_brushes_scb_str[(SolidColorBrush)label.Foreground]));
             grid_Kontextfenster.Children.Add(textWindow.get_lbl_Color());
             grid_Kontextfenster.Children.Add(textWindow.get_lbl_Font_Family());
             grid_Kontextfenster.Children.Add(textWindow.get_lbl_Font_Size());
             grid_Kontextfenster.Children.Add(textWindow.get_lbl_Content());
+            grid_Kontextfenster.Children.Add(textWindow.get_lbl_fontStyle());
         }
 
 
@@ -510,23 +504,23 @@ namespace w19_memecreator {
                     stream.Dispose();
                     stream.Close();
 
-                    effectWindow.set_canvas_target(canvas_Bearbeitungsfenster);
+                    filterWindow.set_canvas_target(canvas_Bearbeitungsfenster);
 
                     grid_Kontextfenster.Children.Clear();
-                    Slider sld_Brightness = effectWindow.get_sld_Brightness();
+                    Slider sld_Brightness = filterWindow.get_sld_Brightness();
                     sld_Brightness.Value = 0;
                     grid_Kontextfenster.Children.Add(sld_Brightness);
-                    grid_Kontextfenster.Children.Add(effectWindow.get_lbl_Brightness_value());
-                    grid_Kontextfenster.Children.Add(effectWindow.get_lbl_Brightness());
-                    ComboBox cmBox_Filter = effectWindow.get_cmBox_Filter();
+                    grid_Kontextfenster.Children.Add(filterWindow.get_lbl_Brightness_value());
+                    grid_Kontextfenster.Children.Add(filterWindow.get_lbl_Brightness());
+                    ComboBox cmBox_Filter = filterWindow.get_cmBox_Filter();
                     cmBox_Filter.SelectedIndex = 0;
                     grid_Kontextfenster.Children.Add(cmBox_Filter);
-                    grid_Kontextfenster.Children.Add(effectWindow.get_lbl_Filter());
-                    Slider sld_Contrast = effectWindow.get_sld_Contrast();
+                    grid_Kontextfenster.Children.Add(filterWindow.get_lbl_Filter());
+                    Slider sld_Contrast = filterWindow.get_sld_Contrast();
                     sld_Contrast.Value = 0;
                     grid_Kontextfenster.Children.Add(sld_Contrast);
-                    grid_Kontextfenster.Children.Add(effectWindow.get_lbl_Contrast_value());
-                    grid_Kontextfenster.Children.Add(effectWindow.get_lbl_Contrast());
+                    grid_Kontextfenster.Children.Add(filterWindow.get_lbl_Contrast_value());
+                    grid_Kontextfenster.Children.Add(filterWindow.get_lbl_Contrast());
                 }
             }
             else

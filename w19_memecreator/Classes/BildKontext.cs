@@ -129,7 +129,6 @@ namespace w19_memecreator.Classes
                 Microsoft.Win32.OpenFileDialog dialog_openUserFile = new Microsoft.Win32.OpenFileDialog()
                 {
                     Filter = "Image Files(*.png)|*.png|All(*.*)|*",
-                    //FileName = "meme.png",
                     InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures)
                 };
                 if (dialog_openUserFile.ShowDialog() == true)

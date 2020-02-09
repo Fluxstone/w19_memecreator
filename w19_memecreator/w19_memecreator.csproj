@@ -87,7 +87,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Classes\BildKontext.cs" />
-    <Compile Include="Classes\EffektKontext.cs" />
+    <Compile Include="Classes\FilterKontext.cs" />
     <Compile Include="Classes\TextKontext.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

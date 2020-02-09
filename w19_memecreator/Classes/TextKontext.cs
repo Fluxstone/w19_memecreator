@@ -12,20 +12,22 @@ namespace w19_memecreator
     {
         //Variables
         TextBox txtBox_txtField_Text = new TextBox();
+        Label lbl_Content = new Label();
+
         ComboBox cmBox_fontFamily = new ComboBox();
+        Label lbl_Font_Family = new Label();
+
         ComboBox cmBox_fontSize = new ComboBox();
+        Label lbl_Font_Size = new Label();
+
         ComboBox cmBox_fontStyle = new ComboBox();
-        Button btn_txtField_Apply = new Button();
+        Label lbl_Font_Style = new Label();
 
         ComboBox cmBox_fontColor = new ComboBox();
-        Label lbl_Content = new Label();
-        Label lbl_Font_Family = new Label();
-        Label lbl_Font_Size = new Label();
-        Label lbl_Color = new Label();
-        SolidColorBrush brush_bright = new SolidColorBrush(Color.FromRgb(130, 130, 130));
-
         Dictionary<string, SolidColorBrush> dict_lbl_colors = new Dictionary<string, SolidColorBrush>();
-
+        Label lbl_Color = new Label();
+        
+        SolidColorBrush brush_bright = new SolidColorBrush(Color.FromRgb(130, 130, 130));
         Label lbl_targetLbl;
 
         //Constructor
@@ -56,15 +58,6 @@ namespace w19_memecreator
             lbl_Font_Family.HorizontalAlignment = HorizontalAlignment.Left;
             lbl_Font_Family.VerticalAlignment = VerticalAlignment.Top;
             lbl_Font_Family.Margin = new Thickness(10, 150, 0, 0);
-
-
-            String[] arr_FontStyles = {"Normal", "Italic", "Bold", "Bold+Italic"};
-            cmBox_fontStyle.Height = 25;
-            cmBox_fontStyle.Width = 180;
-            cmBox_fontStyle.ItemsSource = arr_FontStyles;
-            cmBox_fontStyle.HorizontalAlignment = HorizontalAlignment.Left;
-            cmBox_fontStyle.VerticalAlignment = VerticalAlignment.Top;
-            cmBox_fontStyle.Margin = new Thickness(10, 300, 0, 0);
 
             cmBox_fontFamily.Height = 25;
             cmBox_fontFamily.Width = 180;
@@ -103,7 +96,6 @@ namespace w19_memecreator
                 fontSizeList.Add(i.ToString());
             }
             cmBox_fontSize.ItemsSource = fontSizeList;
-            //cmBox_fontSize.SelectedIndex = 0;
             cmBox_fontSize.SelectionChanged += FontSize_Changed_event;
 
             lbl_Color.Height = 30;
@@ -129,18 +121,21 @@ namespace w19_memecreator
             cmBox_fontColor.SelectedIndex = 0;
             cmBox_fontColor.SelectionChanged += FontColor_Changed_event;
 
-            btn_txtField_Apply.Height = 50;
-            btn_txtField_Apply.Width = 140;
-            btn_txtField_Apply.Content = "Apply Changes";
-            btn_txtField_Apply.HorizontalAlignment = HorizontalAlignment.Left;
-            btn_txtField_Apply.VerticalAlignment = VerticalAlignment.Top;
-            btn_txtField_Apply.Margin = new Thickness(10, 340, 0, 0);
-            btn_txtField_Apply.Background = new SolidColorBrush(Color.FromRgb(22, 22, 22));
-            btn_txtField_Apply.Foreground = brush_bright;
-            btn_txtField_Apply.FontSize = 16;
-            btn_txtField_Apply.FontWeight = FontWeights.DemiBold;
-            btn_txtField_Apply.BorderBrush = Brushes.Transparent;
-            btn_txtField_Apply.AddHandler(Button.ClickEvent, new RoutedEventHandler(btn_txtField_Apply_Click));
+            String[] arr_FontStyles = { "Normal", "Italic", "Bold", "Bold+Italic" };
+            cmBox_fontStyle.Height = 25;
+            cmBox_fontStyle.Width = 180;
+            cmBox_fontStyle.ItemsSource = arr_FontStyles;
+            cmBox_fontStyle.HorizontalAlignment = HorizontalAlignment.Left;
+            cmBox_fontStyle.VerticalAlignment = VerticalAlignment.Top;
+            cmBox_fontStyle.Margin = new Thickness(10, 320, 0, 0);
+            cmBox_fontStyle.SelectionChanged += FontStyle_Changed_event; 
+
+            lbl_Font_Style.Height = 30;
+            lbl_Font_Style.Content = "Font Style";
+            lbl_Font_Style.Foreground = brush_bright;
+            lbl_Font_Style.HorizontalAlignment = HorizontalAlignment.Left;
+            lbl_Font_Style.VerticalAlignment = VerticalAlignment.Top;
+            lbl_Font_Style.Margin = new Thickness(10, 290, 0, 0);
         }
 
         private void Text_Changed_event(object sender, RoutedEventArgs e)
@@ -164,19 +159,35 @@ namespace w19_memecreator
                 lbl_targetLbl.FontSize = Int32.Parse(cmBox_fontSize.SelectedValue.ToString());
         }
 
-        private void FontStyle_Changed_event(object sender, RoutedEventArgs e, String fontStyle)
+        private void FontStyle_Changed_event(object sender, RoutedEventArgs e)
         {
-            /*if (fontStyle == "Italic")
+            if (cmBox_fontStyle.SelectedItem.ToString() == "Italic")
             {
-                cmBox_fontStyle.FontStyle = FontStyles.Italic;
-            } else if(fontStyle == "Bold")
+                lbl_targetLbl.FontStyle = FontStyles.Normal;
+                lbl_targetLbl.FontWeight = FontWeights.Normal;
+
+                lbl_targetLbl.FontStyle = FontStyles.Italic;
+            }
+            else if (cmBox_fontStyle.SelectedItem.ToString() == "Bold")
             {
-                cmBox_fontStyle.FontWeight = FontWeights.Bold;
-            } else if(fontStyle == "Normal")
+                lbl_targetLbl.FontStyle = FontStyles.Normal;
+                lbl_targetLbl.FontWeight = FontWeights.Normal;
+
+                lbl_targetLbl.FontWeight = FontWeights.Bold;
+            }
+            else if (cmBox_fontStyle.SelectedItem.ToString() == "Normal")
             {
-                cmBox_fontStyle.FontStyle = FontStyles.Normal;
-            }*/
-            
+                lbl_targetLbl.FontStyle = FontStyles.Normal;
+                lbl_targetLbl.FontWeight = FontWeights.Normal;
+            }
+            else if (cmBox_fontStyle.SelectedItem.ToString() == "Bold+Italic")
+            {
+                lbl_targetLbl.FontStyle = FontStyles.Normal;
+                lbl_targetLbl.FontWeight = FontWeights.Normal;
+
+                lbl_targetLbl.FontStyle = FontStyles.Italic;
+                lbl_targetLbl.FontWeight = FontWeights.Bold;
+            }
         }
 
         public void generateLabel()
@@ -230,11 +241,6 @@ namespace w19_memecreator
             return txtBox_txtField_Text;
         }
 
-        public Button get_btn_txtField_Apply()
-        {
-            return btn_txtField_Apply;
-        }
-
         public ComboBox get_cmBox_fontMenu(String font)
         {
             cmBox_fontFamily.SelectedValue = font;
@@ -259,7 +265,7 @@ namespace w19_memecreator
         public ComboBox get_cmBox_fontStyle(String fontStyle)
         {
             cmBox_fontStyle.SelectedValue = fontStyle;
-            FontStyle_Changed_event(cmBox_fontStyle, new RoutedEventArgs(), fontStyle);
+            FontStyle_Changed_event(cmBox_fontStyle, new RoutedEventArgs());
             return cmBox_fontStyle;
         }
 
@@ -283,10 +289,9 @@ namespace w19_memecreator
             return lbl_Color;
         }
 
-        //Event Handler
-        private void btn_txtField_Apply_Click(object sender, RoutedEventArgs e)
+        public Label get_lbl_fontStyle()
         {
-            generateLabel();
+            return lbl_Font_Style;
         }
     }
 }
